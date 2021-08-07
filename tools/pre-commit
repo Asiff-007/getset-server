@@ -147,6 +147,6 @@ check_prerequisites
 create_tmp_staging
 check_jshint
 check_coding_standards
-run_test
+#run_test
 finish
 
