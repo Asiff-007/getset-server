@@ -1,0 +1,32 @@
+{
+  "development": {
+    "driver": "mysql",
+    "host": "127.0.0.1",
+    "port": "3306",
+    "user": "root",
+    "password": "password",
+    "database": "retail_dev",
+    "connectionLimit": 3,
+    "multipleStatements": true
+  },
+  "test": {
+    "driver": "mysql",
+    "host": "127.0.0.1",
+    "port": "3306",
+    "user": "root",
+    "password": "password",
+    "database": "retail_test",
+    "connectionLimit": 3,
+    "multipleStatements": true
+  },
+  "production": {
+    "driver": "mysql",
+    "host": "127.0.0.1",
+    "port": "3306",
+    "user": "root",
+    "password": "password",
+    "database": "retail_prod",
+    "connectionLimit": 3,
+    "multipleStatements": true
+  }
+}
