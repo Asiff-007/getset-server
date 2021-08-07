@@ -1,0 +1,11 @@
+node_modules
+
+coverage/lcov-report
+coverage/lcov.info
+coverage/coverage.json
+coverage/result_istanbul
+resources/sys_config.js
+resources/database.json
+*.swp
+*.swo
+
