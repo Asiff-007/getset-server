@@ -1,5 +1,6 @@
+'use strict';
+
 var memcache = require('./cache'),
-  bluebird = require('bluebird'),
   Class = require('js-class'),
   knex = require('knex'),
   config = require('../resources/config');
@@ -10,7 +11,7 @@ module.exports = new (Class({ //jshint ignore:line
     this.knexInstance = knex(config.db);
   },
 
-  getAdminByUserName: function (userName) {
+  getAdminByUserName:  function (userName) {
     var tableName = 'admin',
       knexInstance = this.knexInstance;
 
