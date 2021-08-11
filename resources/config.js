@@ -1,5 +1,6 @@
 var util = require('../modules/util'),
-    db_opts = util.getAppPath('resources/database.json')[
+    sys_config = require('./sys_config'),
+    db_opts = require('./database.json')[
       process.env.NODE_ENV || /* istanbul ignore next*/ 'development'],
     _ = require('lodash'),
     obj = {
@@ -41,6 +42,12 @@ var util = require('../modules/util'),
       messages: {
         err_resp: 'Something went wrong'
       },
+
+      cryptor: {
+        key: 'buildthebestever'
+      }
     };
+
+obj = _.merge(obj, sys_config);
 
 module.exports = obj;
