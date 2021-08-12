@@ -30,5 +30,14 @@ module.exports = new (Class({ //jshint ignore:line
             return data;
           });
       });
+  },
+
+  save: function (req,tableName) {
+
+    return this.knexInstance(tableName)
+      .insert(req)
+      .then(function () {
+        return true;
+      });
   }
 }))();
