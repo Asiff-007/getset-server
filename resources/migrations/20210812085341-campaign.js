@@ -8,7 +8,7 @@ exports.up = function(db) {
     from:{type:'date'},
     to:{type:'date'},
     admin_id:{type: 'int'},
-    status:{type:'boolean'}
+    status:{type: 'string', length: 10}
   });
 };
 
