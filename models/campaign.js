@@ -9,7 +9,7 @@ module.exports = new (Class({ //jshint ignore:line
     return db.save(req,tableName)
       .then(function () {
         return {
-          status: 'Data in serted'
+          status: 'Data inserted'
         };
       })
       .catch(function () {
