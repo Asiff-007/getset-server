@@ -38,5 +38,29 @@ module.exports = new (Class({ //jshint ignore:line
       .then(function () {
         return true;
       });
+  },
+  read: function(id,tableName) {
+    return this.knexInstance(tableName)
+    .where({
+      shop_id:id
+    })
+    .first()
+    .then(function (data) {
+      if (data.length > 0) {
+        return true;
+      }
+    });
+  },
+  update:function (id,update,tableName) {
+    return this.knexInstance(tableName)
+    .where({
+      id:id
+    })
+    .update(update)
+    .then(function (data) {
+      if (data) {
+        return true;
+      }
+    });
   }
 }))();

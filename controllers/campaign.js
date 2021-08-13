@@ -15,5 +15,16 @@ module.exports = {
     campaign.create(req.body)
       .then(resp.success, resp.error);
     //}
+  },
+  get:function(req,resp) {
+    var id = req.params.campaign_id;
+    campaign.get(id)
+      .then(resp.success, resp.error);
+
+  },
+  update:function(req,resp) {
+    var id = req.params.campaign_id;
+    campaign.update(id,req.body)
+      .then(resp.success, resp.error);
   }
 };
