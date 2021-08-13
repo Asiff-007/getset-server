@@ -39,17 +39,9 @@ module.exports = new (Class({ //jshint ignore:line
         return true;
       });
   },
-  read: function(id,tableName) {
+  getList: function(query,tableName) {
     return this.knexInstance(tableName)
-    .where({
-      shop_id:id
-    })
-    .first()
-    .then(function (data) {
-      if (data.length > 0) {
-        return true;
-      }
-    });
+    .where(query);
   },
   update:function (id,update,tableName) {
     return this.knexInstance(tableName)

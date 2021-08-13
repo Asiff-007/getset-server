@@ -16,9 +16,8 @@ module.exports = {
       .then(resp.success, resp.error);
     //}
   },
-  get:function(req,resp) {
-    var id = req.params.campaign_id;
-    campaign.get(id)
+  index:function(req,resp) {
+    campaign.getList(req.query)
       .then(resp.success, resp.error);
 
   },

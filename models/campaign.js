@@ -6,7 +6,7 @@ var Class = require('js-class'),
 
 module.exports = new (Class({ //jshint ignore:line
   create: function (model) {
-    model.status = 'active';
+    model.status = 'Active';
     return db.save(model,tableName)
       .then(function () {
         return {
@@ -20,13 +20,8 @@ module.exports = new (Class({ //jshint ignore:line
         };
       });
   },
-  get:function (id) {
-    return db.read(id,tableName)
-    .then(function () {
-      return {
-        status:'Data readed'
-      };
-    })
+  getList:function (query) {
+    return db.getList(query,tableName)
     .catch(function () {
       return {
         status: 'Failed',
