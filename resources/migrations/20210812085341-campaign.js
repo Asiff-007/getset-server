@@ -2,7 +2,7 @@
 
 exports.up = function(db) {
   return db.createTable('campaign', {
-    id:{type: 'int', primaryKey: true},
+    id:{type: 'int', primaryKey: true,autoIncrement: true},
     shop_id:{type: 'int'},
     campaign_name: {type: 'string', length: 45},
     from:{type:'date'},

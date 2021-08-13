@@ -14,8 +14,8 @@ module.exports = new (Class({ //jshint ignore:line
       })
       .catch(function () {
         return {
-          status: 'failed',
-          error: 'insertion faild'
+          status: 'Failed',
+          error: 'Data insertion failed'
         };
       });
   }

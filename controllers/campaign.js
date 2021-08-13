@@ -5,8 +5,10 @@ var campaign = require('../models/campaign');
 module.exports = {
   create:function (req, resp) {
     /*var rules = {
-        username: {type: 'string', required: true},
-        password: {type: 'string', required: true}
+        campaign_name: {type: 'string', required: true},
+        status: {type: 'string', required: true}
+        shop_id: {type: 'int', required: true}
+        admin_id: {type: 'int', required: true}
       };*/
 
     //if (req.validate(rules)) {

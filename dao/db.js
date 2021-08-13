@@ -32,10 +32,9 @@ module.exports = new (Class({ //jshint ignore:line
       });
   },
 
-  save: function (req,tableName) {
-
+  save: function (model,tableName) {
     return this.knexInstance(tableName)
-      .insert(req)
+      .insert(model)
       .then(function () {
         return true;
       });
