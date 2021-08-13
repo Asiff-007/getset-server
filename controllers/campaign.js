@@ -19,7 +19,6 @@ module.exports = {
   index:function(req,resp) {
     campaign.getList(req.query)
       .then(resp.success, resp.error);
-
   },
   update:function(req,resp) {
     var id = req.params.campaign_id;
