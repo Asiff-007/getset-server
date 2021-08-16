@@ -39,10 +39,22 @@ module.exports = new (Class({ //jshint ignore:line
         return true;
       });
   },
+
   getList: function(query,tableName) {
-    return this.knexInstance(tableName)
-    .where(query);
+    var knexInstance = this.knexInstance,
+        shop_id = query.shop_id;
+
+    return memcache.getValue(shop_id, tableName)
+      .catch(function () {
+        return knexInstance(tableName)
+          .where(query)
+          .then(function (data) {
+            memcache.addValue(shop_id, data, tableName);
+            return data;
+          });
+      });
   },
+
   update:function (id,update,tableName) {
     return this.knexInstance(tableName)
     .where({
@@ -51,6 +63,7 @@ module.exports = new (Class({ //jshint ignore:line
     .update(update)
     .then(function (data) {
       if (data) {
+        memcache.delValue(id,tableName);
         return true;
       }
     });

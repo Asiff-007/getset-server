@@ -21,6 +21,7 @@
     "knex": "^0.21.21",
     "lodash": "^4.17.21",
     "memcache-promise": "0.0.1",
+    "memcached": "^2.2.2",
     "path": "^0.12.7",
     "validator": "^13.6.0"
   },
