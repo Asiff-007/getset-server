@@ -17,12 +17,18 @@ module.exports = {
     //}
   },
   index:function(req,resp) {
+    // var rules = {
+    //   shop_id: {type: 'int', required: false}
+    // };
+
     campaign.getList(req.query)
       .then(resp.success, resp.error);
   },
   update:function(req,resp) {
-    var id = req.params.campaign_id;
-    campaign.update(id,req.body)
+    // var rules = {
+    //   campaign_id: {type: 'int', required: false}
+    // };
+    campaign.update(req.params.campaign_id,req.body)
       .then(resp.success, resp.error);
   }
 };
