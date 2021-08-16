@@ -15,5 +15,21 @@ module.exports = {
     campaign.create(req.body)
       .then(resp.success, resp.error);
     //}
+  },
+  index:function(req,resp) {
+    // var rules = {
+    //   shop_id: {type: 'int', required: false}
+    // };
+
+    campaign.getList(req.query)
+      .then(resp.success, resp.error);
+  },
+  update:function(req,resp) {
+    // var rules = {
+    //   campaign_id: {type: 'int', required: false}
+    // };
+
+    campaign.update(req.params.campaign_id,req.body)
+      .then(resp.success, resp.error);
   }
 };

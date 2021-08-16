@@ -38,5 +38,21 @@ module.exports = new (Class({ //jshint ignore:line
       .then(function () {
         return true;
       });
+  },
+  getList: function(query,tableName) {
+    return this.knexInstance(tableName)
+    .where(query);
+  },
+  update:function (id,update,tableName) {
+    return this.knexInstance(tableName)
+    .where({
+      id:id
+    })
+    .update(update)
+    .then(function (data) {
+      if (data) {
+        return true;
+      }
+    });
   }
 }))();
