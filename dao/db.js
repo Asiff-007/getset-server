@@ -39,10 +39,20 @@ module.exports = new (Class({ //jshint ignore:line
         return true;
       });
   },
+
   getList: function(query,tableName) {
-    return this.knexInstance(tableName)
-    .where(query);
+    var knexInstance = this.knexInstance;
+    return memcache.getValue(query.shop_id, tableName)
+      .catch(function () {
+        return knexInstance(tableName)
+          .where(query)
+          .then(function (data) {
+            memcache.addValue(query.shop_id, data, tableName);
+            return data;
+          });
+      });
   },
+
   update:function (id,update,tableName) {
     return this.knexInstance(tableName)
     .where({
