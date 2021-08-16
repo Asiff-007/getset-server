@@ -1,8 +1,5 @@
 'use strict';
-var _ = require('lodash'),
-  path = require('path'),
-  Class = require('js-class'),
-  bluebird = require('bluebird'),
+var Class = require('js-class'),
   db = require('../dao/db'),
   Cryptr = require('cryptr'),
   config = require('../resources/config');
@@ -10,10 +7,9 @@ var _ = require('lodash'),
 module.exports = new (Class({ //jshint ignore:line
   login: function (req) {
     var cryptor = new Cryptr(config.cryptor.key);
-    return db.getAdminByUserName(req.username, req.password)
+    return db.getRecord({user_name: req.username}, 'admin', 'userName')
       .then(function (data) {
-
-        if (data && cryptor.decrypt(data.password) == req.password) {
+        if (data && cryptor.decrypt(data.password) === req.password) {
           return {
             status: 'success'
           };
@@ -24,7 +20,7 @@ module.exports = new (Class({ //jshint ignore:line
           };
         }
       })
-      .catch(function (error) {
+      .catch(function () {
         return {
           status: 'failed',
           error: 'no user found'
