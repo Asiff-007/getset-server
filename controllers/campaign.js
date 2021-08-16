@@ -28,6 +28,7 @@ module.exports = {
     // var rules = {
     //   campaign_id: {type: 'int', required: false}
     // };
+
     campaign.update(req.params.campaign_id,req.body)
       .then(resp.success, resp.error);
   }
