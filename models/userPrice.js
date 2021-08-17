@@ -1,7 +1,7 @@
 'use strict';
 var Class = require('js-class'),
   userPrice = require('../dao/userPrice'),
-  util = require('../module/util'),
+  util = require('../modules/util'),
   config = require('../resources/config');
 
 module.exports = new (Class({ //jshint ignore:line
