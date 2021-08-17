@@ -7,10 +7,10 @@ var Memcached = require('memcache-promise'),
   memcached = new Memcached(config.memcache.servers, config.memcache.options),
   prefix = config.memcache.prefix,
   lifetime = config.memcache.lifetime,
+  _ = require('lodash'),
   getKey = function (id, type) {
     return prefix + type + ':' + id;
   };
-
 
 module.exports = new (Class({ //jshint ignore:line
 
@@ -30,7 +30,6 @@ module.exports = new (Class({ //jshint ignore:line
   },
   addValue: function (id, data, type) {
     // Converting memcache's q promise to bluebird
-    console.log("getKey: " + getKey(id, type));
     return new Bluebird(function (resolve, reject) {
       memcached.set(getKey(id, type), data, lifetime)
         .then(resolve)
