@@ -18,16 +18,17 @@ module.exports = new (Class({ //jshint ignore:line
       });
   },
 
-  getList: function(query,tableName) {
+  getList: function(query, tableName, memCacheKey) {
     var knexInstance = this.knexInstance,
-        shop_id = query.shop_id;
+        memKey = query[memCacheKey],
+        memCacheTable =  tableName + '_list';
 
-    return memcache.getValue(shop_id, tableName)
+    return memcache.getValue(memKey, memCacheTable)
       .catch(function () {
         return knexInstance(tableName)
           .where(query)
           .then(function (data) {
-            memcache.addValue(shop_id, data, tableName);
+            memcache.addValue(memKey, data, memCacheTable);
             return data;
           });
       });
@@ -48,9 +49,10 @@ module.exports = new (Class({ //jshint ignore:line
   },
   getRecord: function(criteria, tableName, memCacheKey) {
     var knexInstance = this.knexInstance,
-      memKey = criteria[memCacheKey];
+      memKey = criteria[memCacheKey],
+      memCacheTable =  tableName + '_record';
 
-    return memcache.getValue(memKey, tableName)
+    return memcache.getValue(memKey, memCacheTable)
       .catch(function () {
         return knexInstance(tableName)
           .where(criteria)
@@ -59,7 +61,7 @@ module.exports = new (Class({ //jshint ignore:line
             if (data.length > 0) {
               data = data[0];
               if (memKey) {
-                memcache.addValue(memKey, data, tableName);
+                memcache.addValue(memKey, data, memCacheTable);
               }
             }
             return data;

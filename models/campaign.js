@@ -21,7 +21,7 @@ module.exports = new (Class({ //jshint ignore:line
       });
   },
   getList:function (query) {
-    return db.getList(query,tableName)
+    return db.getList(query, tableName, 'shop_id')
     .catch(function () {
       return {
         status: 'Failed',
