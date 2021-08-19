@@ -23,7 +23,7 @@
     "memcache-promise": "0.0.1",
     "memcached": "^2.2.2",
     "path": "^0.12.7",
-    "validator": "^13.6.0"
+    "validator": "^3.43.0"
   },
   "devDependencies": {
     "istanbul": "^0.4.5",
