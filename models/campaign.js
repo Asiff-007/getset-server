@@ -42,6 +42,27 @@ module.exports = new (Class({ //jshint ignore:line
           error: 'Data updation failed'
         };
       });
+  },
+  updatePriceCount: function (price) {
+    var tableNamePrice = 'price',
+      updateData = {
+        total_prices: price.count
+      };
+
+    if (!price.campaign_id) {
+      return db.getRecord({id: price.id}, tableNamePrice, tableNamePrice)
+        .then(function (data) {
+          if (data.count !== price.count) {
+            updateData = {
+              total_prices: price.count - data.count
+            };
+            return db.increment('campaign', updateData, data.campaign_id);
+          }
+          return true;
+        });
+    } else {
+      return db.increment('campaign', updateData, price.campaign_id);
+    }
   }
 }))();
 

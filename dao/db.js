@@ -67,5 +67,17 @@ module.exports = new (Class({ //jshint ignore:line
             return data;
           });
       });
+  },
+  increment: function (tableName, data, id) {
+    return this.knexInstance(tableName)
+      .where({
+        id: id
+      })
+      .increment(data)
+      .then(function () {
+        memcache.delValue(id, tableName);
+        memcache.delValue(id, tableName + '_list');
+        return true;
+      });
   }
 }))();
