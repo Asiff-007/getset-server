@@ -11,7 +11,7 @@ var sys_config = require('./sys_config'),
         connection: _.pick(db_opts, 'host', 'port', 'user', 'password',
           'database', 'multipleStatements'),
         pool: {
-          min: 2,
+          min: 21,
           max: 10
         }
       },
