@@ -2,11 +2,17 @@
 
 var Class = require('js-class'),
     db = require('../dao/db'),
-    tableName = 'campaign';
+    tableName = 'campaign',
+    today = new Date();
 
 module.exports = new (Class({ //jshint ignore:line
   create: function (model) {
-    model.status = 'Active';
+    var from = new Date(model.from);
+    if (from.getTime() < today.getTime()) {
+      model.status = 'ACTIVE';
+    } else {
+      model.status = 'PENDING';
+    }
     return db.save(model,tableName)
       .then(function () {
         return {
