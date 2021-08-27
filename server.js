@@ -15,6 +15,10 @@ app.use(body_parser.urlencoded({extended: true}));
 app.use(body_parser.json({limit: '10mb'}));
 app.use(response_handler);
 app.use(validation.express);
+app.use(express.static(path.join(__dirname, '/games')));
+app.set('views', __dirname + '/games');
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
 // allow cross origin requests for dev mode else Allow specific origins
 if (app.get('env') === 'development') {
