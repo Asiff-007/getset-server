@@ -12,7 +12,8 @@ module.exports = new (Class({ //jshint ignore:line
         if (data && cryptor.decrypt(data.password) === req.password) {
           return {
             status: 'success',
-            shop_id: data.shop_id
+            shop_id: data.shop_id,
+            admin_id: data.id
           };
         } else {
           return {
