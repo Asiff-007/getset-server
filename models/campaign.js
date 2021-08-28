@@ -16,9 +16,10 @@ module.exports = new (Class({ //jshint ignore:line
       model.status = config.campaign_status.pending;
     }
     return db.save(model,tableName)
-      .then(function () {
+      .then(function (data) {
         return {
-          status: 'Data inserted'
+          status: 'Data inserted',
+          campaign_id: data
         };
       })
       .catch(function () {
