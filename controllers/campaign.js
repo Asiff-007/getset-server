@@ -7,7 +7,8 @@ module.exports = {
     var rules = {
         campaign_name: {type: 'string', required: true},
         shop_id: {type: 'int', required: true},
-        admin_id: {type: 'int', required: true}
+        admin_id: {type: 'int', required: true},
+        from: {type: 'string', required: true}
       };
 
     if (req.validate(rules)) {
