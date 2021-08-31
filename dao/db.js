@@ -13,8 +13,8 @@ module.exports = new (Class({ //jshint ignore:line
   save: function (model,tableName) {
     return this.knexInstance(tableName)
       .insert(model)
-      .then(function () {
-        return true;
+      .then(function (data) {
+        return data[0];
       });
   },
 
