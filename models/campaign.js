@@ -4,6 +4,7 @@ var Class = require('js-class'),
     db = require('../dao/db'),
     config = require('../resources/config'),
     util = require('../modules/util'),
+    _ = require('lodash'),
     tableName = 'campaign';
 
 module.exports = new (Class({ //jshint ignore:line
@@ -61,7 +62,13 @@ module.exports = new (Class({ //jshint ignore:line
     if (!price.campaign_id) {
       return db.getRecord({id: price.id}, tableNamePrice, tableNamePrice)
         .then(function (data) {
-          if (data.count !== price.count) {
+          if (price.status !== data.status) {
+            var isInactive = price.status === config.price_status.inactive;
+            price.count = isInactive ? 0 : data.count;
+            data.count = isInactive ? data.count : 0;
+          }
+
+          if (_.isNumber(price.count) && data.count !== price.count) {
             updateData = {
               total_prices: price.count - data.count
             };
