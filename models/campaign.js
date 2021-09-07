@@ -31,7 +31,7 @@ module.exports = new (Class({ //jshint ignore:line
       });
   },
   getList:function (query) {
-    return db.getList(query, tableName, 'shop_id')
+    return db.getList(query, tableName)
     .catch(function () {
       return {
         status: 'Failed',
@@ -60,7 +60,7 @@ module.exports = new (Class({ //jshint ignore:line
       };
 
     if (!price.campaign_id) {
-      return db.getRecord({id: price.id}, tableNamePrice, tableNamePrice)
+      return db.getRecord({id: price.id}, tableNamePrice)
         .then(function (data) {
           if (price.status !== data.status) {
             var isInactive = price.status === config.price_status.inactive;
