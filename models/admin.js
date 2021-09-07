@@ -7,7 +7,7 @@ var Class = require('js-class'),
 module.exports = new (Class({ //jshint ignore:line
   login: function (req) {
     var cryptor = new Cryptr(config.cryptor.key);
-    return db.getRecord({user_name: req.username}, 'admin')
+    return db.getRecord({user_name: req.username}, 'admin', 'userName')
       .then(function (data) {
         if (data && cryptor.decrypt(data.password) === req.password) {
           return {

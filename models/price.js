@@ -24,7 +24,7 @@ module.exports = new (Class({ //jshint ignore:line
       });
   },
   getList: function(criteria) {
-    return db.getList(criteria, tableName);
+    return db.getList(criteria, tableName, 'campaign_id');
   },
   update: function (id, data) {
     return campaign.updatePriceCount(_.merge({id: id}, data))

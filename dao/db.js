@@ -1,7 +1,7 @@
 'use strict';
 
-//var memcache = require('./cache'),
-var  Class = require('js-class'),
+var memcache = require('./cache'),
+  Class = require('js-class'),
   knex = require('knex'),
   config = require('../resources/config');
 
@@ -18,7 +18,7 @@ module.exports = new (Class({ //jshint ignore:line
       });
   },
 
-  getList: function(query, tableName) {
+  getList: function(query, tableName, memCacheKey) {
     var knexInstance = this.knexInstance;
        /* memKey = query[memCacheKey],
         memCacheTable =  tableName + '_list';
@@ -47,7 +47,7 @@ module.exports = new (Class({ //jshint ignore:line
       }
     });
   },
-  getRecord: function(criteria, tableName) {
+  getRecord: function(criteria, tableName, memCacheKey) {
     var knexInstance = this.knexInstance;
       /*memKey = criteria[memCacheKey],
       memCacheTable =  tableName + '_record';
