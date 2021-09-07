@@ -48,7 +48,9 @@ var sys_config = require('./sys_config'),
 
       price_status: {
         not_claimed: 'NotClaimed',
-        claimed: 'Claimed'
+        claimed: 'Claimed',
+        active: 'Active',
+        inactive: 'InActive'
       },
 
       campaign_status: {
