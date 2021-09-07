@@ -19,19 +19,19 @@ module.exports = new (Class({ //jshint ignore:line
   },
 
   getList: function(query, tableName, memCacheKey) {
-    var knexInstance = this.knexInstance;
-       /* memKey = query[memCacheKey],
+    var knexInstance = this.knexInstance,
+        memKey = query[memCacheKey],
         memCacheTable =  tableName + '_list';
 
     return memcache.getValue(memKey, memCacheTable)
-      .catch(function () {*/
+      .catch(function () {
         return knexInstance(tableName)
           .where(query)
           .then(function (data) {
-            //memcache.addValue(memKey, data, memCacheTable);
+            memcache.addValue(memKey, data, memCacheTable);
             return data;
           });
-      //});
+      });
   },
 
   update:function (id,update,tableName) {
@@ -42,31 +42,31 @@ module.exports = new (Class({ //jshint ignore:line
     .update(update)
     .then(function (data) {
       if (data) {
-        //memcache.delValue(id,tableName);
+        memcache.delValue(id,tableName);
         return true;
       }
     });
   },
   getRecord: function(criteria, tableName, memCacheKey) {
-    var knexInstance = this.knexInstance;
-      /*memKey = criteria[memCacheKey],
+    var knexInstance = this.knexInstance,
+      memKey = criteria[memCacheKey],
       memCacheTable =  tableName + '_record';
 
     return memcache.getValue(memKey, memCacheTable)
-      .catch(function () {*/
+      .catch(function () {
         return knexInstance(tableName)
           .where(criteria)
           .first()
           .then(function (data) {
             if (data.length > 0) {
               data = data[0];
-              /*if (memKey) {
+              if (memKey) {
                 memcache.addValue(memKey, data, memCacheTable);
-              }*/
+              }
             }
             return data;
           });
-      //});
+      });
   },
   increment: function (tableName, data, id) {
     return this.knexInstance(tableName)
@@ -75,8 +75,8 @@ module.exports = new (Class({ //jshint ignore:line
       })
       .increment(data)
       .then(function () {
-        //memcache.delValue(id, tableName);
-        //memcache.delValue(id, tableName + '_list');
+        memcache.delValue(id, tableName);
+        memcache.delValue(id, tableName + '_list');
         return true;
       });
   }
