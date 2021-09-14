@@ -54,8 +54,8 @@ var sys_config = require('./sys_config'),
       },
 
       campaign_status: {
-        active: 'ACTIVE',
-        pending: 'PENDING'
+        active: 'Active',
+        pending: 'Pending'
       }
     };
 

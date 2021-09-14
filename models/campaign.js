@@ -3,24 +3,26 @@
 var Class = require('js-class'),
     db = require('../dao/db'),
     config = require('../resources/config'),
-    util = require('../modules/util'),
+    //util = require('../modules/util'),
     _ = require('lodash'),
     tableName = 'campaign';
 
 module.exports = new (Class({ //jshint ignore:line
   create: function (model) {
-    var from = util.getDate(model.from),
+    /*var from = util.getDate(model.from),//     <-- for future status updation
         today = util.getDate();
-    if (from.getTime() < today.getTime()) {
-      model.status = config.campaign_status.active;
-    } else {
+    if (from.getTime() < today.getTime()) {*/
+    model.status = config.campaign_status.active;
+    /*} else {
       model.status = config.campaign_status.pending;
-    }
+    }*/
     return db.save(model,tableName)
       .then(function (data) {
+        console.log(model.status);
         return {
           status: 'Data inserted',
-          campaign_id: data
+          campaign_id: data,
+          campaign_status: model.status
         };
       })
       .catch(function () {
