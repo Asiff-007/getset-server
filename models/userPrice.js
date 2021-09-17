@@ -31,6 +31,10 @@ module.exports = new (Class({ //jshint ignore:line
             return data;
           });
       });
+  },
+  getList:function (query) {
+    return userPrice.getList(query)
+    .catch({status: 'Failed', error: 'Data reading failed'});
   }
 }))();
 
