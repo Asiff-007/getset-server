@@ -19,7 +19,6 @@ module.exports = new (Class({ //jshint ignore:line
     model.status = config.campaign_status.active;
     return db.save(model,tableName)
       .then(function (data) {
-        console.log(model.status);
         return {
           status: 'Data inserted',
           campaign_id: data,
