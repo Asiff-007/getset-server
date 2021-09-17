@@ -34,12 +34,7 @@ module.exports = new (Class({ //jshint ignore:line
   },
   getList:function (query) {
     return userPrice.getList(query)
-    .catch(function () {
-      return {
-        status: 'Failed',
-        error: 'Data reading failed'
-      };
-    });
+    .catch({status: 'Failed', error: 'Data reading failed'});
   }
 }))();
 

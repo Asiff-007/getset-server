@@ -22,11 +22,11 @@ module.exports = new (Class({ //jshint ignore:line
   },
   getList:function (query) {
     return this.knexInstance('user_price')
-    .innerJoin('price', 'price.id', '=', 'user_price.price_id')
-    .where(query)
-    .select('user_price.ticket_id as ticketId','price.name as prizeName')
-    .then(function (data) {
-      return data;
-    });
+      .innerJoin('price', 'price.id', '=', 'user_price.price_id')
+      .where(query)
+      .select('user_price.ticket_id as ticketId','price.name as prizeName')
+      .then(function (data) {
+        return data;
+      });
   }
 }))();

@@ -11,11 +11,12 @@ module.exports = new (Class({ //jshint ignore:line
   create: function (model) {
     /*var from = util.getDate(model.from),//     <-- for future status updation
         today = util.getDate();
-    if (from.getTime() < today.getTime()) {*/
+    if (from.getTime() < today.getTime()) {
     model.status = config.campaign_status.active;
-    /*} else {
+    } else {
       model.status = config.campaign_status.pending;
     }*/
+    model.status = config.campaign_status.active;
     return db.save(model,tableName)
       .then(function (data) {
         console.log(model.status);
