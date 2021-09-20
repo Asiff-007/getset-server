@@ -12,7 +12,7 @@ module.exports = {
       game.getPrice(req.query)
         .then(function (price) {
           resp.render(process.cwd() +
-            '/games/wrapper/misteryBox.html', {price: price.name});
+            '/games/views/misteryBox.html', {price: price.name});
         });
     }
   }

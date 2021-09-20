@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>3d Model test</title>
+  </head><link rel="import" href="">
+  <style type="text/css">
+      .game_title {
+        top: 1em;
+      }
+
+      .game_desc {
+        top: 3em;
+      }
+
+      .game_terms {
+        bottom: 1em;
+        text-align: right !important;
+      }
+
+      .game_text {
+        position: absolute;
+        width: 100%;
+        color: white;
+        z-index: 10;
+        display: block;
+        text-align: center;
+      }
+
+      .start_button {
+        background-color: #FFFF00;
+        border: none;
+        color: black;
+        padding: 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 22px;
+        margin: 4px 2px;
+        border-radius: 40%;
+        position: absolute;
+        bottom: 4em;
+        display: block;
+      }
+
+      .vertical-center {
+        margin: 0;
+        position: absolute;
+        bottom: 20%;
+        left: 42%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+      }
+
+  </style>
+
+  <body>
+    <div id="game_title" style="display: none;"><h2 class="game_text game_title">OPEN A BOX TO WIN</h2></div>
+    <div id="game_desc" style="display: none;"><h3 class="game_text game_desc">You can only open one box, so<br>choose a box wisely</h3></div>
+    <div id="game_terms" style="display: none;"><h6 class="game_text game_terms">Terms and conditions</h6></div>
+    <div id="game_price_desc" style="display: none;"><h3 class="game_text game_title">You have won</h3></div>
+    <div id="game_price_title" style="display: none;"><h2 id="game_price_title_head" class="game_text game_desc"></h2></div>
+    <div class="vertical-center" id="start_button_container" style="display: none;"><button id="start_button" class="start_button">Start</button></div>
+    <script src="../lib/three.js"></script>
+    <script type="module">
+
+      import { GLTFLoader } from"../lib/GLTFLoader.js";
+
+      var price = "<%= price %>";
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(80, window.innerWidth/window.innerHeight, 0.01, 100);
+      var raycaster = new THREE.Raycaster();
+      var mouse = new THREE.Vector2();
+      var renderer = new THREE.WebGLRenderer();
+      var boxes = [];
+      var selectedObj;
+      var globalgltf;
+      var isMobile = true;
+
+      camera.position.set(0, 2, 15);
+
+      renderer.setPixelRatio( window.devicePixelRatio );
+      renderer.setSize( window.innerWidth, window.innerHeight );
+
+      document.body.appendChild(renderer.domElement);
+
+      window.addEventListener("mousemove", function () {
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      });
+
+
+      var loader = new GLTFLoader();
+      var obj;
+      var gltf_global;
+      var clip;
+      var mixer;
+
+      const COLUMNS = 3;
+      const ROWS = 2;
+
+      scene.add(camera);
+      
+      function startGame() {
+        var light2 = new THREE.DirectionalLight(0xffffff, 2, 1000);
+        var light3 = new THREE.DirectionalLight(0xffedb6, 2, 1000 );
+
+        light2.position.set(0,0,5);
+        light3.position.set(0,1,-1);
+
+        scene.add(light2);
+        scene.add(light3);
+
+        scene.remove(mesh);
+        document.getElementById('start_button').style.display = 'none';
+        document.getElementById('game_terms').style.display = 'block';
+        document.getElementById('game_title').style.display = 'block';
+        document.getElementById('game_desc').style.display = 'block';
+        loader.load("../assets/box/thebox.gltf", function(gltf){
+          obj = gltf.scene;
+          gltf_global = gltf;
+
+          for ( let y = 0; y < COLUMNS; y ++ ) {
+            for ( let x = 0; x < ROWS; x ++ ) {
+              var cloned = obj.clone();
+              
+              cloned.name = "object_" + y + '-' + x;
+              cloned.position.x =  (( x / COLUMNS  ) - 0.5) * 4;
+              if (x % 2 == 1) {
+                cloned.position.x = -cloned.position.x + 1;
+              }
+              cloned.position.y = (0.5 - ( y / ROWS )) * 4;
+              cloned.position.z = 0.5;
+              cloned.position.multiplyScalar( 2 );
+
+              scene.add(cloned);
+
+              boxes.push(cloned);
+            }
+          }
+
+          mixer = new THREE.AnimationMixer( obj );
+          clip = mixer.clipAction( gltf.animations[0] );
+        });
+
+        renderer.domElement.addEventListener("click", function () {
+          raycaster.setFromCamera(mouse, camera);
+          var intersects = raycaster.intersectObjects(scene.children, true); //array
+          if (intersects.length > 0) {
+            selectedObj = scene.getObjectByName(intersects[0].object.parent.name);
+            selectedObj.position.multiplyScalar( 2 );
+            mixer = new THREE.AnimationMixer( selectedObj );
+            clip = mixer.clipAction( gltf_global.animations[0] );
+            clip.clampWhenFinished = true;
+            clip.setLoop(THREE.LoopOnce);
+            clip.play();
+
+            for(var i=0; i < boxes.length; i++) {
+              if (boxes[i].name !== selectedObj.name) {
+                scene.remove(boxes[i]);
+              }
+            }
+
+            selectedObj.position.x = 0;
+            selectedObj.position.y = 0;
+
+            document.getElementById('game_terms').style.display = 'none';
+            document.getElementById('game_title').style.display = 'none';
+            document.getElementById('game_desc').style.display = 'none';
+
+            setTimeout(function(){
+              document.getElementById('game_price_desc').style.display = 'block';
+              document.getElementById('game_price_title').style.display = 'block';
+              document.getElementById('game_price_title_head').innerHTML = price;
+            }, 2000);
+          }
+        }, true);
+      }
+      
+      function update () {
+        mixer.update( deltaSeconds );
+      }
+
+      document.getElementById('start_button').addEventListener('click', function () {
+        startGame();
+      });
+
+      var light1 = new THREE.HemisphereLight(0xffffff, 0x000000, 5);
+      scene.add(light1);
+
+      var loaderTexture = new THREE.TextureLoader();
+
+      var material = new THREE.MeshLambertMaterial({
+        map: loaderTexture.load('../assets/kovilakam.png')
+      });
+
+      var geometry = new THREE.PlaneGeometry(10, 10);
+
+      // combine our image geometry and material into a mesh
+      var mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(0,3,0);
+
+      mesh.scale.set(0.5, 0.5, 0.5);
+      scene.background = new THREE.Color(0x310171);
+      scene.add(mesh);
+
+      document.getElementById('start_button_container').style.display = 'block';
+
+      var clock = new THREE. Clock();
+
+      function animate(){
+        requestAnimationFrame(animate);
+        if (!selectedObj) {
+          for (var a = 0;  a < boxes.length; a++) {
+            boxes[a].rotation.y += 0.01;
+          }
+        } else {
+          selectedObj.rotation.y = 0;
+          var deltaSeconds = clock.getDelta();
+          if (mixer) {
+            mixer.update( deltaSeconds );
+          }
+        }
+        renderer.render(scene, camera);
+
+      }
+      animate();
+
+    </script>
+
+  </body>
+</html>
