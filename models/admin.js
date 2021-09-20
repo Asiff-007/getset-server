@@ -18,14 +18,14 @@ module.exports = new (Class({ //jshint ignore:line
         } else {
           return {
             status: 'failed',
-            error: 'password doesn\'t match'
+            error: 'Password doesn\'t match'
           };
         }
       })
       .catch(function () {
         return {
           status: 'failed',
-          error: 'no user found'
+          error: 'No user found'
         };
       });
   }

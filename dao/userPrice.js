@@ -28,5 +28,15 @@ module.exports = new (Class({ //jshint ignore:line
       .then(function (data) {
         return data;
       });
+  },
+  update:function (ticketId,update) {
+    return this.knexInstance('user_price')
+      .where('user_price.ticket_id', ticketId)
+      .update(update)
+      .then(function (data) {
+        if (data) {
+          return true;
+        }
+      });
   }
 }))();

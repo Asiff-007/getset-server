@@ -12,12 +12,12 @@ module.exports = new (Class({ //jshint ignore:line
         if (data.expiry <= util.getDate()) {
           return {
             status: 'failed',
-            error: 'price is expired'
+            error: 'Price is expired'
           };
         } else if (data.claim_status === config.price_status.claimed) {
           return {
             status: 'failed',
-            error: 'price already claimed'
+            error: 'Price already claimed'
           };
         }
         return db.increment('campaign', {claimed_prices: 1}, data.campaign_id)
@@ -35,6 +35,20 @@ module.exports = new (Class({ //jshint ignore:line
   getList:function (query) {
     return userPrice.getList(query)
     .catch({status: 'Failed', error: 'Data reading failed'});
+  },
+  update:function (id,update) {
+    return userPrice.update(id,update)
+      .then(function () {
+        return {
+          status: 'Data updated'
+        };
+      })
+      .catch(function () {
+        return {
+          status: 'Failed',
+          error: 'Data updation failed'
+        };
+      });
   }
 }))();
 
