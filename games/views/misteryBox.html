@@ -7,16 +7,61 @@
   </head><link rel="import" href="">
   <style type="text/css">
       .game_title {
+        bottom: 4em;
+        margin-bottom: .5em;
+        text-align: center;
+        size: 20px;
+      }
+      
+      .shop_title {
         top: 1em;
+        left: 2em;
+        position: absolute;
+        margin: 0;
+      }
+
+      .shop_img {
+        margin-top: 0em;
+        border-radius: 50%;
+        width: 70px;
+        height: 70px;
+        float: left;
+      }
+
+      .campaign_details {
+        margin-left: 1em;
+        margin-top: 1em;
+        float: left;
+        color: white;
+      }
+
+      .shop_name {
+        margin: 0;
+        font-size: 15px;
+      }
+
+      .campaign_name {
+        font-size: 20px;
+        top: 0em;
+        color: yellow;
       }
 
       .game_desc {
-        top: 3em;
+        bottom: 3em;
+        size: 15px;
+        text-align: center;
       }
 
       .game_terms {
-        bottom: 1em;
+        bottom: .2em;
+        right: .75em;
         text-align: right !important;
+        font-size: .5em;
+      }
+
+      .game_terms span {
+        font-size: 1.7em;
+        margin-left: .3em;
       }
 
       .game_text {
@@ -32,7 +77,7 @@
         background-color: #FFFF00;
         border: none;
         color: black;
-        padding: 20px;
+        padding: 10px 20px 10px 20px;
         text-align: center;
         text-decoration: none;
         display: inline-block;
@@ -47,21 +92,35 @@
       .vertical-center {
         margin: 0;
         position: absolute;
-        bottom: 20%;
-        left: 42%;
+        bottom: 12%;
+        left: 40%;
         -ms-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
+      }
+
+      .win_title {
+        top: 33%;
+        text-align: center;
+        color: yellow;
+      }
+      
+      .win_desc {
+        font-weight: bold;
+        top: 35%;
+        text-align: center;
+        color: yellow;
       }
 
   </style>
 
   <body>
     <div id="game_title" style="display: none;"><h2 class="game_text game_title">OPEN A BOX TO WIN</h2></div>
-    <div id="game_desc" style="display: none;"><h3 class="game_text game_desc">You can only open one box, so<br>choose a box wisely</h3></div>
-    <div id="game_terms" style="display: none;"><h6 class="game_text game_terms">Terms and conditions</h6></div>
-    <div id="game_price_desc" style="display: none;"><h3 class="game_text game_title">You have won</h3></div>
-    <div id="game_price_title" style="display: none;"><h2 id="game_price_title_head" class="game_text game_desc"></h2></div>
+    <div id="game_desc" style="display: none;"><h5 class="game_text game_desc">You can only open one box, so<br>choose a box wisely</h3></div>
+    <div id="game_terms" style="display: none;"><h6 class="game_text game_terms">Terms and conditions <span>?</span></h6></div>
+    <div id="game_price_desc" style="display: none;"><h4 class="game_text win_title">You have won</h3></div>
+    <div id="game_price_title" style="display: none;"><h1 id="game_price_title_head" class="game_text win_desc"></h2></div>
     <div class="vertical-center" id="start_button_container" style="display: none;"><button id="start_button" class="start_button">Start</button></div>
+    <div id="shop_title" style="display: none;" class="shop_title"><img src="../assets/kovilakam.png" alt="Avatar" class="shop_img" style="display: inline;"><div class="campaign_details"><p style="display: inline;" class="campaign_name">CAMPAIGN NAME</p><p class="shop_name">SHOP NAME</p></div></div>
     <script src="../lib/three.js"></script>
     <script type="module">
 
@@ -79,7 +138,7 @@
       var globalgltf;
       var isMobile = true;
 
-      camera.position.set(0, 2, 15);
+      camera.position.set(0, 3, 17);
 
       renderer.setPixelRatio( window.devicePixelRatio );
       renderer.setSize( window.innerWidth, window.innerHeight );
@@ -114,6 +173,7 @@
         scene.add(light3);
 
         scene.remove(mesh);
+        document.getElementById('shop_title').style.display = 'block';
         document.getElementById('start_button').style.display = 'none';
         document.getElementById('game_terms').style.display = 'block';
         document.getElementById('game_title').style.display = 'block';
@@ -131,7 +191,7 @@
               if (x % 2 == 1) {
                 cloned.position.x = -cloned.position.x + 1;
               }
-              cloned.position.y = (0.5 - ( y / ROWS )) * 4;
+              cloned.position.y = (1 - ( y / ROWS )) * 4;
               cloned.position.z = 0.5;
               cloned.position.multiplyScalar( 2 );
 
@@ -165,6 +225,7 @@
 
             selectedObj.position.x = 0;
             selectedObj.position.y = 0;
+            selectedObj.position.z = 7;
 
             document.getElementById('game_terms').style.display = 'none';
             document.getElementById('game_title').style.display = 'none';
