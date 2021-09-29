@@ -8,11 +8,17 @@ module.exports = {
       campaign_id: {type: 'int', required: true}
     };
 
+    var game_map = new Map();
+
+    game_map.set(1, '/games/views/misteryBox.html');
+    game_map.set(2, '/games/views/luckySlingShot.html');
+
+    console.log(req.query);
     if (req.validate(null, null, rules)) {
       game.getPrice(req.query)
         .then(function (price) {
           resp.render(process.cwd() +
-            '/games/views/misteryBox.html', {price: price.name});
+            game_map.get(req.query.campaign_id), {price: price.name});
         });
     }
   }
