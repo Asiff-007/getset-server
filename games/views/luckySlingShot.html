@@ -46,11 +46,11 @@ body
       var final_gift;
 
       const glb_loader = new GLTFLoader();
-      const canvas = document.querySelector('canvas.webgl')
-      const scene = new THREE.Scene()
+      const canvas = document.querySelector('canvas.webgl');
+      const scene = new THREE.Scene();
       const geometry = new THREE.TorusGeometry( .1, .05, 16, 100 );
-      const material = new THREE.MeshStandardMaterial()
-      material.color = new THREE.Color(0xff0000)
+      const material = new THREE.MeshStandardMaterial();
+      material.color = new THREE.Color(0xff0000);
 
       const tl = new THREE.TextureLoader();
       var mouse = new THREE.Vector2();
@@ -65,15 +65,11 @@ body
 
       var ball_speed = -50;
 
-      // Mesh
-      const sphere = new THREE.Mesh(geometry,material)
-      //scene.add(sphere)
-
       // Lights
-      const pointLight = new THREE.PointLight(0xffffff, 0.01, 100)
-      pointLight.position.x = 1   
-      pointLight.position.y = 1
-      pointLight.position.z = 4
+      const pointLight = new THREE.PointLight(0xffffff, 0.01, 100);
+      pointLight.position.x = 1;
+      pointLight.position.y = 1;
+      pointLight.position.z = 4;
 
       const ambientLight = new THREE.AmbientLight(0xffffff);
       scene.add(pointLight, ambientLight);
@@ -85,17 +81,17 @@ body
       const sizes = {
           width: window.innerWidth,
           height: window.innerHeight
-      }
+      };
 
 
       /**
        * Camera
        */
       // Base camera
-      const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000)
-      camera.position.x = 0
-      camera.position.y = 0
-      camera.position.z = 2
+      const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000);
+      camera.position.x = 0;
+      camera.position.y = 0;
+      camera.position.z = 2;
       scene.add(camera);
 
       const spaceTexture = tl.load('../assets/lucky_slingshot/night_sky.jpg');
@@ -133,8 +129,8 @@ body
                   gift_boxes.push(gift_clone);
               });
           
-          }, undefined, function ( error ) {
-              console.error( error );
+          }, undefined, function (error) {
+              console.error(error);
               is_ready = false;
           } );
       }
@@ -145,7 +141,7 @@ body
               
               slingshot_clone.position.set(0, -3, -5);
               scene.add(slingshot_clone);
-          }, undefined, function ( error ) {
+          }, undefined, function (error) {
               console.error( error );
               is_ready = false;
           } );
@@ -311,24 +307,21 @@ body
        */
       const renderer = new THREE.WebGLRenderer({
           canvas: canvas
-      })
-      renderer.setSize(sizes.width, sizes.height)
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      });
+      renderer.setSize(sizes.width, sizes.height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
       /**
        * Animate
        */
 
-      const clock = new THREE.Clock()
+      const clock = new THREE.Clock();
 
       const tick = () =>
       {
 
-          const delta = clock.getDelta()
-          const elapsedTime = clock.getElapsedTime()
-
-          // Update objects
-          sphere.rotation.y = .5 * delta
+          const delta = clock.getDelta();
+          const elapsedTime = clock.getElapsedTime();
 
           // Update Orbital Controls
           //controls.update()
@@ -351,13 +344,13 @@ body
           }
 
           // Render
-          renderer.render(scene, camera)
+          renderer.render(scene, camera);
 
           // Call tick again on the next frame
-          window.requestAnimationFrame(tick)
+          window.requestAnimationFrame(tick);
       }
 
-      tick()
+      tick();
     </script>
 </body>
 </html>
