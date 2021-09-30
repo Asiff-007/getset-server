@@ -25,10 +25,41 @@ body
     top: 0;
     left: 0;
     outline: none;
+    z-index: -1;
+}
+
+.main
+{
+    position: absolute;
+    margin: auto;
+    top: 10%;
+    width: 100%;
+}
+
+h2, h1
+{
+    font-size: 5em;
+}
+
+h3
+{
+    font-size: 2.5em;
+}
+
+.game_text
+{
+    color: white;
+    text-align: center;
 }
 
 </style>
 <body>
+    <div class="main">
+        <div id="game_prize_desc" style="display: none;"><h2 class="game_text win_title">You have won</h2></div>
+        <div id="game_prize_title" style="display: none;"><h1 id="game_prize_title_head" class="game_text win_desc"></h1></div>
+        <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
+    </div>
+
     <canvas class="webgl"></canvas>
     <script src="../lib/three.js"></script>
     <script type="module">
@@ -37,6 +68,7 @@ body
       //import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
       import { GLTFLoader } from"../lib/GLTFLoader.js";
 
+      var prize = "<%= price %>";
       var ball_ref;
       var gltf_global;
       var is_ready = false;
@@ -44,11 +76,12 @@ body
       var gift_clone;
       var gift_boxes = Array();
       var final_gift;
+      var is_ready_for_reveal = false;
 
       const glb_loader = new GLTFLoader();
       const canvas = document.querySelector('canvas.webgl');
       const scene = new THREE.Scene();
-      const geometry = new THREE.TorusGeometry( .1, .05, 16, 100 );
+      const geometry = new THREE.TorusGeometry(.1, .05, 16, 100);
       const material = new THREE.MeshStandardMaterial();
       material.color = new THREE.Color(0xff0000);
 
@@ -111,6 +144,7 @@ body
           star.position.set(x, y, z);
           scene.add(star);
       }
+
       function populateGift() {
           var giftMesh;
           glb_loader.load( '../assets/lucky_slingshot/giftbox.glb', function ( gltf ) {
@@ -120,7 +154,7 @@ body
               var z = -30; var i = 0;
               Array(100).fill().forEach(() => {
                   gift_clone = gltf.scene.clone();
-                  const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(80));
+                  const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(60));
                   z -= i*.5;
                   i++;
           
@@ -169,6 +203,10 @@ body
               final_gift = gift_clone.clone();
               final_gift.position.set(position.x, position.y, position.z - 2);
               scene.add(final_gift);
+              setTimeout(function () {
+                is_ready_for_reveal = true;
+                document.getElementById('game_prize_reveal_prompt').style.display = 'block';
+              }, 200);
           }, 5000);
       }
 
@@ -189,7 +227,7 @@ body
             x: (event.clientX - rect.left) * canvas.width  / rect.width,
             y: (event.clientY - rect.top ) * canvas.height / rect.height,
           };
-        }
+      }
 
       window.addEventListener('resize', () =>
       {
@@ -228,6 +266,15 @@ body
 
           initial_pos.x = mouse.x;
           initial_pos.y = mouse.y;
+
+          if (is_ready_for_reveal) {
+
+            // play gift reveal animation here
+            document.getElementById('game_prize_reveal_prompt').style.display = 'none';
+            document.getElementById('game_prize_desc').style.display = 'block';
+            document.getElementById('game_prize_title').style.display = 'block';
+            document.getElementById('game_prize_title_head').innerHTML = prize + "!";
+          }
 
           console.log("mouse down");
       }
