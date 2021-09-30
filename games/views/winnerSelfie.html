@@ -108,11 +108,23 @@ body
         </div>
         <div class="footer">
             <button id="snap" class="bn632-hover bn27">Snap Photo</button>
+            <button id="download" style="display: none;" class="bn632-hover bn27" onclick=download()>Download</button>
         </div>
     </div>
-    <canvas id="canvas" width="480" height="640"></canvas>
+    <canvas id="canvas" width="720" height="1280"></canvas>
     <script>
-        var img = "<%= selfie_frame %>";
+        //var img = "<%= selfie_frame %>";
+        var img_src = '../assets/sample_ph.png';
+
+        var frame_img = new Image();
+        var snapped_img = new Image();
+
+        function download() {
+            var link = document.createElement('a');
+            link.download = 'winner_selfie.jpg';
+            link.href = document.getElementById('canvas').toDataURL();
+            link.click();
+        }
 
         window.addEventListener("DOMContentLoaded", function() {
             var canvas = document.getElementById('canvas');
@@ -154,7 +166,16 @@ body
                 video.pause();
                 video.style.display = 'none';
                 document.getElementById('snap').style.display = 'none';
-				context.drawImage(video, 0, 0, 480, 640);
+
+                frame_img.src = img_src;
+                frame_img.onload = function () {
+                    var a = document.getElementById("canvas");
+                    var context2d = a.getContext("2d");
+
+                    context2d.drawImage(frame_img, 0, 0, 720, 1280);
+                    context2d.drawImage(video, 76, 480, 569, 318);
+                    document.getElementById('download').style.display = 'block';
+                }
 			});
 		}, false);
     </script>
