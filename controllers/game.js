@@ -18,7 +18,7 @@ module.exports = {
       game.getPrice(req.query)
         .then(function (price) {
           resp.render(process.cwd() +
-            game_map.get(req.query.campaign_id), {price: price.name});
+            game_map.get(req.query.campaign_id), {price: price.name, campaign_id: req.query.campaign_id});
         });
     }
   }

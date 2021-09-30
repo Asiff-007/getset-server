@@ -35,6 +35,15 @@ body
     top: 10%;
     width: 100%;
 }
+.footer
+{
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    margin: auto;
+    bottom: 20%;
+    width: 100%;
+}
 
 h2, h1
 {
@@ -52,12 +61,61 @@ h3
     text-align: center;
 }
 
+.bn13 {
+    display: none;
+    padding: 0.65em 1.6em;
+    border: 3px solid #ffffff;
+    border-radius: 0.12em;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    font-size: 1.5em;
+    color: #ffffff;
+    text-align: center;
+    transition: all 0.2s;
+    animation: bn13bouncy 3s infinite linear;
+    position: relative;
+}
+
+.bn13:hover {
+    background-color: white;
+    color: #000000;
+}
+
+@keyframes bn13bouncy {
+    0% {
+        top: 0em;
+    }
+    40% {
+        top: 0em;
+    }
+    43% {
+        top: -0.9em;
+    }
+    46% {
+        top: 0em;
+    }
+    48% {
+        top: -0.4em;
+    }
+    50% {
+        top: 0em;
+    }
+    100% {
+        top: 0em;
+    }
+}
+
 </style>
 <body>
     <div class="main">
         <div id="game_prize_desc" style="display: none;"><h2 class="game_text win_title">You have won</h2></div>
         <div id="game_prize_title" style="display: none;"><h1 id="game_prize_title_head" class="game_text win_desc"></h1></div>
         <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
+    </div>
+    <div class="footer">
+        <a href="/camera_capture?campaign_id=<%= campaign_id %>" id="goto_selfie" class="bn13">Take a Winner Selfie!</a>
     </div>
 
     <canvas class="webgl"></canvas>
@@ -69,6 +127,7 @@ h3
       import { GLTFLoader } from"../lib/GLTFLoader.js";
 
       var prize = "<%= price %>";
+      var campaign_id = "<%= campaign_id %>";
       var ball_ref;
       var gltf_global;
       var is_ready = false;
@@ -274,6 +333,7 @@ h3
             document.getElementById('game_prize_desc').style.display = 'block';
             document.getElementById('game_prize_title').style.display = 'block';
             document.getElementById('game_prize_title_head').innerHTML = prize + "!";
+            document.getElementById('goto_selfie').style.display = 'inline-block';
           }
 
           console.log("mouse down");
