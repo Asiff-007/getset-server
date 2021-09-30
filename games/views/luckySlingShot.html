@@ -60,29 +60,47 @@ h3
     color: white;
     text-align: center;
 }
-
-.bn13 {
+.bn632-hover {
     display: none;
-    padding: 0.65em 1.6em;
-    border: 3px solid #ffffff;
-    border-radius: 0.12em;
-    box-sizing: border-box;
-    text-decoration: none;
-    font-family: "Roboto", sans-serif;
-    font-weight: 300;
-    font-size: 1.5em;
-    color: #ffffff;
-    text-align: center;
-    transition: all 0.2s;
-    animation: bn13bouncy 3s infinite linear;
-    position: relative;
+  width: 310px;
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  margin: 20px;
+  height: 55px;
+  text-align:center;
+  border: none;
+  background-size: 300% 100%;
+  border-radius: 50px;
+  moz-transition: all .4s ease-in-out;
+  -o-transition: all .4s ease-in-out;
+  -webkit-transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out;
 }
 
-.bn13:hover {
-    background-color: white;
-    color: #000000;
+.bn632-hover:hover {
+  background-position: 100% 0;
+  moz-transition: all .4s ease-in-out;
+  -o-transition: all .4s ease-in-out;
+  -webkit-transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out;
 }
 
+.bn632-hover:focus {
+  outline: none;
+}
+
+.bn632-hover.bn27 {
+    background-image: linear-gradient(
+      to right,
+      #ed6ea0,
+      #ec8c69,
+      #f7186a,
+      #fbb03b
+    );
+    box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
+  }
 @keyframes bn13bouncy {
     0% {
         top: 0em;
@@ -115,7 +133,7 @@ h3
         <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
     </div>
     <div class="footer">
-        <a href="/camera_capture?campaign_id=<%= campaign_id %>" id="goto_selfie" class="bn13">Take a Winner Selfie!</a>
+        <a href="/camera_capture?campaign_id=<%= campaign_id %>"  ><button id="goto_selfie" class="bn632-hover bn27"> Take a winner selfie! </button></a>
     </div>
 
     <canvas class="webgl"></canvas>
