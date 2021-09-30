@@ -3,9 +3,26 @@ var Class = require('js-class'),
   userPrice = require('../dao/userPrice'),
   util = require('../modules/util'),
   config = require('../resources/config'),
+  tableName = 'user_price',
   db = require('../dao/db');
 
 module.exports = new (Class({ //jshint ignore:line
+  create: function (model) {
+    model.claim_status = config.price_status.not_claimed;
+    model.price_won_on = util.getDate();
+    return db.save(model,tableName)
+      .then(function () {
+        return {
+          status: 'Data inserted'
+        };
+      })
+      .catch(function () {
+        return {
+          status: 'Failed',
+          error: 'Data insertion failed'
+        };
+      });
+  },
   verifyPrice: function (req) {
     return userPrice.getValidUserPrices(req, 'user_price', 'ticket_id')
       .then(function (data) {

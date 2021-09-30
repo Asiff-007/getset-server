@@ -24,7 +24,10 @@ module.exports = new (Class({ //jshint ignore:line
     return this.knexInstance('user_price')
       .innerJoin('price', 'price.id', '=', 'user_price.price_id')
       .where(query)
-      .select('user_price.ticket_id as ticketId','price.name as prizeName')
+      .select(
+        'user_price.ticket_id as ticketId',
+        'price.name as prizeName',
+        'price.id as prizeId')
       .then(function (data) {
         return data;
       });

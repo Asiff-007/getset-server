@@ -126,7 +126,14 @@
 
       import { GLTFLoader } from"../lib/GLTFLoader.js";
 
-      var price = "<%= price %>";
+      var isplayed = "<%= isplayed %>",price = "<%= price %>",priceId = "<%= price_id %>",ticketId = "<%= ticket_id %>";
+
+      if (isplayed == 'true') {
+        document.body.style.backgroundColor = '#310171'
+        document.getElementById('game_price_title').style.display = 'block';
+        document.getElementById('game_price_title_head').innerHTML = 'You have already played';
+      }
+      else {
 
       var scene = new THREE.Scene();
       var camera = new THREE.PerspectiveCamera(80, window.innerWidth/window.innerHeight, 0.01, 100);
@@ -232,6 +239,8 @@
             document.getElementById('game_title').style.display = 'none';
             document.getElementById('game_desc').style.display = 'none';
 
+            createFunction();
+
             setTimeout(function(){
               document.getElementById('game_price_desc').style.display = 'block';
               document.getElementById('game_price_title').style.display = 'block';
@@ -241,6 +250,29 @@
         }, true);
       }
       
+      function createFunction () {
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+           if (httpRequest.status == 200) {
+               return
+           }
+           else if (httpRequest.status == 400) {
+              alert('There was an error 400');
+           }
+           else {
+               alert('something else other than 200 was returned');
+           }
+        }
+        };
+        httpRequest.open('POST', 'http://13.232.253.195/userPrice',true);
+        httpRequest.setRequestHeader("Content-type", "application/json");
+        httpRequest.send(JSON.stringify({
+          'price_id' : priceId,
+          'ticket_id' : ticketId,
+        }));
+      }
+
       function update () {
         mixer.update( deltaSeconds );
       }
@@ -289,7 +321,7 @@
 
       }
       animate();
-
+      }
     </script>
 
   </body>
