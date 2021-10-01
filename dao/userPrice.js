@@ -27,7 +27,8 @@ module.exports = new (Class({ //jshint ignore:line
       .select(
         'user_price.ticket_id as ticketId',
         'price.name as prizeName',
-        'price.id as prizeId')
+        'price.id as prizeId',
+        'price.expiry as prizeExpiry')
       .then(function (data) {
         return data;
       });

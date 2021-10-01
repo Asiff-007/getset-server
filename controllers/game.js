@@ -13,12 +13,14 @@ module.exports = {
       userPrice.getList({ticket_id: req.query.ticket_id})
         .then(function (userprice) {
           if (userprice.length > 0) {
+            var price = userprice[0];
             resp.render(process.cwd() +
             '/games/views/misteryBox.html',
             {
-              price: userprice.prizeName,
-              price_id: userprice.prizeId,
+              price: price.prizeName,
+              price_id: price.prizeId,
               ticket_id: req.query.ticket_id,
+              price_expiry: price.prizeExpiry,
               isplayed: true
             });
           }else {
@@ -30,6 +32,7 @@ module.exports = {
                     price: price.name,
                     price_id: price.id,
                     ticket_id: req.query.ticket_id,
+                    price_expiry: price.expiry,
                     isplayed: false
                   });
               });
