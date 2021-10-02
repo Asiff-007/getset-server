@@ -18,22 +18,16 @@ body
     height: 100vh;
     font-family: 'Poppins';
 }
-.container
-{
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-}
-
 .footer
 {
+    height:20vh;
     display: flex;
     justify-content: center;
+}
+
+.video_stream
+{
+    height:80vh;
 }
 .bn632-hover {
     display: inline-block;
@@ -102,16 +96,14 @@ body
 
 </style>
 <body>
-    <div class="container">
-        <div class="video_stream">
-            <video id="video" autoplay></video>
-        </div>
-        <div class="footer">
-            <button id="snap" class="bn632-hover bn27">Snap Photo</button>
-            <button id="download" style="display: none;" class="bn632-hover bn27" onclick=download()>Download</button>
-        </div>
+    <div class="video_stream">
+        <video id="video" autoplay></video>
+        <canvas id="canvas" width="720" height="1280" style="display: none;"></canvas>
     </div>
-    <canvas id="canvas" width="720" height="1280"></canvas>
+    <div class="footer">
+        <button id="snap" class="bn632-hover bn27">Snap Photo</button>
+        <button id="download" style="display: none;" class="bn632-hover bn27" onclick=download()>Download</button>
+    </div>
     <script>
         //var img = "<%= selfie_frame %>";
         var img_src = '../assets/sample_ph.png';
@@ -175,6 +167,7 @@ body
                     context2d.drawImage(frame_img, 0, 0, 720, 1280);
                     context2d.drawImage(video, 76, 480, 569, 318);
                     document.getElementById('download').style.display = 'block';
+                    document.getElementById('canvas').style.display = 'block';
                 }
 			});
 		}, false);
