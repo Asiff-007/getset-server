@@ -49,6 +49,7 @@
       .game_desc {
         bottom: 3em;
         size: 15px;
+        font-size: 15px;
         text-align: center;
       }
 
@@ -121,8 +122,10 @@
   <body>
     <div id="game_title" style="display: none;"><h2 class="game_text game_title">OPEN A BOX TO WIN</h2></div>
     <div id="game_desc" style="display: none;"><h5 class="game_text game_desc">You can only open one box, so<br>choose a box wisely</h3></div>
+    <div id="game_empty" style="display: none;"><h5 class="game_text game_desc">The box you opened is empty. <br>Try your luck next time</h3></div>
     <div id="game_terms" style="display: none;"><h6 class="game_text game_terms">Terms and conditions <span>?</span></h6></div>
     <div id="game_price_desc" style="display: none;"><h4 class="game_text win_title">You have won</h3></div>
+    <div id="game_empty_desc" style="display: none;"><h4 class="game_text win_title">ooppss!!!</h3></div>
     <div id="game_warn_title" style="display: none;"><h2 id='warn_title' class="game_text warn_title">You have already played</h2></div>
     <div id="game_warn_foot" style="display: none;"><h5 class="game_text game_desc">please collect your prize before<br><span id="price_expiry"></span></h3></div>
     <div id="game_price_title" style="display: none;"><h1 id="game_price_title_head" class="game_text win_desc"></h2></div>
@@ -254,11 +257,18 @@
             createUserPrice();
 
             setTimeout(function(){
-              document.getElementById('game_price_desc').style.display = 'block';
-              document.getElementById('game_price_title').style.display = 'block';
-              document.getElementById('game_warn_foot').style.display = 'block';
-              document.getElementById('price_expiry').innerHTML = expiry;
-              document.getElementById('game_price_title_head').innerHTML = price;
+              if(price ==''){
+                document.getElementById('game_price_title').style.display = 'block';
+                document.getElementById('game_empty_desc').style.display = 'block';
+                document.getElementById('game_empty').style.display = 'block';
+                document.getElementById('game_price_title_head').innerHTML = "EMPTY BOX";
+              }else{
+                document.getElementById('game_price_desc').style.display = 'block';
+                document.getElementById('game_price_title').style.display = 'block';
+                document.getElementById('game_warn_foot').style.display = 'block';
+                document.getElementById('price_expiry').innerHTML = expiry;
+                document.getElementById('game_price_title_head').innerHTML = price;
+              }
             }, 2000);
           }
         }, true);
@@ -279,7 +289,7 @@
            }
         }
         };
-        httpRequest.open('POST', 'http://13.232.253.195/userPrice',true);
+        httpRequest.open('POST', 'http://test.getset.store/userPrice',true);
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
           'price_id' : priceId,
