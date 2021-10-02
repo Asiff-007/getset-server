@@ -16,18 +16,22 @@ html,
 body
 {
     height: 100vh;
-    font-family: 'Poppins';
+    width: 100vw;
 }
 .footer
 {
     height:20vh;
+    width: 100vw;
     display: flex;
     justify-content: center;
 }
 
 .video_stream
 {
+    object-fit: fill;
+    /* overflow: hidden; */
     height:80vh;
+    width: 100vw;
 }
 .bn632-hover {
     display: inline-block;
@@ -111,6 +115,13 @@ body
         var frame_img = new Image();
         var snapped_img = new Image();
 
+        var inner_frame = {
+            offset_x: 76,
+            offset_y: 480,
+            width: 569,
+            height: 318
+        };
+
         function download() {
             var link = document.createElement('a');
             link.download = 'winner_selfie.jpg';
@@ -161,11 +172,12 @@ body
 
                 frame_img.src = img_src;
                 frame_img.onload = function () {
-                    var a = document.getElementById("canvas");
-                    var context2d = a.getContext("2d");
-
-                    context2d.drawImage(frame_img, 0, 0, 720, 1280);
-                    context2d.drawImage(video, 76, 480, 569, 318);
+                    context.drawImage(frame_img, 0, 0, 720, 1280);
+                    context.drawImage(video,
+                                        0, (video.videoHeight/2) - (inner_frame.height / 2),
+                                        inner_frame.width, inner_frame.height,
+                                        inner_frame.offset_x, inner_frame.offset_y,
+                                        inner_frame.width, inner_frame.height);
                     document.getElementById('download').style.display = 'block';
                     document.getElementById('canvas').style.display = 'block';
                 }
