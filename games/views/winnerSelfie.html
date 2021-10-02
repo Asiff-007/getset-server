@@ -29,7 +29,7 @@ body
 .video_stream
 {
     object-fit: fill;
-    /* overflow: hidden; */
+    overflow: hidden;
     height:80vh;
     width: 100vw;
 }
@@ -170,14 +170,21 @@ body
                 video.style.display = 'none';
                 document.getElementById('snap').style.display = 'none';
 
+                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth;
+
                 frame_img.src = img_src;
                 frame_img.onload = function () {
-                    context.drawImage(frame_img, 0, 0, 720, 1280);
+                    var ratio_y = canvas.height / 1280;
+                    var ratio_x = window.visualViewport.width / 720;
+
+                    context.scale(ratio_x, ratio_y);
                     context.drawImage(video,
                                         0, (video.videoHeight/2) - (inner_frame.height / 2),
                                         inner_frame.width, inner_frame.height,
                                         inner_frame.offset_x, inner_frame.offset_y,
                                         inner_frame.width, inner_frame.height);
+                    context.drawImage(frame_img, 0, 0, 720, 1280);
                     document.getElementById('download').style.display = 'block';
                     document.getElementById('canvas').style.display = 'block';
                 }
