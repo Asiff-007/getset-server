@@ -147,6 +147,7 @@ h3
       var prize = "<%= price %>";
       var campaign_id = "<%= campaign_id %>";
       var ball_ref;
+      var ball_initial_pos = new THREE.Vector3(0, -4.5, -5);
       var gltf_global;
       var is_ready = false;
       var is_pressed = false;
@@ -260,14 +261,27 @@ h3
       }
 
       function addBall() {
-          const ball = new THREE.Mesh(
-              new THREE.SphereGeometry(0.3),
-              new THREE.MeshStandardMaterial({color: 0xff0000})
-          );
-          ball.position.set(0, -1, -5);
           
-          ball_ref = ball;
-          scene.add(ball);
+        glb_loader.load( '../assets/lucky_slingshot/ball/ball.gltf', function ( gltf ) {
+              var ball_clone = gltf.scene.clone();
+              
+              ball_clone.position.set(ball_initial_pos.x, ball_initial_pos.y, ball_initial_pos.z);
+              ball_clone.scale.set(3.5, 3.5, 3.5);
+              scene.add(ball_clone);
+              ball_ref = ball_clone;
+          }, undefined, function (error) {
+              console.error( error );
+              is_ready = false;
+          } );
+
+        //   const ball = new THREE.Mesh(
+        //       new THREE.SphereGeometry(0.3),
+        //       new THREE.MeshStandardMaterial({color: 0xff0000})
+        //   );
+        //   ball.position.set(0, -1, -5);
+          
+        //   ball_ref = ball;
+        //   scene.add(ball);
       }
 
       function looseBall() {
@@ -279,7 +293,7 @@ h3
               scene.remove(ball_ref);
               
               final_gift = gift_clone.clone();
-              final_gift.position.set(position.x, position.y, position.z - 2);
+              final_gift.position.set(position.x, position.y + 4, position.z - 2);
               scene.add(final_gift);
               setTimeout(function () {
                 is_ready_for_reveal = true;
@@ -371,7 +385,7 @@ h3
                   looseBall();
               } else {
                   // reset position
-                  ball_ref.position.lerp(new THREE.Vector3(0, -1, -5), 0.9);
+                  ball_ref.position.lerp(new THREE.Vector3(ball_initial_pos), 0.9);
               }
           }
           
@@ -452,10 +466,10 @@ h3
           // Update Orbital Controls
           //controls.update()
 
-          if (ball_ref.alive) {
+          if (ball_ref && ball_ref.alive) {
               ball_ref.translateZ( ball_speed * delta);
               ball_ref.translateY( .01 * delta);
-              camera.position.lerp(new THREE.Vector3(ball_ref.position.x, ball_ref.position.y, ball_ref.position.z), 0.1);
+              camera.position.lerp(new THREE.Vector3(ball_ref.position.x, ball_ref.position.y + 4, ball_ref.position.z), 0.1);
           }
           if (final_gift) {
               final_gift.rotation.y = .2 * elapsedTime;
