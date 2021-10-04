@@ -18,12 +18,18 @@ body
     height: 100vh;
     width: 100vw;
 }
+.container
+{
+    display: flex;
+    flex-direction: column;
+}
 .footer
 {
     height:20vh;
     width: 100vw;
     display: flex;
     justify-content: center;
+    z-index: 999;
 }
 
 .video_stream
@@ -100,13 +106,15 @@ body
 
 </style>
 <body>
-    <div class="video_stream">
-        <video id="video" autoplay></video>
-        <canvas id="canvas" width="<%= width %>" height="<%= height %>" style="display: none;"></canvas>
-    </div>
-    <div class="footer">
-        <button id="snap" class="bn632-hover bn27">Snap Photo</button>
-        <button id="download" style="display: none;" class="bn632-hover bn27" onclick=download()>Download</button>
+    <div class="container">
+        <div class="video_stream">
+            <video id="video" autoplay></video>
+            <canvas id="canvas" width="<%= width %>" height="<%= height %>" style="display: none;"></canvas>
+        </div>
+        <div class="footer">
+            <button id="snap" class="bn632-hover bn27">Snap Photo</button>
+            <button id="download" style="display: none;" class="bn632-hover bn27" onclick=download()>Download</button>
+        </div>
     </div>
     <script>
         var img_src = "<%= selfie_frame %>";
