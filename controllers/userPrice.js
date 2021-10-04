@@ -3,6 +3,16 @@
 var userPrice = require('../models/userPrice');
 
 module.exports = {
+  create:function (req, resp) {
+    var rules = {
+      price_id: {type: 'int', required: true},
+      ticket_id: {type: 'int', required: true}
+    };
+    if (req.validate(rules)) {
+      userPrice.create(req.body)
+        .then(resp.success, resp.error);
+    }
+  },
   index:function(req, resp) {
     var rules = {
       campaign_id: {type: 'int', required: true}

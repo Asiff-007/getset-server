@@ -49,6 +49,7 @@
       .game_desc {
         bottom: 3em;
         size: 15px;
+        font-size: 15px;
         text-align: center;
       }
 
@@ -103,6 +104,11 @@
         text-align: center;
         color: yellow;
       }
+
+      .warn_title{
+        text-align: center;
+        color: white;
+      }
       
       .win_desc {
         font-weight: bold;
@@ -116,8 +122,12 @@
   <body>
     <div id="game_title" style="display: none;"><h2 class="game_text game_title">OPEN A BOX TO WIN</h2></div>
     <div id="game_desc" style="display: none;"><h5 class="game_text game_desc">You can only open one box, so<br>choose a box wisely</h3></div>
+    <div id="game_empty" style="display: none;"><h5 class="game_text game_desc">The box you opened is empty. <br>Try your luck next time</h3></div>
     <div id="game_terms" style="display: none;"><h6 class="game_text game_terms">Terms and conditions <span>?</span></h6></div>
     <div id="game_price_desc" style="display: none;"><h4 class="game_text win_title">You have won</h3></div>
+    <div id="game_empty_desc" style="display: none;"><h4 class="game_text win_title">ooppss!!!</h3></div>
+    <div id="game_warn_title" style="display: none;"><h2 id='warn_title' class="game_text warn_title">You have already played</h2></div>
+    <div id="game_warn_foot" style="display: none;"><h5 class="game_text game_desc">please collect your prize before<br><span id="price_expiry"></span></h3></div>
     <div id="game_price_title" style="display: none;"><h1 id="game_price_title_head" class="game_text win_desc"></h2></div>
     <div class="vertical-center" id="start_button_container" style="display: none;"><button id="start_button" class="start_button">Start</button></div>
     <div id="shop_title" style="display: none;" class="shop_title"><img src="../assets/kovilakam.png" alt="Avatar" class="shop_img" style="display: inline;"><div class="campaign_details"><p style="display: inline;" class="campaign_name">CAMPAIGN NAME</p><p class="shop_name">SHOP NAME</p></div></div>
@@ -126,7 +136,19 @@
 
       import { GLTFLoader } from"../lib/GLTFLoader.js";
 
-      var price = "<%= price %>";
+      var isplayed = "<%= isplayed %>",price = "<%= price %>",priceId = "<%= price_id %>",ticketId = "<%= ticket_id %>",priceExpiry = "<%= price_expiry %>";
+      const expiry = new Date(priceExpiry).toDateString();
+
+      if (isplayed == 'true') {
+        document.body.style.backgroundColor = '#310171'
+        document.getElementById('game_warn_title').style.display = 'block';
+        document.getElementById('game_price_desc').style.display = 'block';
+        document.getElementById('game_price_title').style.display = 'block';
+        document.getElementById('game_warn_foot').style.display = 'block';
+        document.getElementById('price_expiry').innerHTML = expiry;
+        document.getElementById('game_price_title_head').innerHTML = price;
+      }
+      else {
 
       var scene = new THREE.Scene();
       var camera = new THREE.PerspectiveCamera(80, window.innerWidth/window.innerHeight, 0.01, 100);
@@ -232,15 +254,49 @@
             document.getElementById('game_title').style.display = 'none';
             document.getElementById('game_desc').style.display = 'none';
 
+            createUserPrice();
+
             setTimeout(function(){
-              document.getElementById('game_price_desc').style.display = 'block';
-              document.getElementById('game_price_title').style.display = 'block';
-              document.getElementById('game_price_title_head').innerHTML = price;
+              if(price ==''){
+                document.getElementById('game_price_title').style.display = 'block';
+                document.getElementById('game_empty_desc').style.display = 'block';
+                document.getElementById('game_empty').style.display = 'block';
+                document.getElementById('game_price_title_head').innerHTML = "EMPTY BOX";
+              }else{
+                document.getElementById('game_price_desc').style.display = 'block';
+                document.getElementById('game_price_title').style.display = 'block';
+                document.getElementById('game_warn_foot').style.display = 'block';
+                document.getElementById('price_expiry').innerHTML = expiry;
+                document.getElementById('game_price_title_head').innerHTML = price;
+              }
             }, 2000);
           }
         }, true);
       }
       
+      function createUserPrice () {
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+           if (httpRequest.status == 200) {
+               return
+           }
+           else if (httpRequest.status == 400) {
+              alert('There was an error 400');
+           }
+           else {
+               alert('something else other than 200 was returned');
+           }
+        }
+        };
+        httpRequest.open('POST', 'http://test.getset.store/userPrice',true);
+        httpRequest.setRequestHeader("Content-type", "application/json");
+        httpRequest.send(JSON.stringify({
+          'price_id' : priceId,
+          'ticket_id' : ticketId,
+        }));
+      }
+
       function update () {
         mixer.update( deltaSeconds );
       }
@@ -289,7 +345,7 @@
 
       }
       animate();
-
+      }
     </script>
 
   </body>
