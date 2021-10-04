@@ -205,7 +205,7 @@ h3
       camera.position.z = 2;
       scene.add(camera);
 
-      const spaceTexture = tl.load('../assets/lucky_slingshot/night_sky.jpg');
+      const spaceTexture = tl.load('../lucky_slingshot/night_sky.jpg');
       scene.background = spaceTexture;
 
 
@@ -225,7 +225,7 @@ h3
 
       function populateGift() {
           var giftMesh;
-          glb_loader.load( '../assets/lucky_slingshot/giftbox.glb', function ( gltf ) {
+          glb_loader.load( '../lucky_slingshot/giftbox.glb', function ( gltf ) {
               giftMesh = gltf.scene;
               gltf_global = gltf;
 
@@ -248,7 +248,7 @@ h3
       }
 
       function addSlingshot() {
-          glb_loader.load( '../assets/lucky_slingshot/stick/stick.gltf', function ( gltf ) {
+          glb_loader.load( '../lucky_slingshot/stick/stick.gltf', function ( gltf ) {
               var slingshot_clone = gltf.scene.clone();
               
               slingshot_clone.position.set(0, -5.5, -5);
@@ -262,7 +262,7 @@ h3
 
       function addBall() {
           
-        glb_loader.load( '../assets/lucky_slingshot/ball/ball.gltf', function ( gltf ) {
+        glb_loader.load( '../lucky_slingshot/ball/ball.gltf', function ( gltf ) {
               var ball_clone = gltf.scene.clone();
               
               ball_clone.position.set(ball_initial_pos.x, ball_initial_pos.y, ball_initial_pos.z);
