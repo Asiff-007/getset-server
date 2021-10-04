@@ -173,18 +173,12 @@ body
                 video.style.display = 'none';
                 document.getElementById('snap').style.display = 'none';
 
-                //canvas.height = video.videoHeight;
-                //canvas.width = video.videoWidth;
-
                 frame_img.src = img_src;
                 frame_img.onload = function () {
                     var ratio_y = canvas.height / img_resolution.height;
                     var ratio_x = window.visualViewport.width / img_resolution.width;
 
-                    //context.scale(ratio_x, ratio_y);
                     context.drawImage(video,
-                                        0, (video.videoHeight/2) - (inner_frame.height / 2),
-                                        inner_frame.width, inner_frame.height,
                                         inner_frame.offset_x, inner_frame.offset_y,
                                         inner_frame.width, inner_frame.height);
                     context.drawImage(frame_img, 0, 0, img_resolution.width, img_resolution.height);

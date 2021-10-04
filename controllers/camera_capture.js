@@ -22,7 +22,6 @@ module.exports = {
       }
     });
 
-    console.log(req.query);
     if (req.validate(null, null, rules)) {
       resp.render(process.cwd() +
         '/games/views/winnerSelfie.html', {
