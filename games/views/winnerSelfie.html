@@ -29,7 +29,7 @@ body
 .video_stream
 {
     object-fit: fill;
-    overflow: hidden;
+    /* overflow: hidden; */
     height:80vh;
     width: 100vw;
 }
@@ -102,24 +102,27 @@ body
 <body>
     <div class="video_stream">
         <video id="video" autoplay></video>
-        <canvas id="canvas" width="720" height="1280" style="display: none;"></canvas>
+        <canvas id="canvas" width="<%= width %>" height="<%= height %>" style="display: none;"></canvas>
     </div>
     <div class="footer">
         <button id="snap" class="bn632-hover bn27">Snap Photo</button>
         <button id="download" style="display: none;" class="bn632-hover bn27" onclick=download()>Download</button>
     </div>
     <script>
-        //var img = "<%= selfie_frame %>";
-        var img_src = '../assets/sample_ph.png';
+        var img_src = "<%= selfie_frame %>";
+        var img_resolution = {
+            height: "<%= height %>",
+            width: "<%= width %>"
+        };
 
         var frame_img = new Image();
         var snapped_img = new Image();
 
         var inner_frame = {
-            offset_x: 76,
-            offset_y: 480,
-            width: 569,
-            height: 318
+            offset_x: "<%= offset_x %>",
+            offset_y: "<%= offset_y %>",
+            width: "<%= inner_width %>",
+            height: "<%= inner_height %>"
         };
 
         function download() {
@@ -170,21 +173,21 @@ body
                 video.style.display = 'none';
                 document.getElementById('snap').style.display = 'none';
 
-                canvas.height = video.videoHeight;
-                canvas.width = video.videoWidth;
+                //canvas.height = video.videoHeight;
+                //canvas.width = video.videoWidth;
 
                 frame_img.src = img_src;
                 frame_img.onload = function () {
-                    var ratio_y = canvas.height / 1280;
-                    var ratio_x = window.visualViewport.width / 720;
+                    var ratio_y = canvas.height / img_resolution.height;
+                    var ratio_x = window.visualViewport.width / img_resolution.width;
 
-                    context.scale(ratio_x, ratio_y);
+                    //context.scale(ratio_x, ratio_y);
                     context.drawImage(video,
                                         0, (video.videoHeight/2) - (inner_frame.height / 2),
                                         inner_frame.width, inner_frame.height,
                                         inner_frame.offset_x, inner_frame.offset_y,
                                         inner_frame.width, inner_frame.height);
-                    context.drawImage(frame_img, 0, 0, 720, 1280);
+                    context.drawImage(frame_img, 0, 0, img_resolution.width, img_resolution.height);
                     document.getElementById('download').style.display = 'block';
                     document.getElementById('canvas').style.display = 'block';
                 }
