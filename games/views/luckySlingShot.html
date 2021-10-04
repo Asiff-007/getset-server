@@ -247,10 +247,11 @@ h3
       }
 
       function addSlingshot() {
-          glb_loader.load( '../assets/lucky_slingshot/slingshot.glb', function ( gltf ) {
+          glb_loader.load( '../assets/lucky_slingshot/stick/stick.gltf', function ( gltf ) {
               var slingshot_clone = gltf.scene.clone();
               
-              slingshot_clone.position.set(0, -3, -5);
+              slingshot_clone.position.set(0, -5.5, -5);
+              slingshot_clone.scale.set(3.5, 3.5, 3.5);
               scene.add(slingshot_clone);
           }, undefined, function (error) {
               console.error( error );
