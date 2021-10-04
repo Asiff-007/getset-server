@@ -147,7 +147,9 @@ h3
       var prize = "<%= price %>";
       var campaign_id = "<%= campaign_id %>";
       var ball_ref;
-      var ball_initial_pos = new THREE.Vector3(0, -4.5, -5);
+      var band_ref;
+      var scale_diff = 0;
+      var ball_initial_pos = new THREE.Vector3(0, -5.5, -5);
       var gltf_global;
       var is_ready = false;
       var is_pressed = false;
@@ -258,6 +260,17 @@ h3
               console.error( error );
               is_ready = false;
           } );
+          glb_loader.load( '../lucky_slingshot/rubber_band/rubberband.gltf', function ( gltf ) {
+              var band_clone = gltf.scene.clone();
+
+              band_clone.position.set(0, -5.5, -5);
+              band_clone.scale.set(3.5, 3.5, 3.5);
+              band_ref = band_clone;
+              scene.add(band_clone);
+          }, undefined, function (error) {
+              console.error( error );
+              is_ready = false;
+          } );
       }
 
       function addBall() {
@@ -342,6 +355,7 @@ h3
           current_pos.x = point.x;
           current_pos.y = point.y;
           
+          scale_diff = current_pos.y - initial_pos.y;
           if (current_pos.y > initial_pos.y) {
               mouse_drag_diff = initial_pos.distanceTo(current_pos);
           } else {
@@ -383,14 +397,18 @@ h3
               if (mouse_drag_diff > mouse_drag_threshold) {
                   console.log("firing initiate");
                   looseBall();
-              } else {
+              } else if(ball_ref) {
                   // reset position
                   ball_ref.position.lerp(new THREE.Vector3(ball_initial_pos), 0.9);
               }
           }
-          
+          if (band_ref) {
+            band_ref.scale.set(3.5, 3.5, 3.5);
+          }
+
           // reset drag diff
           mouse_drag_diff = 0;
+          scale_diff = 0;
           
           
           console.log("mouse up");
@@ -468,7 +486,7 @@ h3
 
           if (ball_ref && ball_ref.alive) {
               ball_ref.translateZ( ball_speed * delta);
-              ball_ref.translateY( .01 * delta);
+              ball_ref.translateY( .05 * delta);
               camera.position.lerp(new THREE.Vector3(ball_ref.position.x, ball_ref.position.y + 4, ball_ref.position.z), 0.1);
           }
           if (final_gift) {
@@ -480,7 +498,11 @@ h3
           });
           if (is_ball_dragged && ball_ref.position.z < -2) {
               ball_ref.position.z = ball_ref.position.z + (.1 * mouse_drag_diff * delta);
-              ball_ref.position.y = ball_ref.position.y - (.01 * mouse_drag_diff * delta);
+              ball_ref.position.y = ball_ref.position.y - (.007 * mouse_drag_diff * delta);
+          }
+          if (is_ball_dragged && band_ref.scale.z > -1.5 && band_ref.scale.z < 10.5) {
+              //console.log("scale ;; ", scale_diff);
+            band_ref.scale.set(3.5, 3.5, band_ref.scale.z + (scale_diff * 0.5 * delta));
           }
 
           // Render
