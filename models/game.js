@@ -1,12 +1,15 @@
 'use strict';
 var Class = require('js-class'),
   price = require('./price'),
+  config = require('../resources/config'),
   _ = require('lodash');
 
 module.exports = new (Class({ //jshint ignore:line
   getPrice: function (req) {
     var expiryFactor = 1,
-      priceIndexArray = [];
+      priceIndexArray = [],
+      factor = 1,
+      priceGivenRatio = 1;
 
     return price.getList(req)
       .then(function (priceList) {
@@ -17,10 +20,18 @@ module.exports = new (Class({ //jshint ignore:line
           expiryFactor++;
           _.times(probability, function () {
             priceIndexArray.push(key);
+            if (factor % priceGivenRatio === 0) {
+              priceIndexArray.push(config.price_status.no_price);
+            }
+            factor++;
           });
         });
-
-        return priceList[priceIndexArray[_.random(0, priceIndexArray.length)]];
+        var key = priceIndexArray[_.random(0, priceIndexArray.length)];
+        if (key === config.price_status.no_price) {
+          return '';
+        }else {
+          return priceList[key];
+        }
       });
   }
 }))();

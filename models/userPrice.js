@@ -7,20 +7,32 @@ var Class = require('js-class'),
   db = require('../dao/db');
 
 module.exports = new (Class({ //jshint ignore:line
-  create: function (model) {
+  create: function (model,campaignId) {
     model.claim_status = config.price_status.not_claimed;
     model.price_won_on = util.getDate();
-    return db.save(model,tableName)
+    var updateData = {
+      total_players:1
+    };
+    return db.increment('campaign',updateData,campaignId)
       .then(function () {
-        return {
-          status: 'Data inserted'
+        updateData = {
+          given:1
         };
-      })
-      .catch(function () {
-        return {
-          status: 'Failed',
-          error: 'Data insertion failed'
-        };
+        return db.increment('price',updateData,model.price_id)
+          .then(function () {
+            return db.save(model,tableName)
+              .then(function () {
+                return {
+                  status: 'Data inserted'
+                };
+              })
+              .catch(function () {
+                return {
+                  status: 'Failed',
+                  error: 'Data insertion failed'
+                };
+              });
+          });
       });
   },
   verifyPrice: function (req) {
@@ -37,34 +49,28 @@ module.exports = new (Class({ //jshint ignore:line
             error: 'Price already claimed'
           };
         }
-        return db.increment('campaign', {claimed_prices: 1}, data.campaign_id)
-          .then (function () {
-            return db.update(data.id, {
-              claim_status: config.price_status.claimed,
-              claimed_on: new Date()
-            }, 'user_price');
-          })
-          .then(function () {
-            return data;
-          });
+        return data;
       });
   },
   getList:function (query) {
     return userPrice.getList(query)
     .catch({status: 'Failed', error: 'Data reading failed'});
   },
-  update:function (id,update) {
-    return userPrice.update(id,update)
-      .then(function () {
-        return {
-          status: 'Data updated'
-        };
-      })
-      .catch(function () {
-        return {
-          status: 'Failed',
-          error: 'Data updation failed'
-        };
+  update:function (id,update,campaignId) {
+    return db.increment('campaign', {claimed_prices: 1}, campaignId)
+      .then (function () {
+        return userPrice.update(id,update)
+          .then(function () {
+            return {
+              status: 'Data updated'
+            };
+          })
+          .catch(function () {
+            return {
+              status: 'Failed',
+              error: 'Data updation failed'
+            };
+          });
       });
   }
 }))();

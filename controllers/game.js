@@ -21,6 +21,7 @@ module.exports = {
               price_id: price.prizeId,
               ticket_id: req.query.ticket_id,
               price_expiry: price.prizeExpiry,
+              campaign_id: req.query.campaign_id,
               isplayed: true
             });
           }else {
@@ -33,6 +34,7 @@ module.exports = {
                     price_id: price.id,
                     ticket_id: req.query.ticket_id,
                     price_expiry: price.expiry,
+                    campaign_id: req.query.campaign_id,
                     isplayed: false
                   });
               });

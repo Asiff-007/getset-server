@@ -136,17 +136,24 @@
 
       import { GLTFLoader } from"../lib/GLTFLoader.js";
 
-      var isplayed = "<%= isplayed %>",price = "<%= price %>",priceId = "<%= price_id %>",ticketId = "<%= ticket_id %>",priceExpiry = "<%= price_expiry %>";
+      var isplayed = "<%= isplayed %>",price = "<%= price %>",priceId = "<%= price_id %>",ticketId = "<%= ticket_id %>",priceExpiry = "<%= price_expiry %>",campaignId = "<%= campaign_id %>";
       const expiry = new Date(priceExpiry).toDateString();
 
       if (isplayed == 'true') {
         document.body.style.backgroundColor = '#310171'
         document.getElementById('game_warn_title').style.display = 'block';
-        document.getElementById('game_price_desc').style.display = 'block';
         document.getElementById('game_price_title').style.display = 'block';
-        document.getElementById('game_warn_foot').style.display = 'block';
-        document.getElementById('price_expiry').innerHTML = expiry;
-        document.getElementById('game_price_title_head').innerHTML = price;
+        if(price == ''){
+          document.getElementById('game_empty_desc').style.display = 'block';
+          document.getElementById('game_empty').style.display = 'block';
+          document.getElementById('game_price_title_head').innerHTML = "EMPTY BOX";
+        }
+        else{
+          document.getElementById('game_price_desc').style.display = 'block';
+          document.getElementById('game_warn_foot').style.display = 'block';
+          document.getElementById('price_expiry').innerHTML = expiry;
+          document.getElementById('game_price_title_head').innerHTML = price;
+        }
       }
       else {
 
@@ -253,15 +260,14 @@
             document.getElementById('game_terms').style.display = 'none';
             document.getElementById('game_title').style.display = 'none';
             document.getElementById('game_desc').style.display = 'none';
-
-            createUserPrice();
-
+    
             setTimeout(function(){
               if(price ==''){
                 document.getElementById('game_price_title').style.display = 'block';
                 document.getElementById('game_empty_desc').style.display = 'block';
                 document.getElementById('game_empty').style.display = 'block';
                 document.getElementById('game_price_title_head').innerHTML = "EMPTY BOX";
+                priceId = 0;
               }else{
                 document.getElementById('game_price_desc').style.display = 'block';
                 document.getElementById('game_price_title').style.display = 'block';
@@ -269,6 +275,7 @@
                 document.getElementById('price_expiry').innerHTML = expiry;
                 document.getElementById('game_price_title_head').innerHTML = price;
               }
+              createUserPrice();
             }, 2000);
           }
         }, true);
@@ -289,7 +296,7 @@
            }
         }
         };
-        httpRequest.open('POST', 'http://test.getset.store/userPrice',true);
+        httpRequest.open('POST', `http://192.168.0.102:3002/userPrice?campaign_id=${campaignId}`,true);
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
           'price_id' : priceId,
