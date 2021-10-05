@@ -11,6 +11,7 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
+    "canvas": "^2.8.0",
     "cryptr": "^6.0.2",
     "db-migrate": "^0.11.12",
     "db-migrate-mysql": "^2.1.2",
@@ -23,7 +24,10 @@
     "lodash": "^4.17.21",
     "memcache-promise": "0.0.1",
     "memcached": "^2.2.2",
+    "merge-images": "^2.0.0",
     "path": "^0.12.7",
+    "pdf-creator-node": "^2.2.4",
+    "qr-image": "^3.2.0",
     "validator": "^3.43.0"
   },
   "devDependencies": {
