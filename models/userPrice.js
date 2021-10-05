@@ -10,29 +10,24 @@ module.exports = new (Class({ //jshint ignore:line
   create: function (model,campaignId) {
     model.claim_status = config.price_status.not_claimed;
     model.price_won_on = util.getDate();
-    var updateData = {
-      total_players:1
-    };
-    return db.increment('campaign',updateData,campaignId)
+    
+    return db.save(model,tableName)
       .then(function () {
-        updateData = {
-          given:1
-        };
-        return db.increment('price',updateData,model.price_id)
+        return db.increment('price', {given: 1}, model.price_id)
           .then(function () {
-            return db.save(model,tableName)
+            return db.increment('campaign', {total_players: 1}, campaignId)
               .then(function () {
                 return {
                   status: 'Data inserted'
                 };
               })
-              .catch(function () {
-                return {
-                  status: 'Failed',
-                  error: 'Data insertion failed'
-                };
-              });
           });
+      })
+      .catch(function () {
+        return {
+          status: 'Failed',
+          error: 'Data insertion failed'
+        };
       });
   },
   verifyPrice: function (req) {
@@ -57,20 +52,20 @@ module.exports = new (Class({ //jshint ignore:line
     .catch({status: 'Failed', error: 'Data reading failed'});
   },
   update:function (id,update,campaignId) {
-    return db.increment('campaign', {claimed_prices: 1}, campaignId)
+    return userPrice.update(id,update)
       .then (function () {
-        return userPrice.update(id,update)
+        return db.increment('campaign', {claimed_prices: 1}, campaignId)
           .then(function () {
             return {
               status: 'Data updated'
             };
           })
-          .catch(function () {
-            return {
-              status: 'Failed',
-              error: 'Data updation failed'
-            };
-          });
+      })
+      .catch(function () {
+        return {
+          status: 'Failed',
+          error: 'Data updation failed'
+        };
       });
   }
 }))();

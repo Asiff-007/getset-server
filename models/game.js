@@ -27,7 +27,7 @@ module.exports = new (Class({ //jshint ignore:line
           });
         });
         var key = priceIndexArray[_.random(0, priceIndexArray.length)];
-        if (key === config.price_status.no_price) {
+        if (key === config.price_status.no_price ||priceIndexArray.length === 0) {
           return '';
         }else {
           return priceList[key];
