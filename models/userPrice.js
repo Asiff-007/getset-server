@@ -7,11 +7,11 @@ var Class = require('js-class'),
   db = require('../dao/db');
 
 module.exports = new (Class({ //jshint ignore:line
-  create: function (model,campaignId) {
+  create: function (model,campaignId,ticketId) {
     model.claim_status = config.price_status.not_claimed;
     model.price_won_on = util.getDate();
     
-    return db.save(model,tableName)
+    return userPrice.update(ticketId,model)
       .then(function () {
         return db.increment('price', {given: 1}, model.price_id)
           .then(function () {
