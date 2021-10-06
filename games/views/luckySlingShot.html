@@ -210,11 +210,34 @@ h3
       camera.position.z = 2;
       scene.add(camera);
 
-      const spaceTexture = tl.load('../lucky_slingshot/popee_gameBg.png');
+      const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.png');
       scene.background = spaceTexture;
 
     //   const lightHelper = new THREE.PointLightHelper(pointLight);
     //   scene.add(lightHelper);
+      function createUserPrize () {
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function() {
+          if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+            if (httpRequest.status == 200) {
+                return
+            }
+            else if (httpRequest.status == 400) {
+                alert('There was an error 400');
+            }
+            else {
+                alert('something else other than 200 was returned');
+            }
+          }
+        };
+        // todo : move url to config
+        httpRequest.open('POST', `https://test.getset.shop/userPrice?campaign_id=${campaign_id}`,true);
+        httpRequest.setRequestHeader("Content-type", "application/json");
+        httpRequest.send(JSON.stringify({
+          'price_id' : price_id,
+          'ticket_id' : ticket_id,
+        }));
+      }
 
       function addStar() {
           const sphereGeometry = new THREE.SphereGeometry(0.05);
@@ -388,6 +411,7 @@ h3
                 document.getElementById('game_prize_title_head').innerHTML = prize + "!";
                 document.getElementById('goto_selfie').style.display = 'inline-block';
             }
+            createUserPrize();
             is_ready_for_reveal = false;
           }
 
