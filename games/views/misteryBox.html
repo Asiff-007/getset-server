@@ -118,6 +118,13 @@
         color: yellow;
       }
 
+      @font-face {
+        font-family: "Roboto";
+        src: url(../assets/Roboto.ttf);
+}
+
+      h1, h2, h3, h4, h5, h6, p, button {font-family:  Roboto;}
+
   </style>
 
   <body>
@@ -131,8 +138,9 @@
     <div id="game_warn_foot" style="display: none;"><h5 class="game_text game_desc">please collect your prize before<br><span id="price_expiry"></span></h3></div>
     <div id="game_price_title" style="display: none;"><h1 id="game_price_title_head" class="game_text win_desc"></h2></div>
     <div class="vertical-center" id="start_button_container" style="display: none;"><button id="start_button" class="start_button">Start</button></div>
-    <div id="shop_title" style="display: none;" class="shop_title"><img src="../assets/kovilakam.png" alt="Avatar" class="shop_img" style="display: inline;"><div class="campaign_details"><p style="display: inline;" class="campaign_name">CAMPAIGN NAME</p><p class="shop_name">SHOP NAME</p></div></div>
+    <div id="shop_title" style="display: none;" class="shop_title"><img src="../assets/kovilakam.png" alt="Avatar" class="shop_img" style="display: inline;"><div class="campaign_details"><p style="display: inline;" class="campaign_name">POOJA AND DEEPAVALI FEST</p><p class="shop_name">KOVILAKAM HYPERMARKET</p></div></div>
     <script src="../lib/three.js"></script>
+    <script type="module" src="https://cdn.rawgit.com/mrdoob/three.js/r92/examples/js/loaders/RGBELoader.js"></script>
     <script type="module">
 
       import { GLTFLoader } from"../lib/GLTFLoader.js";
@@ -316,8 +324,8 @@
       var light1 = new THREE.HemisphereLight(0xffffff, 0x000000, 5);
       scene.add(light1);
 
-      var loaderTexture = new THREE.TextureLoader();
-
+      var envmap = new THREE.RGBELoader().load( "../assets/studio_country_hall_1k.hdr" );
+      scene.environment = envmap;
       var bgTexture = new THREE.TextureLoader().load("../assets/gamebanner_kovilakam.png");
       bgTexture.minFilter = THREE.LinearFilter;
       scene.background = bgTexture;
