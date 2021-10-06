@@ -128,7 +128,7 @@ h3
 </style>
 <body>
     <div class="main">
-        <div id="game_prize_desc" style="display: none;"><h2 class="game_text win_title">You have won</h2></div>
+        <div id="game_prize_desc" style="display: none;"><h2 id="game_prize_title_desc" class="game_text win_title">You have won</h2></div>
         <div id="game_prize_title" style="display: none;"><h1 id="game_prize_title_head" class="game_text win_desc"></h1></div>
         <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
     </div>
@@ -146,6 +146,12 @@ h3
 
       var prize = "<%= price %>";
       var campaign_id = "<%= campaign_id %>";
+      var is_played = "<%= isplayed %>";
+      var price_id = "<%= price_id %>";
+      var ticket_id = "<%= ticket_id %>";
+      var price_expiry = "<%= price_expiry %>";
+      const date_expiry = new Date(price_expiry).toDateString();
+
       var ball_ref;
       var band_ref;
       var scale_diff = 0;
@@ -375,8 +381,14 @@ h3
             document.getElementById('game_prize_reveal_prompt').style.display = 'none';
             document.getElementById('game_prize_desc').style.display = 'block';
             document.getElementById('game_prize_title').style.display = 'block';
-            document.getElementById('game_prize_title_head').innerHTML = prize + "!";
-            document.getElementById('goto_selfie').style.display = 'inline-block';
+            if (prize == "") {
+                document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
+                document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
+            } else {
+                document.getElementById('game_prize_title_head').innerHTML = prize + "!";
+                document.getElementById('goto_selfie').style.display = 'inline-block';
+            }
+            is_ready_for_reveal = false;
           }
 
           console.log("mouse down");
