@@ -9,7 +9,7 @@ module.exports = {
       ticket_id: {type: 'int', required: true}
     };
     if (req.validate(rules)) {
-      userPrice.create(req.body)
+      userPrice.create(req.body,req.query.campaign_id)
         .then(resp.success, resp.error);
     }
   },
@@ -38,7 +38,7 @@ module.exports = {
       userPrice_id: {type: 'int', required: true}
     };
     if (req.validate(null, rules, null)) {
-      userPrice.update(req.params.userPrice_id,req.body)
+      userPrice.update(req.params.userPrice_id,req.body,req.query.campaign_id)
         .then(resp.success, resp.error);
     }
   }
