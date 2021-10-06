@@ -37,11 +37,11 @@
 
       .shop_name {
         margin: 0;
-        font-size: 15px;
+        font-size: 13px;
       }
 
       .campaign_name {
-        font-size: 20px;
+        font-size: 18px;
         top: 0em;
         color: yellow;
       }
@@ -75,8 +75,9 @@
       }
 
       .start_button {
-        background-color: #FFFF00;
-        border: none;
+        background-color: orange;
+        border: double;
+        border-color: white;
         color: black;
         padding: 10px 20px 10px 20px;
         text-align: center;
@@ -86,7 +87,7 @@
         margin: 4px 2px;
         border-radius: 40%;
         position: absolute;
-        bottom: 4em;
+        bottom: 2em;
         display: block;
       }
 
@@ -205,11 +206,11 @@
 
         light2.position.set(0,0,5);
         light3.position.set(0,1,-1);
+        scene.background = new THREE.Color(0x310171);
 
         scene.add(light2);
         scene.add(light3);
 
-        scene.remove(mesh);
         document.getElementById('shop_title').style.display = 'block';
         document.getElementById('start_button').style.display = 'none';
         document.getElementById('game_terms').style.display = 'block';
@@ -286,7 +287,7 @@
               createUserPrice();
             }, 2000);
           }
-        }, true);
+        },{once : true},true);
       }
       
       function createUserPrice () {
@@ -323,23 +324,11 @@
       var light1 = new THREE.HemisphereLight(0xffffff, 0x000000, 5);
       scene.add(light1);
 
-      var loaderTexture = new THREE.TextureLoader();
-
-      var material = new THREE.MeshLambertMaterial({
-        map: loaderTexture.load('../assets/kovilakam.png')
-      });
-
-      var geometry = new THREE.PlaneGeometry(10, 10);
-
-      // combine our image geometry and material into a mesh
-      var mesh = new THREE.Mesh(geometry, material);
-      mesh.position.set(0,3,0);
-
-      mesh.scale.set(0.5, 0.5, 0.5);
       var envmap = new THREE.RGBELoader().load( "../assets/studio_country_hall_1k.hdr" );
       scene.environment = envmap;
-      scene.background = new THREE.Color(0x310171);
-      scene.add(mesh);
+      var bgTexture = new THREE.TextureLoader().load("../assets/gamebanner_kovilakam.png");
+      bgTexture.minFilter = THREE.LinearFilter;
+      scene.background = bgTexture;
 
       document.getElementById('start_button_container').style.display = 'block';
 
