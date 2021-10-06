@@ -210,7 +210,7 @@ h3
       camera.position.z = 2;
       scene.add(camera);
 
-      const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.png');
+      const spaceTexture = tl.load('../lucky_slingshot/popee_gameBg.png');
       scene.background = spaceTexture;
 
     //   const lightHelper = new THREE.PointLightHelper(pointLight);
@@ -252,17 +252,31 @@ h3
 
       function populateGift() {
           var giftMesh;
-          glb_loader.load( '../lucky_slingshot/giftbox.glb', function ( gltf ) {
+          glb_loader.load( '../lucky_slingshot/giftbox/giftbox.gltf', function ( gltf ) {
               giftMesh = gltf.scene;
-              gltf_global = gltf;
+              var giftbox_group = new THREE.Group();
+              var giftbox_meshes = new Array();
+
+              gltf.scene.traverse(function (child) {
+                if (child.isMesh) {
+                  console.log("mesh");
+                  giftbox_meshes.push(child);
+                }
+              });
+
+              giftbox_meshes.forEach(function (child) {
+                giftbox_group.add(child);
+                child.scale.set(2, 2, 2);
+              });
+              gltf_global = giftbox_group;
 
               var z = -30; var i = 0;
               Array(100).fill().forEach(() => {
-                  gift_clone = gltf.scene.clone();
+                  gift_clone = giftbox_group.clone();
                   const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(60));
                   z -= i*.5;
                   i++;
-          
+
                   gift_clone.position.set(x, y, z);
                   scene.add(gift_clone);
                   gift_boxes.push(gift_clone);
