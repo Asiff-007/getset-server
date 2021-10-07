@@ -62,7 +62,6 @@ h3
 }
 .bn632-hover
 {
-    display: none;
   width: 310px;
   font-size: 1.5em;
   font-weight: 600;
@@ -144,6 +143,7 @@ h3
     </div>
     <div class="footer">
         <a href="/camera_capture?campaign_id=<%= campaign_id %>"  ><button id="goto_selfie" class="bn632-hover bn27"> Take a winner selfie! </button></a>
+        <button id="startGame" class="bn632-hover bn27">Play game</button>
     </div>
 
     <canvas class="webgl"></canvas>
@@ -200,6 +200,7 @@ h3
 
       scene.add(pointLight, ambientLight);
 
+      document.getElementById('goto_selfie').style.display = 'none';
 
       /**
        * Sizes
@@ -220,8 +221,8 @@ h3
       camera.position.z = 2;
       scene.add(camera);
 
-      const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.png');
-      scene.background = spaceTexture;
+      const startScreenBg = tl.load('../assets/lucky_slingshot/gamebanner_popees.png');
+      scene.background = startScreenBg;
 
     //   const lightHelper = new THREE.PointLightHelper(pointLight);
     //   scene.add(lightHelper);
@@ -364,11 +365,20 @@ h3
           }, 5000);
       }
 
-      Array(10000).fill().forEach(addStar);
-      populateGift();
-      addSlingshot();
-      addBall();
-      is_ready = true;
+      function startGame() {
+        Array(10000).fill().forEach(addStar);
+        populateGift();
+        addSlingshot();
+        addBall();
+
+        const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.png');
+        scene.background = spaceTexture;
+
+        document.getElementById('startGame').style.display = 'none';
+        is_ready = true;
+      }
+
+      document.getElementById('startGame').addEventListener("click", startGame);
 
       function getCanvasRelativePosition(event, isTouch = false) {
           const rect = canvas.getBoundingClientRect();
@@ -552,11 +562,11 @@ h3
               element.rotation.y = .2 * elapsedTime;
               element.rotation.x = .01 * elapsedTime;
           });
-          if (is_ball_dragged && ball_ref.position.z < -2) {
+          if (is_ball_dragged && ball_ref && ball_ref.position.z < -2) {
               ball_ref.position.z = ball_ref.position.z + (.1 * mouse_drag_diff * delta);
               ball_ref.position.y = ball_ref.position.y - (.007 * mouse_drag_diff * delta);
           }
-          if (is_ball_dragged && band_ref.scale.z > -1.5 && band_ref.scale.z < 10.5) {
+          if (is_ball_dragged && band_ref && band_ref.scale.z > -1.5 && band_ref.scale.z < 10.5) {
               //console.log("scale ;; ", scale_diff);
             band_ref.scale.set(3.5, 3.5, band_ref.scale.z + (scale_diff * 0.5 * delta));
           }
