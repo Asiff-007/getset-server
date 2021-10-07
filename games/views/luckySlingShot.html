@@ -142,7 +142,7 @@ h3
         <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
     </div>
     <div class="footer">
-        <a href="/camera_capture?campaign_id=<%= campaign_id %>"  ><button id="goto_selfie" class="bn632-hover bn27"> Take a winner selfie! </button></a>
+        <a href="/camera_capture?campaign_id=<%= campaign_id %>"><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
         <button id="startGame" class="bn632-hover bn27">Play game</button>
     </div>
 
@@ -222,6 +222,7 @@ h3
       scene.add(camera);
 
       const startScreenBg = tl.load('../assets/lucky_slingshot/gamebanner_popees.png');
+      const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.png');
       scene.background = startScreenBg;
 
     //   const lightHelper = new THREE.PointLightHelper(pointLight);
@@ -370,7 +371,6 @@ h3
         addSlingshot();
         addBall();
 
-        const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.png');
         scene.background = spaceTexture;
 
         document.getElementById('startGame').style.display = 'none';

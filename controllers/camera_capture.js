@@ -11,7 +11,7 @@ module.exports = {
     var snapshot_map = new Map();
 
     snapshot_map.set(2, {
-      frame_path: '../popees_frame.png',
+      frame_path: '../assets/popees_frame.png',
       data: {
         height: 1920,
         width: 1080,
