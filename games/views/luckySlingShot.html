@@ -60,8 +60,8 @@ h3
     color: white;
     text-align: center;
 }
-.bn632-hover {
-    display: none;
+.bn632-hover
+{
   width: 310px;
   font-size: 1.5em;
   font-weight: 600;
@@ -79,7 +79,8 @@ h3
   transition: all .4s ease-in-out;
 }
 
-.bn632-hover:hover {
+.bn632-hover:hover
+{
   background-position: 100% 0;
   moz-transition: all .4s ease-in-out;
   -o-transition: all .4s ease-in-out;
@@ -87,11 +88,13 @@ h3
   transition: all .4s ease-in-out;
 }
 
-.bn632-hover:focus {
+.bn632-hover:focus
+{
   outline: none;
 }
 
-.bn632-hover.bn27 {
+.bn632-hover.bn27
+{
     background-image: linear-gradient(
       to right,
       #ed6ea0,
@@ -100,7 +103,8 @@ h3
       #fbb03b
     );
     box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
-  }
+}
+
 @keyframes bn13bouncy {
     0% {
         top: 0em;
@@ -124,16 +128,22 @@ h3
         top: 0em;
     }
 }
+@font-face
+{
+    font-family: "poppins";
+    src: url(../assets/Poppins-Medium.ttf);
+}
 
 </style>
 <body>
     <div class="main">
-        <div id="game_prize_desc" style="display: none;"><h2 class="game_text win_title">You have won</h2></div>
+        <div id="game_prize_desc" style="display: none;"><h2 id="game_prize_title_desc" class="game_text win_title">You have won</h2></div>
         <div id="game_prize_title" style="display: none;"><h1 id="game_prize_title_head" class="game_text win_desc"></h1></div>
         <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
     </div>
     <div class="footer">
-        <a href="/camera_capture?campaign_id=<%= campaign_id %>"  ><button id="goto_selfie" class="bn632-hover bn27"> Take a winner selfie! </button></a>
+        <a href="/camera_capture?campaign_id=<%= campaign_id %>"><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
+        <button id="startGame" class="bn632-hover bn27">Play game</button>
     </div>
 
     <canvas class="webgl"></canvas>
@@ -146,8 +156,16 @@ h3
 
       var prize = "<%= price %>";
       var campaign_id = "<%= campaign_id %>";
+      var is_played = "<%= isplayed %>";
+      var price_id = "<%= price_id %>";
+      var ticket_id = "<%= ticket_id %>";
+      var price_expiry = "<%= price_expiry %>";
+      const date_expiry = new Date(price_expiry).toDateString();
+
       var ball_ref;
-      var ball_initial_pos = new THREE.Vector3(0, -4.5, -5);
+      var band_ref;
+      var scale_diff = 0;
+      var ball_initial_pos = new THREE.Vector3(0, -5.5, -5);
       var gltf_global;
       var is_ready = false;
       var is_pressed = false;
@@ -177,14 +195,12 @@ h3
       var ball_speed = -50;
 
       // Lights
-      const pointLight = new THREE.PointLight(0xffffff, 0.01, 100);
-      pointLight.position.x = 1;
-      pointLight.position.y = 1;
-      pointLight.position.z = 4;
-
+      const pointLight = new THREE.HemisphereLight(0xffeeb1, 0x080820, 2);
       const ambientLight = new THREE.AmbientLight(0xffffff);
+
       scene.add(pointLight, ambientLight);
 
+      document.getElementById('goto_selfie').style.display = 'none';
 
       /**
        * Sizes
@@ -205,12 +221,35 @@ h3
       camera.position.z = 2;
       scene.add(camera);
 
-      const spaceTexture = tl.load('../lucky_slingshot/night_sky.jpg');
-      scene.background = spaceTexture;
+      const startScreenBg = tl.load('../assets/lucky_slingshot/gamebanner_popees.png');
+      const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.png');
+      scene.background = startScreenBg;
 
-
-      // const lightHelper = new THREE.PointLightHelper(pointLight);
-      // scene.add(lightHelper);
+    //   const lightHelper = new THREE.PointLightHelper(pointLight);
+    //   scene.add(lightHelper);
+      function createUserPrize () {
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function() {
+          if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+            if (httpRequest.status == 200) {
+                return
+            }
+            else if (httpRequest.status == 400) {
+                alert('There was an error 400');
+            }
+            else {
+                alert('something else other than 200 was returned');
+            }
+          }
+        };
+        // todo : move url to config
+        httpRequest.open('POST', `https://test.getset.shop/userPrice?campaign_id=${campaign_id}`,true);
+        httpRequest.setRequestHeader("Content-type", "application/json");
+        httpRequest.send(JSON.stringify({
+          'price_id' : price_id,
+          'ticket_id' : ticket_id,
+        }));
+      }
 
       function addStar() {
           const sphereGeometry = new THREE.SphereGeometry(0.05);
@@ -225,17 +264,30 @@ h3
 
       function populateGift() {
           var giftMesh;
-          glb_loader.load( '../lucky_slingshot/giftbox.glb', function ( gltf ) {
+          glb_loader.load( '../assets/lucky_slingshot/giftbox/giftbox.gltf', function ( gltf ) {
               giftMesh = gltf.scene;
-              gltf_global = gltf;
+              var giftbox_group = new THREE.Group();
+              var giftbox_meshes = new Array();
+
+              gltf.scene.traverse(function (child) {
+                if (child.isMesh) {
+                  giftbox_meshes.push(child);
+                }
+              });
+
+              giftbox_meshes.forEach(function (child) {
+                giftbox_group.add(child);
+                child.scale.set(2, 2, 2);
+              });
+              gltf_global = giftbox_group;
 
               var z = -30; var i = 0;
               Array(100).fill().forEach(() => {
-                  gift_clone = gltf.scene.clone();
+                  gift_clone = giftbox_group.clone();
                   const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(60));
                   z -= i*.5;
                   i++;
-          
+
                   gift_clone.position.set(x, y, z);
                   scene.add(gift_clone);
                   gift_boxes.push(gift_clone);
@@ -248,7 +300,7 @@ h3
       }
 
       function addSlingshot() {
-          glb_loader.load( '../lucky_slingshot/stick/stick.gltf', function ( gltf ) {
+          glb_loader.load( '../assets/lucky_slingshot/stick/stick.gltf', function ( gltf ) {
               var slingshot_clone = gltf.scene.clone();
               
               slingshot_clone.position.set(0, -5.5, -5);
@@ -258,11 +310,22 @@ h3
               console.error( error );
               is_ready = false;
           } );
+          glb_loader.load( '../assets/lucky_slingshot/rubber_band/rubberband.gltf', function ( gltf ) {
+              var band_clone = gltf.scene.clone();
+              
+              band_clone.position.set(0, -5.5, -5);
+              band_clone.scale.set(3.5, 3.5, 3.5);
+              band_ref = band_clone;
+              scene.add(band_clone);
+          }, undefined, function (error) {
+              console.error( error );
+              is_ready = false;
+          } );
       }
 
       function addBall() {
           
-        glb_loader.load( '../lucky_slingshot/ball/ball.gltf', function ( gltf ) {
+        glb_loader.load( '../assets/lucky_slingshot/ball/ball.gltf', function ( gltf ) {
               var ball_clone = gltf.scene.clone();
               
               ball_clone.position.set(ball_initial_pos.x, ball_initial_pos.y, ball_initial_pos.z);
@@ -302,11 +365,19 @@ h3
           }, 5000);
       }
 
-      Array(10000).fill().forEach(addStar);
-      populateGift();
-      addSlingshot();
-      addBall();
-      is_ready = true;
+      function startGame() {
+        Array(10000).fill().forEach(addStar);
+        populateGift();
+        addSlingshot();
+        addBall();
+
+        scene.background = spaceTexture;
+
+        document.getElementById('startGame').style.display = 'none';
+        is_ready = true;
+      }
+
+      document.getElementById('startGame').addEventListener("click", startGame);
 
       function getCanvasRelativePosition(event, isTouch = false) {
           const rect = canvas.getBoundingClientRect();
@@ -342,6 +413,7 @@ h3
           current_pos.x = point.x;
           current_pos.y = point.y;
           
+          scale_diff = current_pos.y - initial_pos.y;
           if (current_pos.y > initial_pos.y) {
               mouse_drag_diff = initial_pos.distanceTo(current_pos);
           } else {
@@ -365,11 +437,16 @@ h3
             document.getElementById('game_prize_reveal_prompt').style.display = 'none';
             document.getElementById('game_prize_desc').style.display = 'block';
             document.getElementById('game_prize_title').style.display = 'block';
-            document.getElementById('game_prize_title_head').innerHTML = prize + "!";
-            document.getElementById('goto_selfie').style.display = 'inline-block';
+            if (prize == "") {
+                document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
+                document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
+            } else {
+                document.getElementById('game_prize_title_head').innerHTML = prize + "!";
+                document.getElementById('goto_selfie').style.display = 'inline-block';
+            }
+            createUserPrize();
+            is_ready_for_reveal = false;
           }
-
-          console.log("mouse down");
       }
 
       function handleUp() {
@@ -381,19 +458,19 @@ h3
 
           if (is_ready) {
               if (mouse_drag_diff > mouse_drag_threshold) {
-                  console.log("firing initiate");
                   looseBall();
-              } else {
+              } else if(ball_ref) {
                   // reset position
                   ball_ref.position.lerp(new THREE.Vector3(ball_initial_pos), 0.9);
               }
           }
-          
+          if (band_ref) {
+            band_ref.scale.set(3.5, 3.5, 3.5);
+          }
+
           // reset drag diff
           mouse_drag_diff = 0;
-          
-          
-          console.log("mouse up");
+          scale_diff = 0;
       }
 
       function handleMouseMove() {
@@ -468,7 +545,7 @@ h3
 
           if (ball_ref && ball_ref.alive) {
               ball_ref.translateZ( ball_speed * delta);
-              ball_ref.translateY( .01 * delta);
+              ball_ref.translateY( .05 * delta);
               camera.position.lerp(new THREE.Vector3(ball_ref.position.x, ball_ref.position.y + 4, ball_ref.position.z), 0.1);
           }
           if (final_gift) {
@@ -478,9 +555,12 @@ h3
               element.rotation.y = .2 * elapsedTime;
               element.rotation.x = .01 * elapsedTime;
           });
-          if (is_ball_dragged && ball_ref.position.z < -2) {
+          if (is_ball_dragged && ball_ref && ball_ref.position.z < -2) {
               ball_ref.position.z = ball_ref.position.z + (.1 * mouse_drag_diff * delta);
-              ball_ref.position.y = ball_ref.position.y - (.01 * mouse_drag_diff * delta);
+              ball_ref.position.y = ball_ref.position.y - (.007 * mouse_drag_diff * delta);
+          }
+          if (is_ball_dragged && band_ref && band_ref.scale.z > -1.5 && band_ref.scale.z < 10.5) {
+              band_ref.scale.set(3.5, 3.5, band_ref.scale.z + (scale_diff * 0.5 * delta));
           }
 
           // Render
