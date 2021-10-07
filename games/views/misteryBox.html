@@ -6,6 +6,14 @@
     <title>3d Model test</title>
   </head><link rel="import" href="">
   <style type="text/css">
+
+      html,
+      body{
+        height: 100vh;
+        font-family: 'Poppins';
+        margin:0;
+      }
+
       .game_title {
         bottom: 4em;
         margin-bottom: .5em;
@@ -37,11 +45,11 @@
 
       .shop_name {
         margin: 0;
-        font-size: 15px;
+        font-size: 13px;
       }
 
       .campaign_name {
-        font-size: 20px;
+        font-size: 18px;
         top: 0em;
         color: yellow;
       }
@@ -75,8 +83,9 @@
       }
 
       .start_button {
-        background-color: #FFFF00;
-        border: none;
+        background-color: orange;
+        border: double;
+        border-color: white;
         color: black;
         padding: 10px 20px 10px 20px;
         text-align: center;
@@ -86,7 +95,7 @@
         margin: 4px 2px;
         border-radius: 40%;
         position: absolute;
-        bottom: 4em;
+        bottom: 2em;
         display: block;
       }
 
@@ -117,6 +126,11 @@
         color: yellow;
       }
 
+      @font-face {
+        font-family: "poppins";
+        src: url(../assets/Poppins-Medium.ttf);
+      }
+
   </style>
 
   <body>
@@ -130,8 +144,9 @@
     <div id="game_warn_foot" style="display: none;"><h5 class="game_text game_desc">please collect your prize before<br><span id="price_expiry"></span></h3></div>
     <div id="game_price_title" style="display: none;"><h1 id="game_price_title_head" class="game_text win_desc"></h2></div>
     <div class="vertical-center" id="start_button_container" style="display: none;"><button id="start_button" class="start_button">Start</button></div>
-    <div id="shop_title" style="display: none;" class="shop_title"><img src="../assets/kovilakam.png" alt="Avatar" class="shop_img" style="display: inline;"><div class="campaign_details"><p style="display: inline;" class="campaign_name">CAMPAIGN NAME</p><p class="shop_name">SHOP NAME</p></div></div>
+    <div id="shop_title" style="display: none;" class="shop_title"><img src="../assets/kovilakam.png" alt="Avatar" class="shop_img" style="display: inline;"><div class="campaign_details"><p style="display: inline;" class="campaign_name">POOJA AND DEEPAVALI FEST</p><p class="shop_name">KOVILAKAM HYPERMARKET</p></div></div>
     <script src="../lib/three.js"></script>
+    <script type="module" src="https://cdn.rawgit.com/mrdoob/three.js/r92/examples/js/loaders/RGBELoader.js"></script>
     <script type="module">
 
       import { GLTFLoader } from"../lib/GLTFLoader.js";
@@ -197,11 +212,11 @@
 
         light2.position.set(0,0,5);
         light3.position.set(0,1,-1);
+        scene.background = new THREE.Color(0x310171);
 
         scene.add(light2);
         scene.add(light3);
 
-        scene.remove(mesh);
         document.getElementById('shop_title').style.display = 'block';
         document.getElementById('start_button').style.display = 'none';
         document.getElementById('game_terms').style.display = 'block';
@@ -235,7 +250,7 @@
           clip = mixer.clipAction( gltf.animations[0] );
         });
 
-        renderer.domElement.addEventListener("click", function () {
+        renderer.domElement.addEventListener("click", function boxClick() {
           raycaster.setFromCamera(mouse, camera);
           var intersects = raycaster.intersectObjects(scene.children, true); //array
           if (intersects.length > 0) {
@@ -260,6 +275,7 @@
             document.getElementById('game_terms').style.display = 'none';
             document.getElementById('game_title').style.display = 'none';
             document.getElementById('game_desc').style.display = 'none';
+            renderer.domElement.removeEventListener("click",boxClick,true);
     
             setTimeout(function(){
               if(price ==''){
@@ -278,7 +294,7 @@
               createUserPrice();
             }, 2000);
           }
-        }, true);
+        },true);
       }
       
       function createUserPrice () {
@@ -296,11 +312,11 @@
            }
         }
         };
-        httpRequest.open('POST', `https://test.getset.shop/userPrice?campaign_id=${campaignId}`,true);
+        httpRequest.open('POST', `https://test.getset.shop/userPrice?campaign_id=${campaignId}&ticket_id=${ticketId}`,true);
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
           'price_id' : priceId,
-          'ticket_id' : ticketId,
+          'played' : true
         }));
       }
 
@@ -315,21 +331,11 @@
       var light1 = new THREE.HemisphereLight(0xffffff, 0x000000, 5);
       scene.add(light1);
 
-      var loaderTexture = new THREE.TextureLoader();
-
-      var material = new THREE.MeshLambertMaterial({
-        map: loaderTexture.load('../assets/kovilakam.png')
-      });
-
-      var geometry = new THREE.PlaneGeometry(10, 10);
-
-      // combine our image geometry and material into a mesh
-      var mesh = new THREE.Mesh(geometry, material);
-      mesh.position.set(0,3,0);
-
-      mesh.scale.set(0.5, 0.5, 0.5);
-      scene.background = new THREE.Color(0x310171);
-      scene.add(mesh);
+      var envmap = new THREE.RGBELoader().load( "../assets/studio_country_hall_1k.hdr" );
+      scene.environment = envmap;
+      var bgTexture = new THREE.TextureLoader().load("../assets/gamebanner_kovilakam.png");
+      bgTexture.minFilter = THREE.LinearFilter;
+      scene.background = bgTexture;
 
       document.getElementById('start_button_container').style.display = 'block';
 

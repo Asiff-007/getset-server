@@ -5,11 +5,10 @@ var userPrice = require('../models/userPrice');
 module.exports = {
   create:function (req, resp) {
     var rules = {
-      price_id: {type: 'int', required: true},
-      ticket_id: {type: 'int', required: true}
+      price_id: {type: 'int', required: true}
     };
     if (req.validate(rules)) {
-      userPrice.create(req.body,req.query.campaign_id)
+      userPrice.create(req.body,req.query.campaign_id,req.query.ticket_id)
         .then(resp.success, resp.error);
     }
   },
