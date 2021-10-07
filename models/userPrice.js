@@ -33,18 +33,25 @@ module.exports = new (Class({ //jshint ignore:line
   verifyPrice: function (req) {
     return userPrice.getValidUserPrices(req, 'user_price', 'ticket_id')
       .then(function (data) {
-        if (data.expiry <= util.getDate()) {
-          return {
+        if (Object.keys(data).length != 0) {
+          if (data.expiry <= util.getDate()) {
+            return {
+              status: 'failed',
+              error: 'Price is expired'
+            };
+          }else if (data.claim_status === config.price_status.claimed) {
+            return {
+              status: 'failed',
+              error: 'Price already claimed'
+            };
+          }
+          return data;
+        }else {
+          return{
             status: 'failed',
-            error: 'Price is expired'
-          };
-        } else if (data.claim_status === config.price_status.claimed) {
-          return {
-            status: 'failed',
-            error: 'Price already claimed'
-          };
+            error: 'Unused coupon OR No price for this coupon'
+          }
         }
-        return data;
       });
   },
   getList:function (query) {

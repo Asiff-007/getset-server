@@ -9,7 +9,7 @@ module.exports = new (Class({ //jshint ignore:line
     var expiryFactor = 1,
       priceIndexArray = [],
       factor = 1,
-      priceGivenRatio = 1;
+      priceGivenRatio = 2;
 
     return price.getList(req)
       .then(function (priceList) {
