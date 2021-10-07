@@ -270,7 +270,6 @@ h3
 
               gltf.scene.traverse(function (child) {
                 if (child.isMesh) {
-                  console.log("mesh");
                   giftbox_meshes.push(child);
                 }
               });
@@ -448,8 +447,6 @@ h3
             createUserPrize();
             is_ready_for_reveal = false;
           }
-
-          console.log("mouse down");
       }
 
       function handleUp() {
@@ -461,7 +458,6 @@ h3
 
           if (is_ready) {
               if (mouse_drag_diff > mouse_drag_threshold) {
-                  console.log("firing initiate");
                   looseBall();
               } else if(ball_ref) {
                   // reset position
@@ -475,9 +471,6 @@ h3
           // reset drag diff
           mouse_drag_diff = 0;
           scale_diff = 0;
-          
-          
-          console.log("mouse up");
       }
 
       function handleMouseMove() {
@@ -567,8 +560,7 @@ h3
               ball_ref.position.y = ball_ref.position.y - (.007 * mouse_drag_diff * delta);
           }
           if (is_ball_dragged && band_ref && band_ref.scale.z > -1.5 && band_ref.scale.z < 10.5) {
-              //console.log("scale ;; ", scale_diff);
-            band_ref.scale.set(3.5, 3.5, band_ref.scale.z + (scale_diff * 0.5 * delta));
+              band_ref.scale.set(3.5, 3.5, band_ref.scale.z + (scale_diff * 0.5 * delta));
           }
 
           // Render
