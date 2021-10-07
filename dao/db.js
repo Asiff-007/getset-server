@@ -1,5 +1,6 @@
+'use strict';
+
 var memcache = require('./cache'),
-  bluebird = require('bluebird'),
   Class = require('js-class'),
   knex = require('knex'),
   config = require('../resources/config');
@@ -9,25 +10,74 @@ module.exports = new (Class({ //jshint ignore:line
   constructor: function () {
     this.knexInstance = knex(config.db);
   },
+  save: function (model,tableName) {
+    return this.knexInstance(tableName)
+      .insert(model)
+      .then(function (data) {
+        return data[0];
+      });
+  },
 
-  getAdminByUserName: function (userName) {
-    var tableName = 'admin',
-      knexInstance = this.knexInstance;
+  getList: function(query, tableName, memCacheKey) {
+    var knexInstance = this.knexInstance,
+        memKey = query[memCacheKey],
+        memCacheTable =  tableName + '_list';
 
-    return memcache.getValue(userName, tableName)
+    return memcache.getValue(memKey, memCacheTable)
       .catch(function () {
         return knexInstance(tableName)
-          .where({
-            user_name: userName
-          })
+          .where(query)
+          .then(function (data) {
+            memcache.addValue(memKey, data, memCacheTable);
+            return data;
+          });
+      });
+  },
+
+  update:function (id,update,tableName) {
+    return this.knexInstance(tableName)
+    .where({
+      id:id
+    })
+    .update(update)
+    .then(function (data) {
+      if (data) {
+        memcache.delValue(id,tableName);
+        return true;
+      }
+    });
+  },
+  getRecord: function(criteria, tableName, memCacheKey) {
+    var knexInstance = this.knexInstance,
+      memKey = criteria[memCacheKey],
+      memCacheTable =  tableName + '_record';
+
+    return memcache.getValue(memKey, memCacheTable)
+      .catch(function () {
+        return knexInstance(tableName)
+          .where(criteria)
           .first()
           .then(function (data) {
             if (data.length > 0) {
               data = data[0];
-              memcache.addValue(userName, data, tableName);
+              if (memKey) {
+                memcache.addValue(memKey, data, memCacheTable);
+              }
             }
             return data;
           });
+      });
+  },
+  increment: function (tableName, data, id) {
+    return this.knexInstance(tableName)
+      .where({
+        id: id
+      })
+      .increment(data)
+      .then(function () {
+        memcache.delValue(id, tableName);
+        memcache.delValue(id, tableName + '_list');
+        return true;
       });
   }
 }))();

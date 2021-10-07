@@ -7,34 +7,34 @@ var Memcached = require('memcache-promise'),
   memcached = new Memcached(config.memcache.servers, config.memcache.options),
   prefix = config.memcache.prefix,
   lifetime = config.memcache.lifetime,
+  _ = require('lodash'),
   getKey = function (id, type) {
     return prefix + type + ':' + id;
   };
-
 
 module.exports = new (Class({ //jshint ignore:line
 
   getValue: function (id, type) {
     // Converting memcache's q promise to bluebird
     return new Bluebird(function (resolve, reject) {
-      memcached.get(getKey(id, type))
+      /*memcached.get(getKey(id, type))
         .then(function (res) {
           if (res) {
             resolve(res);
-          } else {
+          } else {*/
             reject('not_found');
-          }
+          /*}
         })
-        .catch(reject);
+        .catch(reject);*/
     });
   },
   addValue: function (id, data, type) {
     // Converting memcache's q promise to bluebird
-    console.log("getKey: " + getKey(id, type));
     return new Bluebird(function (resolve, reject) {
-      memcached.set(getKey(id, type), data, lifetime)
+      return reject;
+      /*memcached.set(getKey(id, type), data, lifetime)
         .then(resolve)
-        .catch(reject);
+        .catch(reject);*/
     });
   },
 
@@ -42,21 +42,22 @@ module.exports = new (Class({ //jshint ignore:line
     if (!_.isArray(value)) {
       value = [value];
     }
-
-    return this.getValue(key, type)
+    return this.addValue.bind(this, key, value, type);
+    /*return this.getValue(key, type)
       .bind(this)
       .then(function (data) {
         return this.addValue(key, _.union(data, value), type);
       })
-      .catch(this.addValue.bind(this, key, value, type));
+      .catch(this.addValue.bind(this, key, value, type));*/
   },
 
   delValue: function (id, type) {
     // Converting memcache's q promise to bluebird
     return new Bluebird(function (resolve, reject) {
-      memcached.del(getKey(id, type))
+      return reject;
+     /* memcached.del(getKey(id, type))
         .then(resolve)
-        .catch(reject);
+        .catch(reject);*/
     });
   }
 }))();

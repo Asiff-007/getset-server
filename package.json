@@ -11,9 +11,12 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
+    "canvas": "^2.8.0",
     "cryptr": "^6.0.2",
+    "custom-id": "^1.2.0",
     "db-migrate": "^0.11.12",
     "db-migrate-mysql": "^2.1.2",
+    "ejs": "^3.1.6",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "glob": "^7.1.7",
@@ -21,7 +24,17 @@
     "knex": "^0.21.21",
     "lodash": "^4.17.21",
     "memcache-promise": "0.0.1",
+    "memcached": "^2.2.2",
+    "merge-images": "^2.0.0",
     "path": "^0.12.7",
-    "validator": "^13.6.0"
+    "pdf-creator-node": "^2.2.4",
+    "qr-image": "^3.2.0",
+    "validator": "^3.43.0"
+  },
+  "devDependencies": {
+    "istanbul": "^0.4.5",
+    "jscs": "^2.5.0",
+    "jshint": "^2.13.1",
+    "mocha": "^9.0.3"
   }
 }

@@ -1,5 +1,4 @@
-var util = require('../modules/util'),
-    sys_config = require('./sys_config'),
+var sys_config = require('./sys_config'),
     db_opts = require('./database.json')[
       process.env.NODE_ENV || /* istanbul ignore next*/ 'development'],
     _ = require('lodash'),
@@ -45,6 +44,19 @@ var util = require('../modules/util'),
 
       cryptor: {
         key: 'buildthebestever'
+      },
+
+      price_status: {
+        not_claimed: 'NotClaimed',
+        claimed: 'Claimed',
+        active: 'Active',
+        inactive: 'Inactive',
+        no_price: 'Noprize'
+      },
+
+      campaign_status: {
+        active: 'Active',
+        pending: 'Pending'
       }
     };
 

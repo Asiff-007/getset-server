@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>3d Model test</title>
+  </head><link rel="import" href="">
+  <style type="text/css">
+
+      html,
+      body{
+        height: 100vh;
+        font-family: 'Poppins';
+        margin:0;
+      }
+
+      .game_title {
+        bottom: 4em;
+        margin-bottom: .5em;
+        text-align: center;
+        size: 20px;
+      }
+      
+      .shop_title {
+        top: 1em;
+        left: 2em;
+        position: absolute;
+        margin: 0;
+      }
+
+      .shop_img {
+        margin-top: 0em;
+        border-radius: 50%;
+        width: 70px;
+        height: 70px;
+        float: left;
+      }
+
+      .campaign_details {
+        margin-left: 1em;
+        margin-top: 1em;
+        float: left;
+        color: white;
+      }
+
+      .shop_name {
+        margin: 0;
+        font-size: 13px;
+      }
+
+      .campaign_name {
+        font-size: 18px;
+        top: 0em;
+        color: yellow;
+      }
+
+      .game_desc {
+        bottom: 3em;
+        size: 15px;
+        font-size: 15px;
+        text-align: center;
+      }
+
+      .game_terms {
+        bottom: .2em;
+        right: .75em;
+        text-align: right !important;
+        font-size: .5em;
+      }
+
+      .game_terms span {
+        font-size: 1.7em;
+        margin-left: .3em;
+      }
+
+      .game_text {
+        position: absolute;
+        width: 100%;
+        color: white;
+        z-index: 10;
+        display: block;
+        text-align: center;
+      }
+
+      .start_button {
+        background-color: orange;
+        border: double;
+        border-color: white;
+        color: black;
+        padding: 10px 20px 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 22px;
+        margin: 4px 2px;
+        border-radius: 40%;
+        position: absolute;
+        bottom: 2em;
+        display: block;
+      }
+
+      .vertical-center {
+        margin: 0;
+        position: absolute;
+        bottom: 12%;
+        left: 40%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+      }
+
+      .win_title {
+        top: 33%;
+        text-align: center;
+        color: yellow;
+      }
+
+      .warn_title{
+        text-align: center;
+        color: white;
+      }
+      
+      .win_desc {
+        font-weight: bold;
+        top: 35%;
+        text-align: center;
+        color: yellow;
+      }
+
+      @font-face {
+        font-family: "poppins";
+        src: url(../assets/Poppins-Medium.ttf);
+      }
+
+  </style>
+
+  <body>
+    <div id="game_title" style="display: none;"><h2 class="game_text game_title">OPEN A BOX TO WIN</h2></div>
+    <div id="game_desc" style="display: none;"><h5 class="game_text game_desc">You can only open one box, so<br>choose a box wisely</h3></div>
+    <div id="game_empty" style="display: none;"><h5 class="game_text game_desc">The box you opened is empty. <br>Try your luck next time</h3></div>
+    <div id="game_terms" style="display: none;"><h6 class="game_text game_terms">Terms and conditions <span>?</span></h6></div>
+    <div id="game_price_desc" style="display: none;"><h4 class="game_text win_title">You have won</h3></div>
+    <div id="game_empty_desc" style="display: none;"><h4 class="game_text win_title">ooppss!!!</h3></div>
+    <div id="game_warn_title" style="display: none;"><h2 id='warn_title' class="game_text warn_title">You have already played</h2></div>
+    <div id="game_warn_foot" style="display: none;"><h5 class="game_text game_desc">please collect your prize before<br><span id="price_expiry"></span></h3></div>
+    <div id="game_price_title" style="display: none;"><h1 id="game_price_title_head" class="game_text win_desc"></h2></div>
+    <div class="vertical-center" id="start_button_container" style="display: none;"><button id="start_button" class="start_button">Start</button></div>
+    <div id="shop_title" style="display: none;" class="shop_title"><img src="../assets/kovilakam.png" alt="Avatar" class="shop_img" style="display: inline;"><div class="campaign_details"><p style="display: inline;" class="campaign_name">POOJA AND DEEPAVALI FEST</p><p class="shop_name">KOVILAKAM HYPERMARKET</p></div></div>
+    <script src="../lib/three.js"></script>
+    <script type="module" src="https://cdn.rawgit.com/mrdoob/three.js/r92/examples/js/loaders/RGBELoader.js"></script>
+    <script type="module">
+
+      import { GLTFLoader } from"../lib/GLTFLoader.js";
+
+      var isplayed = "<%= isplayed %>",price = "<%= price %>",priceId = "<%= price_id %>",ticketId = "<%= ticket_id %>",priceExpiry = "<%= price_expiry %>",campaignId = "<%= campaign_id %>";
+      const expiry = new Date(priceExpiry).toDateString();
+
+      if (isplayed == 'true') {
+        document.body.style.backgroundColor = '#310171'
+        document.getElementById('game_warn_title').style.display = 'block';
+        document.getElementById('game_price_title').style.display = 'block';
+        if(price == ''){
+          document.getElementById('game_empty_desc').style.display = 'block';
+          document.getElementById('game_empty').style.display = 'block';
+          document.getElementById('game_price_title_head').innerHTML = "EMPTY BOX";
+        }
+        else{
+          document.getElementById('game_price_desc').style.display = 'block';
+          document.getElementById('game_warn_foot').style.display = 'block';
+          document.getElementById('price_expiry').innerHTML = expiry;
+          document.getElementById('game_price_title_head').innerHTML = price;
+        }
+      }
+      else {
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(80, window.innerWidth/window.innerHeight, 0.01, 100);
+      var raycaster = new THREE.Raycaster();
+      var mouse = new THREE.Vector2();
+      var renderer = new THREE.WebGLRenderer();
+      var boxes = [];
+      var selectedObj;
+      var globalgltf;
+      var isMobile = true;
+
+      camera.position.set(0, 3, 17);
+
+      renderer.setPixelRatio( window.devicePixelRatio );
+      renderer.setSize( window.innerWidth, window.innerHeight );
+
+      document.body.appendChild(renderer.domElement);
+
+      window.addEventListener("mousemove", function () {
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+      });
+
+
+      var loader = new GLTFLoader();
+      var obj;
+      var gltf_global;
+      var clip;
+      var mixer;
+
+      const COLUMNS = 3;
+      const ROWS = 2;
+
+      scene.add(camera);
+      
+      function startGame() {
+        var light2 = new THREE.DirectionalLight(0xffffff, 2, 1000);
+        var light3 = new THREE.DirectionalLight(0xffedb6, 2, 1000 );
+
+        light2.position.set(0,0,5);
+        light3.position.set(0,1,-1);
+        scene.background = new THREE.Color(0x310171);
+
+        scene.add(light2);
+        scene.add(light3);
+
+        document.getElementById('shop_title').style.display = 'block';
+        document.getElementById('start_button').style.display = 'none';
+        document.getElementById('game_terms').style.display = 'block';
+        document.getElementById('game_title').style.display = 'block';
+        document.getElementById('game_desc').style.display = 'block';
+        loader.load("../assets/box/GetSetBox.gltf", function(gltf){
+          obj = gltf.scene;
+          gltf_global = gltf;
+
+          for ( let y = 0; y < COLUMNS; y ++ ) {
+            for ( let x = 0; x < ROWS; x ++ ) {
+              var cloned = obj.clone();
+              
+              cloned.name = "object_" + y + '-' + x;
+              cloned.position.x =  (( x / COLUMNS  ) - 0.5) * 4;
+              if (x % 2 == 1) {
+                cloned.position.x = -cloned.position.x + 1;
+              }
+              cloned.position.y = (1 - ( y / ROWS )) * 4;
+              cloned.position.z = 0.5;
+              cloned.rotation.x = 0.3;
+              cloned.position.multiplyScalar( 2 );
+
+              scene.add(cloned);
+
+              boxes.push(cloned);
+            }
+          }
+
+          mixer = new THREE.AnimationMixer( obj );
+          clip = mixer.clipAction( gltf.animations[0] );
+        });
+
+        renderer.domElement.addEventListener("click", function boxClick() {
+          raycaster.setFromCamera(mouse, camera);
+          var intersects = raycaster.intersectObjects(scene.children, true); //array
+          if (intersects.length > 0) {
+            selectedObj = scene.getObjectByName(intersects[0].object.parent.name);
+            selectedObj.position.multiplyScalar( 2 );
+            mixer = new THREE.AnimationMixer( selectedObj );
+            clip = mixer.clipAction( gltf_global.animations[0] );
+            clip.clampWhenFinished = true;
+            clip.setLoop(THREE.LoopOnce);
+            clip.play();
+
+            for(var i=0; i < boxes.length; i++) {
+              if (boxes[i].name !== selectedObj.name) {
+                scene.remove(boxes[i]);
+              }
+            }
+
+            selectedObj.position.x = 0;
+            selectedObj.position.y = 0;
+            selectedObj.position.z = 7;
+
+            document.getElementById('game_terms').style.display = 'none';
+            document.getElementById('game_title').style.display = 'none';
+            document.getElementById('game_desc').style.display = 'none';
+            renderer.domElement.removeEventListener("click",boxClick,true);
+    
+            setTimeout(function(){
+              if(price ==''){
+                document.getElementById('game_price_title').style.display = 'block';
+                document.getElementById('game_empty_desc').style.display = 'block';
+                document.getElementById('game_empty').style.display = 'block';
+                document.getElementById('game_price_title_head').innerHTML = "EMPTY BOX";
+                priceId = 0;
+              }else{
+                document.getElementById('game_price_desc').style.display = 'block';
+                document.getElementById('game_price_title').style.display = 'block';
+                document.getElementById('game_warn_foot').style.display = 'block';
+                document.getElementById('price_expiry').innerHTML = expiry;
+                document.getElementById('game_price_title_head').innerHTML = price;
+              }
+              createUserPrice();
+            }, 2000);
+          }
+        },true);
+      }
+      
+      function createUserPrice () {
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+           if (httpRequest.status == 200) {
+               return
+           }
+           else if (httpRequest.status == 400) {
+              alert('There was an error 400');
+           }
+           else {
+               alert('something else other than 200 was returned');
+           }
+        }
+        };
+        httpRequest.open('POST', `https://test.getset.shop/userPrice?campaign_id=${campaignId}&ticket_id=${ticketId}`,true);
+        httpRequest.setRequestHeader("Content-type", "application/json");
+        httpRequest.send(JSON.stringify({
+          'price_id' : priceId,
+          'played' : true
+        }));
+      }
+
+      function update () {
+        mixer.update( deltaSeconds );
+      }
+
+      document.getElementById('start_button').addEventListener('click', function () {
+        startGame();
+      });
+
+      var light1 = new THREE.HemisphereLight(0xffffff, 0x000000, 5);
+      scene.add(light1);
+
+      var envmap = new THREE.RGBELoader().load( "../assets/studio_country_hall_1k.hdr" );
+      scene.environment = envmap;
+      var bgTexture = new THREE.TextureLoader().load("../assets/gamebanner_kovilakam.png");
+      bgTexture.minFilter = THREE.LinearFilter;
+      scene.background = bgTexture;
+
+      document.getElementById('start_button_container').style.display = 'block';
+
+      var clock = new THREE. Clock();
+
+      function animate(){
+        requestAnimationFrame(animate);
+        if (!selectedObj) {
+          for (var a = 0;  a < boxes.length; a++) {
+            boxes[a].rotation.y += 0.01;
+          }
+        } else {
+          selectedObj.rotation.y = 0;
+          var deltaSeconds = clock.getDelta();
+          if (mixer) {
+            mixer.update( deltaSeconds );
+          }
+        }
+        renderer.render(scene, camera);
+
+      }
+      animate();
+      }
+    </script>
+
+  </body>
+</html>
