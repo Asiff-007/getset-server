@@ -60,7 +60,8 @@ h3
     color: white;
     text-align: center;
 }
-.bn632-hover {
+.bn632-hover
+{
     display: none;
   width: 310px;
   font-size: 1.5em;
@@ -79,7 +80,8 @@ h3
   transition: all .4s ease-in-out;
 }
 
-.bn632-hover:hover {
+.bn632-hover:hover
+{
   background-position: 100% 0;
   moz-transition: all .4s ease-in-out;
   -o-transition: all .4s ease-in-out;
@@ -87,11 +89,13 @@ h3
   transition: all .4s ease-in-out;
 }
 
-.bn632-hover:focus {
+.bn632-hover:focus
+{
   outline: none;
 }
 
-.bn632-hover.bn27 {
+.bn632-hover.bn27
+{
     background-image: linear-gradient(
       to right,
       #ed6ea0,
@@ -100,7 +104,8 @@ h3
       #fbb03b
     );
     box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
-  }
+}
+
 @keyframes bn13bouncy {
     0% {
         top: 0em;
@@ -123,6 +128,11 @@ h3
     100% {
         top: 0em;
     }
+}
+@font-face
+{
+    font-family: "poppins";
+    src: url(../assets/Poppins-Medium.ttf);
 }
 
 </style>
@@ -210,7 +220,7 @@ h3
       camera.position.z = 2;
       scene.add(camera);
 
-      const spaceTexture = tl.load('../lucky_slingshot/popee_gameBg.png');
+      const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.png');
       scene.background = spaceTexture;
 
     //   const lightHelper = new THREE.PointLightHelper(pointLight);
@@ -252,7 +262,7 @@ h3
 
       function populateGift() {
           var giftMesh;
-          glb_loader.load( '../lucky_slingshot/giftbox/giftbox.gltf', function ( gltf ) {
+          glb_loader.load( '../assets/lucky_slingshot/giftbox/giftbox.gltf', function ( gltf ) {
               giftMesh = gltf.scene;
               var giftbox_group = new THREE.Group();
               var giftbox_meshes = new Array();
@@ -289,7 +299,7 @@ h3
       }
 
       function addSlingshot() {
-          glb_loader.load( '../lucky_slingshot/stick/stick.gltf', function ( gltf ) {
+          glb_loader.load( '../assets/lucky_slingshot/stick/stick.gltf', function ( gltf ) {
               var slingshot_clone = gltf.scene.clone();
               
               slingshot_clone.position.set(0, -5.5, -5);
@@ -299,7 +309,7 @@ h3
               console.error( error );
               is_ready = false;
           } );
-          glb_loader.load( '../lucky_slingshot/rubber_band/rubberband.gltf', function ( gltf ) {
+          glb_loader.load( '../assets/lucky_slingshot/rubber_band/rubberband.gltf', function ( gltf ) {
               var band_clone = gltf.scene.clone();
               
               band_clone.position.set(0, -5.5, -5);
@@ -314,7 +324,7 @@ h3
 
       function addBall() {
           
-        glb_loader.load( '../lucky_slingshot/ball/ball.gltf', function ( gltf ) {
+        glb_loader.load( '../assets/lucky_slingshot/ball/ball.gltf', function ( gltf ) {
               var ball_clone = gltf.scene.clone();
               
               ball_clone.position.set(ball_initial_pos.x, ball_initial_pos.y, ball_initial_pos.z);
