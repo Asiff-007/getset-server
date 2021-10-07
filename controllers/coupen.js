@@ -6,13 +6,14 @@ var qr = require('qr-image'),
     { Canvas, Image } = require('canvas'),
     pdf = require("pdf-creator-node"),
     _ = require('lodash'),
-    Promise = require('bluebird');
-
-//var price = require('../models/price');
+    config = require('../resources/config'),
+    customId = require("custom-id"),
+    Promise = require('bluebird'),
+    knex = require('knex');
 
 module.exports = {
   index: function (req, resp) {
-    var qrBaseURL = "https://api.getset.shop/game?campaign_id=12&ticket_id=";
+    var qrBaseURL = "https://api.getset.shop/game?campaign_id=13&ticket_id=";
     var options = {
       format: "A3",
       orientation: "landscape",
@@ -23,14 +24,15 @@ module.exports = {
       width: "18in",
     };
 
-    // height: "29.7cm",
-    // width: "42cm",
     var html = fs.readFileSync("template.html", "utf8");
-    var imageArray = [];
     var promises = [];
+    var noOfCoupons = 1000;
+    var startId = 5001;
 
-    _.times(1000, function (k) {
-      var key = k + 4001;
+    _.times(noOfCoupons, function (k) {
+      var fK = k + startId;
+      var key = customId({uniqueId: fK});
+
       // var qr_svg = qr.image(qrBaseURL + key, { type: 'png', size: 8, margin: 0});
       var qr_svg = qr.image(qrBaseURL + key, { type: 'png', size: 5, margin: 0});
       qr_svg.pipe(fs.createWriteStream('qrs/qr' + key + '.png'));
@@ -50,17 +52,11 @@ module.exports = {
             .then(function (b64) {
               var base64Data = b64.replace(/^data:image\/png;base64,/, "");
               var imagePath = 'qrs/finalout' + key + '.png';
-              // return fs.writeFile(imagePath, base64Data, {encoding: 'base64'}, function (err) {
-              //   console.log("writing here");
-              //   imageArray.push(imagePath);
-              //   return 'finalout' + key + '.png';
-              // });
     
               return new Promise(function(resolve, reject) {
                 fs.writeFile(imagePath, base64Data, {encoding: 'base64'}, function(err) {
                     if (err) reject(err);
-                    //return imagePath;
-                    res(imagePath);
+                    res(key);
                 });
               });
             })
@@ -69,12 +65,14 @@ module.exports = {
       );
     });
     var users = [];
+    var userPrices = [];
     Promise.all(promises)
       .then(function (finalQRs) {
         _.each(finalQRs, function (finalQR) {
-          //html = html.replace('{{image}}', `file://${require.resolve('../' + finalQR)}`);
-
-          users.push({image: "file:///Users/vivek/getset/retail-controller/" + finalQR});
+          users.push({image: "file:///Users/vivek/getset/retail-controller/qrs/finalout" + finalQR + ".png"});
+          userPrices.push({
+            ticket_id: finalQR
+          });
         });
 
         var document = {
@@ -91,55 +89,14 @@ module.exports = {
           .create(document, options)
           .then((res) => {
             console.log(res);
+            var knexInstance = knex(config.db);
+            knexInstance('user_price').insert(userPrices)
+              .then(function () {console.log("success")})
+              .catch(function (err) {console.log("Failed", err)});
           })
           .catch((error) => {
             console.error(error);
           });
       });
-    //html = html.replace('{{image}}', `file://${require.resolve('../finalout.png')}`);
-
-    // var imageURL = "file:///Users/vivek/getset/retail-controller/finalout.png";
-
-    // var users = [
-    //   {
-    //     name: "Shyam",
-    //     age: "26",
-    //     image: imageURL
-    //   },
-    //   {
-    //     name: "Navjot",
-    //     age: "26",
-    //     image: imageURL
-    //   },
-    //   {
-    //     name: "Shyam",
-    //     age: "26",
-    //     image: imageURL
-    //   },
-    //   {
-    //     name: "Navjot",
-    //     age: "26",
-    //     image: imageURL
-    //   }
-    // ];
-    
-    // var document = {
-    //   html: html,
-    //   data: {
-    //     users: users,
-    //   },
-    //   path: "output.pdf",
-    //   type: "",
-    //   localUrlAccess: true
-    // };
-
-    // pdf
-    //   .create(document, options)
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
   }
 };
