@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Slingshot</title>
+</head>
+<style type="text/css">
+*
+{
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body
+{
+    height: 100vh;
+    width: 100vw;
+}
+.footer
+{
+    height:20vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+}
+
+.video_stream
+{
+    object-fit: fill;
+    /* overflow: hidden; */
+    height:80vh;
+    width: 100vw;
+}
+.bn632-hover {
+    display: inline-block;
+    width: 310px;
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    margin: 20px;
+    height: 55px;
+    text-align:center;
+    border: none;
+    background-size: 300% 100%;
+    border-radius: 50px;
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
+
+.bn632-hover:hover {
+    background-position: 100% 0;
+    moz-transition: all .4s ease-in-out;
+    -o-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
+
+.bn632-hover:focus {
+    outline: none;
+}
+
+.bn632-hover.bn27 {
+    background-image: linear-gradient(
+      to right,
+      #ed6ea0,
+      #ec8c69,
+      #f7186a,
+      #fbb03b
+    );
+    box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
+  }
+@keyframes bn13bouncy {
+    0% {
+        top: 0em;
+    }
+    40% {
+        top: 0em;
+    }
+    43% {
+        top: -0.9em;
+    }
+    46% {
+        top: 0em;
+    }
+    48% {
+        top: -0.4em;
+    }
+    50% {
+        top: 0em;
+    }
+    100% {
+        top: 0em;
+    }
+}
+
+</style>
+<body>
+    <div class="video_stream">
+        <video id="video" autoplay></video>
+        <canvas id="canvas" width="<%= width %>" height="<%= height %>" style="display: none;"></canvas>
+    </div>
+    <div class="footer">
+        <button id="snap" class="bn632-hover bn27">Snap Photo</button>
+        <button id="download" style="display: none;" class="bn632-hover bn27" onclick=download()>Download</button>
+    </div>
+    <script>
+        var img_src = "<%= selfie_frame %>";
+        var img_resolution = {
+            height: "<%= height %>",
+            width: "<%= width %>"
+        };
+
+        var frame_img = new Image();
+        var snapped_img = new Image();
+
+        var inner_frame = {
+            offset_x: "<%= offset_x %>",
+            offset_y: "<%= offset_y %>",
+            width: "<%= inner_width %>",
+            height: "<%= inner_height %>"
+        };
+
+        function download() {
+            var link = document.createElement('a');
+            link.download = 'winner_selfie.jpg';
+            link.href = document.getElementById('canvas').toDataURL();
+            link.click();
+        }
+
+        window.addEventListener("DOMContentLoaded", function() {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            var video = document.getElementById('video');
+            var mediaConfig =  { video: true };
+            var errBack = function(e) {
+            	console.log('An error has occurred!', e)
+            };
+
+            if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia(mediaConfig).then(function(stream) {
+					//video.src = window.URL.createObjectURL(stream);
+					video.srcObject = stream;
+                    video.play();
+                });
+            }
+
+            /* Legacy code */
+            else if(navigator.getUserMedia) { // Standard
+				navigator.getUserMedia(mediaConfig, function(stream) {
+					video.src = stream;
+					video.play();
+				}, errBack);
+			} else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+				navigator.webkitGetUserMedia(mediaConfig, function(stream){
+					video.src = window.webkitURL.createObjectURL(stream);
+					video.play();
+				}, errBack);
+			} else if(navigator.mozGetUserMedia) { // Mozilla-prefixed
+				navigator.mozGetUserMedia(mediaConfig, function(stream){
+					video.src = window.URL.createObjectURL(stream);
+					video.play();
+				}, errBack);
+			}
+
+			// Trigger photo take
+			document.getElementById('snap').addEventListener('click', function() {
+                video.pause();
+                video.style.display = 'none';
+                document.getElementById('snap').style.display = 'none';
+
+                //canvas.height = video.videoHeight;
+                //canvas.width = video.videoWidth;
+
+                frame_img.src = img_src;
+                frame_img.onload = function () {
+                    var ratio_y = canvas.height / img_resolution.height;
+                    var ratio_x = window.visualViewport.width / img_resolution.width;
+
+                    //context.scale(ratio_x, ratio_y);
+                    context.drawImage(video,
+                                        0, (video.videoHeight/2) - (inner_frame.height / 2),
+                                        inner_frame.width, inner_frame.height,
+                                        inner_frame.offset_x, inner_frame.offset_y,
+                                        inner_frame.width, inner_frame.height);
+                    context.drawImage(frame_img, 0, 0, img_resolution.width, img_resolution.height);
+                    document.getElementById('download').style.display = 'block';
+                    document.getElementById('canvas').style.display = 'block';
+                }
+			});
+		}, false);
+    </script>
+</body>
+</html>

@@ -50,12 +50,13 @@ var sys_config = require('./sys_config'),
         not_claimed: 'NotClaimed',
         claimed: 'Claimed',
         active: 'Active',
-        inactive: 'InActive'
+        inactive: 'Inactive',
+        no_price: 'Noprize'
       },
 
       campaign_status: {
-        active: 'ACTIVE',
-        pending: 'PENDING'
+        active: 'Active',
+        pending: 'Pending'
       }
     };
 
