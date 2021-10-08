@@ -459,9 +459,9 @@ h3
           if (is_ready) {
               if (mouse_drag_diff > mouse_drag_threshold) {
                   looseBall();
-              } else if(ball_ref) {
+              } else if (ball_ref) {
                   // reset position
-                  ball_ref.position.lerp(new THREE.Vector3(ball_initial_pos), 0.9);
+                  ball_ref.position.lerp(ball_initial_pos, 1);
               }
           }
           if (band_ref) {
