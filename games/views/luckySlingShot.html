@@ -39,7 +39,8 @@ body
 .footer
 {
     display: flex;
-    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     position: absolute;
     margin: auto;
     bottom: 20%;
@@ -143,6 +144,7 @@ h3
         <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
     </div>
     <div class="footer">
+        <div id="game_warn_title" style="display: none;"><h4 id='warn_title' class="game_text warn_title">You have already played with this coupon,<br>Try with another</h4></div>
         <a href="/camera_capture?campaign_id=<%= campaign_id %>"><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
         <button id="startGame" class="bn632-hover bn27">Play game</button>
     </div>
@@ -201,8 +203,6 @@ h3
 
       scene.add(pointLight, ambientLight);
 
-      document.getElementById('goto_selfie').style.display = 'none';
-
       /**
        * Sizes
        */
@@ -226,6 +226,22 @@ h3
       const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.png');
       scene.background = startScreenBg;
 
+      document.getElementById('goto_selfie').style.display = 'none';
+
+      if (is_played == "true") {
+          scene.background = spaceTexture;
+          document.getElementById('game_warn_title').style.display = 'block';
+          document.getElementById('startGame').style.display = 'none';
+          document.getElementById('game_prize_title').style.display = 'block';
+          document.getElementById('game_prize_desc').style.display = 'block';
+          if (prize == "") {
+              document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
+              document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
+          } else {
+              document.getElementById('game_prize_title_head').innerHTML = prize + "!";
+          }
+      }
+
     //   const lightHelper = new THREE.PointLightHelper(pointLight);
     //   scene.add(lightHelper);
       function createUserPrize () {
@@ -248,7 +264,7 @@ h3
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
           'price_id' : price_id,
-          'ticket_id' : ticket_id,
+          'played' : true
         }));
       }
 
