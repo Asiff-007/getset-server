@@ -252,10 +252,10 @@ h3
                 return
             }
             else if (httpRequest.status == 400) {
-                alert('There was an error 400');
+                console.log('There was an error 400');
             }
             else {
-                alert('something else other than 200 was returned');
+                console.log('something else other than 200 was returned');
             }
           }
         };
@@ -268,12 +268,16 @@ h3
         }));
       }
 
+      var j = 0;
       function addStar() {
+          var z = -30;
           const sphereGeometry = new THREE.SphereGeometry(0.05);
           const material = new THREE.MeshStandardMaterial({color: 0xffffff});
           const star = new THREE.Mesh(sphereGeometry, material);
 
-          const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(200));
+          const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
+          z -= j*.5;
+          j++;
 
           star.position.set(x, y, z);
           scene.add(star);
@@ -383,7 +387,7 @@ h3
       }
 
       function startGame() {
-        Array(10000).fill().forEach(addStar);
+        Array(500).fill().forEach(addStar);
         populateGift();
         addSlingshot();
         addBall();
