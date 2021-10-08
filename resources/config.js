@@ -28,6 +28,10 @@ var sys_config = require('./sys_config'),
         ERROR: 500
       },
 
+      server:{
+        url:'https://test.getset.shop'
+      },
+
       access_control_prod: {
         origin: '',
         headers: ''

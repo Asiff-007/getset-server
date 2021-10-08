@@ -1,7 +1,8 @@
 'use strict';
 
 var game = require('../models/game'),
-    userPrice = require('../models/userPrice');
+    userPrice = require('../models/userPrice'),
+    config = require('../resources/config');
 
 module.exports = {
   index: function (req, resp) {
@@ -28,7 +29,8 @@ module.exports = {
                 ticket_id: req.query.ticket_id,
                 price_expiry: user.prizeExpiry,
                 isplayed: true,
-                campaign_id: req.query.campaign_id
+                campaign_id: req.query.campaign_id,
+                url: config.server.url
               });
             }else {
               game.getPrice({campaign_id:req.query.campaign_id})
@@ -41,7 +43,8 @@ module.exports = {
                       ticket_id: req.query.ticket_id,
                       price_expiry: price.expiry,
                       isplayed: false,
-                      campaign_id: req.query.campaign_id
+                      campaign_id: req.query.campaign_id,
+                      url: config.server.url
                     });
                 });
             }
