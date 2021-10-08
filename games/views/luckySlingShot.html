@@ -565,7 +565,8 @@ h3
 
           if (ball_ref && ball_ref.alive) {
               ball_ref.position.lerp(new THREE.Vector3(target_pos.x, target_pos.y - 2, target_pos.z - 40), 0.009);
-              camera.position.lerp(new THREE.Vector3(ball_ref.position.x, ball_ref.position.y + 4, ball_ref.position.z + 8), 0.2);
+              camera.position.lerp(new THREE.Vector3(ball_ref.position.x, ball_ref.position.y + 4, ball_ref.position.z + 8), 0.5);
+
               if (ball_ref.position.distanceTo(new THREE.Vector3(target_pos.x, target_pos.y, target_pos.z)) < 10) {
                   ball_ref.alive = false;
                   scene.remove(ball_ref);
