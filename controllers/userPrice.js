@@ -24,7 +24,7 @@ module.exports = {
   },
   get:function(req, resp) {
     var rules = {
-      userPrice_id: {type: 'int', required: true}
+      userPrice_id: {required: true}
     };
 
     if (req.validate(null, rules, null)) {
@@ -34,7 +34,7 @@ module.exports = {
   },
   update:function(req,resp) {
     var rules = {
-      userPrice_id: {type: 'int', required: true}
+      userPrice_id: {required: true}
     };
     if (req.validate(null, rules, null)) {
       userPrice.update(req.params.userPrice_id,req.body,req.query.campaign_id)
