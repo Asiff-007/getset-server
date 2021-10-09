@@ -260,7 +260,7 @@ h3
           }
         };
         // todo : move url to config
-        httpRequest.open('POST', `https://test.getset.shop/userPrice?campaign_id=${campaign_id}`,true);
+        httpRequest.open('POST', `https://test.getset.shop/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}`,true);
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
           'price_id' : price_id,
