@@ -176,6 +176,7 @@ h3
       var gift_boxes = Array();
       var final_gift;
       var target_pos;
+      var mixer;
       var is_ready_for_reveal = false;
 
       const glb_loader = new GLTFLoader();
@@ -261,7 +262,7 @@ h3
           }
         };
         // todo : move url to config
-        httpRequest.open('POST', `https://test.getset.shop/userPrice?campaign_id=${campaign_id}`,true);
+        httpRequest.open('POST', `https://test.getset.shop/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}`,true);
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
           'price_id' : price_id,
@@ -285,27 +286,14 @@ h3
       }
 
       function populateGift() {
-          var giftMesh;
           glb_loader.load( '../assets/lucky_slingshot/giftbox/giftbox.gltf', function ( gltf ) {
-              giftMesh = gltf.scene;
-              var giftbox_group = new THREE.Group();
-              var giftbox_meshes = new Array();
-
-              gltf.scene.traverse(function (child) {
-                if (child.isMesh) {
-                  giftbox_meshes.push(child);
-                }
-              });
-
-              giftbox_meshes.forEach(function (child) {
-                giftbox_group.add(child);
-                child.scale.set(2, 2, 2);
-              });
-              gltf_global = giftbox_group;
-
               var z = -30; var i = 0;
+              gltf_global = gltf;
+
               Array(100).fill().forEach(() => {
-                  gift_clone = giftbox_group.clone();
+                  gift_clone = gltf.scene.clone();
+                  final_gift = gift_clone.clone();
+
                   const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(60));
                   z -= i*.5;
                   i++;
@@ -452,8 +440,14 @@ h3
           initial_pos.y = mouse.y;
 
           if (is_ready_for_reveal) {
+            mixer = new THREE.AnimationMixer(final_gift);
 
-            // play gift reveal animation here
+            gltf_global.animations.forEach((clip)=>{
+                mixer.clipAction(clip).clampWhenFinished = true;
+                mixer.clipAction(clip).setLoop(THREE.LoopOnce);
+                mixer.clipAction(clip).play();
+            });
+
             document.getElementById('game_prize_reveal_prompt').style.display = 'none';
             document.getElementById('game_prize_desc').style.display = 'block';
             document.getElementById('game_prize_title').style.display = 'block';
@@ -575,9 +569,7 @@ h3
                   camera.position.lerp(new THREE.Vector3(target_pos.x, target_pos.y, target_pos.z + 5), 0.75);
               }
           }
-          if (final_gift) {
-              final_gift.rotation.y = .2 * elapsedTime;
-          }
+
           gift_boxes.forEach(element => {
               element.rotation.y = .2 * elapsedTime;
               element.rotation.x = .01 * elapsedTime;
@@ -589,7 +581,9 @@ h3
           if (is_ball_dragged && band_ref && band_ref.scale.z > -1.5 && band_ref.scale.z < 10.5) {
               band_ref.scale.set(3.5, 3.5, band_ref.scale.z + (scale_diff * 0.5 * delta));
           }
-
+          if (mixer) {
+            mixer.update( delta );
+          }
           // Render
           renderer.render(scene, camera);
 
