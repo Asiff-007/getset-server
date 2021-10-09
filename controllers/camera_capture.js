@@ -1,6 +1,6 @@
 'use strict';
 
-//var game = require('../models/game');
+var sys_config = require('../resources/sys_config');
 
 module.exports = {
   index: function (req, resp) {
@@ -8,30 +8,24 @@ module.exports = {
       campaign_id: {type: 'int', required: true}
     };
 
-    var snapshot_map = new Map();
-
-    snapshot_map.set(2, {
-      frame_path: '../assets/popees_frame.png',
-      data: {
-        height: 1920,
-        width: 1080,
-        offset_x: 162,
-        offset_y: 594,
-        inner_width: 732,
-        inner_height: 1058
-      }
-    });
-
     if (req.validate(null, null, rules)) {
+      var frame_data = sys_config.game_data
+        .get(req.query.campaign_id).selfie_frame_data;
+
+      if (!frame_data) {
+        resp.sendStatus(404);
+        return;
+      }
+
       resp.render(process.cwd() +
         '/games/views/winnerSelfie.html', {
-          selfie_frame: snapshot_map.get(req.query.campaign_id).frame_path,
-          height: snapshot_map.get(req.query.campaign_id).data.height,
-          width: snapshot_map.get(req.query.campaign_id).data.width,
-          offset_x: snapshot_map.get(req.query.campaign_id).data.offset_x,
-          offset_y: snapshot_map.get(req.query.campaign_id).data.offset_y,
-          inner_width: snapshot_map.get(req.query.campaign_id).data.inner_width,
-          inner_height: snapshot_map.get(req.query.campaign_id).data.inner_height
+          selfie_frame: frame_data.frame_path,
+          height: frame_data.data.height,
+          width: frame_data.data.width,
+          offset_x: frame_data.data.offset_x,
+          offset_y: frame_data.data.offset_y,
+          inner_width: frame_data.data.inner_width,
+          inner_height: frame_data.data.inner_height
         });
     }
   }
