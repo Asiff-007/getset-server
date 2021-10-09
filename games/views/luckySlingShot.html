@@ -176,7 +176,7 @@ h3
       var gift_boxes = Array();
       var final_gift;
       var target_pos;
-      var mixer;
+      var mixers = Array();
       var is_ready_for_reveal = false;
 
       const glb_loader = new GLTFLoader();
@@ -290,15 +290,23 @@ h3
               var z = -30; var i = 0;
               gltf_global = gltf;
 
+              var gift_group = new THREE.Group();
+              gltf.scene.traverse(function(child) {
+                  if(child.isMesh) {
+                      var mesh = new THREE.Mesh(child.geometry, child.material);
+                      gift_group.add(mesh);
+                    }
+                });
+
               Array(100).fill().forEach(() => {
-                  gift_clone = gltf.scene.clone();
-                  final_gift = gift_clone.clone();
+                  gift_clone = gift_group.clone();
 
                   const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(60));
                   z -= i*.5;
                   i++;
 
                   gift_clone.position.set(x, y, z);
+                  gift_clone.scale.set(2, 2, 2);
                   scene.add(gift_clone);
                   gift_boxes.push(gift_clone);
               });
@@ -440,13 +448,26 @@ h3
           initial_pos.y = mouse.y;
 
           if (is_ready_for_reveal) {
-            mixer = new THREE.AnimationMixer(final_gift);
+            mixers.push(new THREE.AnimationMixer(final_gift.children[2])); // top box
+            mixers.push(new THREE.AnimationMixer(final_gift.children[1])); // ribbon
+            mixers.push(new THREE.AnimationMixer(final_gift.children[0])); // ribbon
 
-            gltf_global.animations.forEach((clip)=>{
-                mixer.clipAction(clip).clampWhenFinished = true;
-                mixer.clipAction(clip).setLoop(THREE.LoopOnce);
-                mixer.clipAction(clip).play();
-            });
+            var clip_1 = mixers[0].clipAction(gltf_global.animations[0]);
+            var clip_2 = mixers[1].clipAction(gltf_global.animations[2]);
+            var clip_3 = mixers[2].clipAction(gltf_global.animations[1]);
+
+            clip_1.clampWhenFinished = true;
+            clip_1.setLoop(THREE.LoopOnce);
+
+            clip_2.clampWhenFinished = true;
+            clip_2.setLoop(THREE.LoopOnce);
+
+            clip_3.clampWhenFinished = true;
+            clip_3.setLoop(THREE.LoopOnce);
+
+            clip_1.play();
+            clip_2.play();
+            clip_3.play();
 
             document.getElementById('game_prize_reveal_prompt').style.display = 'none';
             document.getElementById('game_prize_desc').style.display = 'block';
@@ -566,7 +587,7 @@ h3
                   scene.remove(ball_ref);
                   is_ready_for_reveal = true;
                   document.getElementById('game_prize_reveal_prompt').style.display = 'block';
-                  camera.position.lerp(new THREE.Vector3(target_pos.x, target_pos.y, target_pos.z + 5), 0.75);
+                  camera.position.lerp(new THREE.Vector3(target_pos.x, target_pos.y + 1, target_pos.z + 5), 0.75);
               }
           }
 
@@ -581,8 +602,10 @@ h3
           if (is_ball_dragged && band_ref && band_ref.scale.z > -1.5 && band_ref.scale.z < 10.5) {
               band_ref.scale.set(3.5, 3.5, band_ref.scale.z + (scale_diff * 0.5 * delta));
           }
-          if (mixer) {
-            mixer.update( delta );
+          if (mixers.length > 0) {
+              mixers.forEach(function (mixer) {
+                  mixer.update(delta);
+              });
           }
           // Render
           renderer.render(scene, camera);
