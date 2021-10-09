@@ -593,6 +593,10 @@ h3
 
           gift_boxes.forEach(element => {
               element.rotation.y = .2 * elapsedTime;
+              // prevent final gift being rotated in x axis
+              if (final_gift && final_gift == element) {
+                  return;
+              }
               element.rotation.x = .01 * elapsedTime;
           });
           if (is_ball_dragged && ball_ref && ball_ref.position.z < -2) {
