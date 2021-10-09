@@ -168,7 +168,7 @@ h3
       var ball_ref;
       var band_ref;
       var scale_diff = 0;
-      var ball_initial_pos = new THREE.Vector3(0, -5.5, -5);
+      var ball_initial_pos = new THREE.Vector3(0, -1.5 , -5);
       var gltf_global;
       var is_ready = false;
       var is_pressed = false;
@@ -344,8 +344,15 @@ h3
       function addBall() {
           
         glb_loader.load( '../assets/lucky_slingshot/ball/ball.gltf', function ( gltf ) {
-              var ball_clone = gltf.scene.clone();
-              
+              var ball_clone = new THREE.Group();
+
+              gltf.scene.traverse(function (child) {
+                  if (child.isMesh) {
+                      var mesh = new THREE.Mesh(child.geometry, child.material);
+                      ball_clone.add(mesh);
+                  }
+              });
+
               ball_clone.position.set(ball_initial_pos.x, ball_initial_pos.y, ball_initial_pos.z);
               ball_clone.scale.set(3.5, 3.5, 3.5);
               scene.add(ball_clone);
@@ -354,15 +361,6 @@ h3
               console.error( error );
               is_ready = false;
           } );
-
-        //   const ball = new THREE.Mesh(
-        //       new THREE.SphereGeometry(0.3),
-        //       new THREE.MeshStandardMaterial({color: 0xff0000})
-        //   );
-        //   ball.position.set(0, -1, -5);
-          
-        //   ball_ref = ball;
-        //   scene.add(ball);
       }
 
       function looseBall() {
@@ -579,8 +577,10 @@ h3
           //controls.update()
 
           if (ball_ref && ball_ref.alive) {
-              ball_ref.position.lerp(new THREE.Vector3(target_pos.x, target_pos.y - 2, target_pos.z - 40), 0.009);
-              camera.position.lerp(new THREE.Vector3(ball_ref.position.x, ball_ref.position.y + 4, ball_ref.position.z + 8), 0.5);
+              ball_ref.position.lerp(new THREE.Vector3(target_pos.x, target_pos.y, target_pos.z - 40), 0.009);
+              camera.position.lerp(new THREE.Vector3(ball_ref.position.x, ball_ref.position.y, ball_ref.position.z + 8), 0.5);
+              ball_ref.rotateX(Math.PI * -3 * delta);
+              ball_ref.rotateY(Math.PI * -1 * delta);
 
               if (ball_ref.position.distanceTo(new THREE.Vector3(target_pos.x, target_pos.y, target_pos.z)) < 10) {
                   ball_ref.alive = false;
