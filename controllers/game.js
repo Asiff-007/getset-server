@@ -1,18 +1,14 @@
 'use strict';
 
 var game = require('../models/game'),
-    userPrice = require('../models/userPrice');
+    userPrice = require('../models/userPrice'),
+    sys_config = require('../resources/sys_config');
 
 module.exports = {
   index: function (req, resp) {
     var rules = {
       campaign_id: {type: 'int', required: true}
     };
-
-    var game_map = new Map();
-
-    game_map.set(1, '/games/views/misteryBox.html');
-    game_map.set(2, '/games/views/luckySlingShot.html');
 
     if (req.validate(null, null, rules)) {
       userPrice.getList({ticket_id: req.query.ticket_id})
@@ -21,7 +17,7 @@ module.exports = {
             var user = userprice[0];
             if (user.played) {
               resp.render(process.cwd() +
-              game_map.get(req.query.campaign_id),
+              sys_config.game_data.get(req.query.campaign_id).url,
               {
                 price: user.prizeName,
                 price_id: user.prizeId,
@@ -34,7 +30,7 @@ module.exports = {
               game.getPrice({campaign_id:req.query.campaign_id})
                 .then(function (price) {
                   resp.render(process.cwd() +
-                  game_map.get(req.query.campaign_id),
+                  sys_config.game_data.get(req.query.campaign_id).url,
                     {
                       price: price.name,
                       price_id: price.id,
