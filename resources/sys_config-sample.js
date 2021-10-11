@@ -1,6 +1,7 @@
 module.exports = {
   server: {
-    ip: 'localhost:3000'
+    ip: 'localhost:3000',
+    url:'https://test.getset.shop'
   },
 
   game_data: new Map([

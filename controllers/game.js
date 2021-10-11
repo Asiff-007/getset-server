@@ -2,7 +2,6 @@
 
 var game = require('../models/game'),
     userPrice = require('../models/userPrice'),
-    config = require('../resources/config');
     sys_config = require('../resources/sys_config');
 
 module.exports = {
@@ -26,7 +25,7 @@ module.exports = {
                 price_expiry: user.prizeExpiry,
                 isplayed: true,
                 campaign_id: req.query.campaign_id,
-                url: config.server.url
+                url: sys_config.server.url
               });
             }else {
               game.getPrice({campaign_id:req.query.campaign_id})
@@ -40,7 +39,7 @@ module.exports = {
                       price_expiry: price.expiry,
                       isplayed: false,
                       campaign_id: req.query.campaign_id,
-                      url: config.server.url
+                      url: sys_config.server.url
                     });
                 });
             }
