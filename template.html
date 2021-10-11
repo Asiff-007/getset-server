@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello world!</title>
+  </head>
+  <style>
+      /* Three image containers (use 25% for four, and 50% for two, etc) */
+        .column {
+            float: left;
+            width: 32%;
+        }
+
+        /* Clear floats after image containers */
+        .row::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        .column img {
+          margin-top: 0px;
+          vertical-align: middle;
+        }
+  </style>
+  <body>
+    
+
+    <div class="row">
+        {{#each users}}
+        <div class="column">
+            <img src="{{this.image}}" alt="Snow" style="width:100%">
+        </div>
+        {{/each}}
+      </div>
+  </body>
+</html>
