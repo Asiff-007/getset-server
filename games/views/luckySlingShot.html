@@ -565,16 +565,17 @@ h3
                   is_ready_for_reveal = true;
                   document.getElementById('game_prize_reveal_prompt').style.display = 'block';
                   camera.position.lerp(new THREE.Vector3(target_pos.x, target_pos.y + 1, target_pos.z + 5), 0.75);
+                  final_gift.lookAt(camera.position);
               }
           }
 
           gift_boxes.forEach(element => {
-              element.rotation.y = .2 * elapsedTime;
-              // prevent final gift being rotated in x axis
+              // prevent final gift being rotated
               if (final_gift && final_gift == element) {
                   return;
               }
-              element.rotation.x = .01 * elapsedTime;
+              element.rotateX(Math.PI * .01 * delta);
+              element.rotateY(Math.PI * .1 * delta);
           });
           if (is_ball_dragged && ball_ref && ball_ref.position.z < -2) {
               ball_ref.position.z = ball_ref.position.z + (.1 * mouse_drag_diff * delta);
