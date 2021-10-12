@@ -176,7 +176,7 @@ h3
       var gift_boxes = Array();
       var final_gift;
       var target_pos;
-      var mixers = Array();
+      var mixer;
       var is_ready_for_reveal = false;
 
       const glb_loader = new GLTFLoader();
@@ -289,24 +289,15 @@ h3
           glb_loader.load( '../assets/lucky_slingshot/giftbox/giftbox.gltf', function ( gltf ) {
               var z = -30; var i = 0;
               gltf_global = gltf;
-
-              var gift_group = new THREE.Group();
-              gltf.scene.traverse(function(child) {
-                  if(child.isMesh) {
-                      var mesh = new THREE.Mesh(child.geometry, child.material);
-                      gift_group.add(mesh);
-                    }
-                });
-
               Array(100).fill().forEach(() => {
-                  gift_clone = gift_group.clone();
+                  gift_clone = gltf.scene.clone();
 
                   const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(60));
                   z -= i*.5;
                   i++;
 
                   gift_clone.position.set(x, y, z);
-                  gift_clone.scale.set(2, 2, 2);
+                  gift_clone.scale.set(1.5, 1.5, 1.5);
                   scene.add(gift_clone);
                   gift_boxes.push(gift_clone);
               });
@@ -446,26 +437,12 @@ h3
           initial_pos.y = mouse.y;
 
           if (is_ready_for_reveal) {
-            mixers.push(new THREE.AnimationMixer(final_gift.children[2])); // top box
-            mixers.push(new THREE.AnimationMixer(final_gift.children[1])); // ribbon
-            mixers.push(new THREE.AnimationMixer(final_gift.children[0])); // ribbon
-
-            var clip_1 = mixers[0].clipAction(gltf_global.animations[0]);
-            var clip_2 = mixers[1].clipAction(gltf_global.animations[2]);
-            var clip_3 = mixers[2].clipAction(gltf_global.animations[1]);
-
-            clip_1.clampWhenFinished = true;
-            clip_1.setLoop(THREE.LoopOnce);
-
-            clip_2.clampWhenFinished = true;
-            clip_2.setLoop(THREE.LoopOnce);
-
-            clip_3.clampWhenFinished = true;
-            clip_3.setLoop(THREE.LoopOnce);
-
-            clip_1.play();
-            clip_2.play();
-            clip_3.play();
+            mixer = new THREE.AnimationMixer(final_gift);
+            gltf_global.animations.forEach(function (clip) {
+                mixer.clipAction(clip).clampWhenFinished = true;
+                mixer.clipAction(clip).setLoop(THREE.LoopOnce);
+                mixer.clipAction(clip).play();
+            });
 
             document.getElementById('game_prize_reveal_prompt').style.display = 'none';
             document.getElementById('game_prize_desc').style.display = 'block';
@@ -588,16 +565,17 @@ h3
                   is_ready_for_reveal = true;
                   document.getElementById('game_prize_reveal_prompt').style.display = 'block';
                   camera.position.lerp(new THREE.Vector3(target_pos.x, target_pos.y + 1, target_pos.z + 5), 0.75);
+                  final_gift.lookAt(camera.position);
               }
           }
 
           gift_boxes.forEach(element => {
-              element.rotation.y = .2 * elapsedTime;
-              // prevent final gift being rotated in x axis
+              // prevent final gift being rotated
               if (final_gift && final_gift == element) {
                   return;
               }
-              element.rotation.x = .01 * elapsedTime;
+              element.rotateX(Math.PI * .01 * delta);
+              element.rotateY(Math.PI * .1 * delta);
           });
           if (is_ball_dragged && ball_ref && ball_ref.position.z < -2) {
               ball_ref.position.z = ball_ref.position.z + (.1 * mouse_drag_diff * delta);
@@ -606,10 +584,8 @@ h3
           if (is_ball_dragged && band_ref && band_ref.scale.z > -1.5 && band_ref.scale.z < 10.5) {
               band_ref.scale.set(3.5, 3.5, band_ref.scale.z + (scale_diff * 0.5 * delta));
           }
-          if (mixers.length > 0) {
-              mixers.forEach(function (mixer) {
-                  mixer.update(delta);
-              });
+          if (mixer) {
+              mixer.update(delta);
           }
           // Render
           renderer.render(scene, camera);
