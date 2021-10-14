@@ -255,7 +255,10 @@
           raycaster.setFromCamera(mouse, camera);
           var intersects = raycaster.intersectObjects(scene.children, true); //array
           if (intersects.length > 0) {
-            selectedObj = scene.getObjectByName(intersects[0].object.parent.name);
+            selectedObj = intersects[0].object.parent;
+              if (selectedObj.parent.name !== '') {
+                selectedObj = selectedObj.parent;
+              }
             selectedObj.position.multiplyScalar( 2 );
             mixer = new THREE.AnimationMixer( selectedObj );
             clip = mixer.clipAction( gltf_global.animations[0] );
