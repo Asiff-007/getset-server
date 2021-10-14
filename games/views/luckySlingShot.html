@@ -154,9 +154,9 @@ h3
         <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
     </div>
     <div class="footer">
+        <a href="/camera_capture?campaign_id=<%= campaign_id %>"><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
         <div id="qrcode" class="qrcode" style="display: none;"></div>
         <div id="game_warn_title" class="warn_text" style="display: none;"><h4 id='warn_title' class="game_text">You have already played with this coupon,<br>Try with another</h4></div>
-        <a href="/camera_capture?campaign_id=<%= campaign_id %>"><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
         <button id="startGame" class="bn632-hover bn27">Play game</button>
     </div>
 
@@ -210,6 +210,10 @@ h3
       var current_pos = new THREE.Vector2();
 
       var ball_speed = -50;
+
+      const uid = function() {
+          return (Date.now().toString(36) + Math.random().toString(36).substr(2)).toUpperCase();
+      };
 
       // Lights
       const pointLight = new THREE.HemisphereLight(0xffeeb1, 0x080820, 2);
@@ -468,8 +472,10 @@ h3
                 document.getElementById('game_warn_title').style.display = 'block';
                 document.getElementById('warn_title').innerHTML = "Show this QR Code to Redeem Prize";
                 document.getElementById("qrcode").style.display = 'block';
+                var unique_id = uid();
+                console.log("code :: ", unique_id);
                 new QRCode(document.getElementById("qrcode"), {
-                        text: "QRCODE",
+                        text: unique_id,
                         width: Math.max(window.innerWidth * 20 / 100, 64),
                         height: Math.max(window.innerWidth * 20 / 100, 64)
                     });
