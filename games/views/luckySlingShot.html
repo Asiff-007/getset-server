@@ -33,7 +33,7 @@ body
 {
     position: absolute;
     margin: auto;
-    top: 10%;
+    top: 8%;
     width: 100%;
 }
 .footer
@@ -43,8 +43,17 @@ body
     flex-direction: column;
     position: absolute;
     margin: auto;
-    bottom: 20%;
+    bottom: 8%;
     width: 100%;
+}
+
+.qrcode {
+    padding: .5em;
+    background-color: white;
+}
+
+.warn_text {
+    padding: 1em;
 }
 
 h2, h1
@@ -61,6 +70,7 @@ h3
 {
     color: white;
     text-align: center;
+    font-weight: unset;
 }
 .bn632-hover
 {
@@ -144,13 +154,15 @@ h3
         <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
     </div>
     <div class="footer">
-        <div id="game_warn_title" style="display: none;"><h4 id='warn_title' class="game_text warn_title">You have already played with this coupon,<br>Try with another</h4></div>
+        <div id="qrcode" class="qrcode" style="display: none;"></div>
+        <div id="game_warn_title" class="warn_text" style="display: none;"><h4 id='warn_title' class="game_text">You have already played with this coupon,<br>Try with another</h4></div>
         <a href="/camera_capture?campaign_id=<%= campaign_id %>"><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
         <button id="startGame" class="bn632-hover bn27">Play game</button>
     </div>
 
     <canvas class="webgl"></canvas>
     <script src="../lib/three.js"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script type="module">
       //import * as THREE from 'three'
       //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -453,6 +465,14 @@ h3
             } else {
                 document.getElementById('game_prize_title_head').innerHTML = prize + "!";
                 document.getElementById('goto_selfie').style.display = 'inline-block';
+                document.getElementById('game_warn_title').style.display = 'block';
+                document.getElementById('warn_title').innerHTML = "Show this QR Code to Redeem Prize";
+                document.getElementById("qrcode").style.display = 'block';
+                new QRCode(document.getElementById("qrcode"), {
+                        text: "QRCODE",
+                        width: Math.max(window.innerWidth * 20 / 100, 64),
+                        height: Math.max(window.innerWidth * 20 / 100, 64)
+                    });
             }
             createUserPrize();
             is_ready_for_reveal = false;
