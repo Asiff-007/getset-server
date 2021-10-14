@@ -152,7 +152,7 @@
 
       import { GLTFLoader } from"../lib/GLTFLoader.js";
 
-      var isplayed = "<%= isplayed %>",price = "<%= price %>",priceId = "<%= price_id %>",ticketId = "<%= ticket_id %>",priceExpiry = "<%= price_expiry %>",campaignId = "<%= campaign_id %>";
+      var isplayed = "<%= isplayed %>",price = "<%= price %>",priceId = "<%= price_id %>",ticketId = "<%= ticket_id %>",priceExpiry = "<%= price_expiry %>",campaignId = "<%= campaign_id %>",url = "<%= url %>";
       const expiry = new Date(priceExpiry).toDateString();
 
       if (isplayed == 'true') {
@@ -313,7 +313,7 @@
            }
         }
         };
-        httpRequest.open('POST', `https://test.getset.shop/userPrice?campaign_id=${campaignId}&ticket_id=${ticketId}`,true);
+        httpRequest.open('POST', `${url}/userPrice?campaign_id=${campaignId}&ticket_id=${ticketId}`,true);
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
           'price_id' : priceId,
