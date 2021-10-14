@@ -16,6 +16,7 @@ module.exports = new (Class({ //jshint ignore:line
       return db.save(model,tableName)
         .then(function () {
           return {
+            ticket_id: ticketId,
             status: 'Data inserted'
           };
         })
