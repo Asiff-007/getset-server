@@ -4,6 +4,8 @@ module.exports = {
     url:'https://test.getset.shop'
   },
 
+  coupen_less: [2],
+
   game_data: new Map([
     [1,
       {

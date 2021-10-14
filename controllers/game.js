@@ -11,6 +11,22 @@ module.exports = {
     };
 
     if (req.validate(null, null, rules)) {
+      if (sys_config.coupen_less.includes(req.query.campaign_id)) {
+        game.getPrice({campaign_id:req.query.campaign_id})
+          .then(function (price) {
+            resp.render(process.cwd() +
+            sys_config.game_data.get(req.query.campaign_id).url,
+              {
+                price: price.name,
+                price_id: price.id,
+                ticket_id: '0000',
+                price_expiry: price.expiry,
+                isplayed: false,
+                campaign_id: req.query.campaign_id,
+                url: sys_config.server.url
+              });
+          });
+      }else {
       userPrice.getList({ticket_id: req.query.ticket_id})
         .then(function (userprice) {
           if (userprice.length > 0){
@@ -48,5 +64,6 @@ module.exports = {
           }
         });
     }
+  }
   }
 };
