@@ -10,25 +10,41 @@ module.exports = new (Class({ //jshint ignore:line
   create: function (model,campaignId,ticketId) {
     model.claim_status = config.price_status.not_claimed;
     model.price_won_on = util.getDate();
-    
-    return userPrice.update(ticketId,model)
-      .then(function () {
-        return db.increment('price', {given: 1}, model.price_id)
-          .then(function () {
-            return db.increment('campaign', {total_players: 1}, campaignId)
-              .then(function () {
-                return {
-                  status: 'Data inserted'
-                };
-              })
-          });
-      })
-      .catch(function () {
-        return {
-          status: 'Failed',
-          error: 'Data insertion failed'
-        };
-      });
+    model.ticket_id = ticketId; //want to add random ticket_id
+
+    if (config.coupen_less.includes(campaignId)) {
+      return db.save(model,tableName)
+        .then(function () {
+          return {
+            status: 'Data inserted'
+          };
+        })
+        .catch(function () {
+          return {
+            status: 'Failed',
+            error: 'Data insertion failed'
+          };
+        });
+    }else {
+      return userPrice.update(ticketId,model)
+        .then(function () {
+          return db.increment('price', {given: 1}, model.price_id)
+            .then(function () {
+              return db.increment('campaign', {total_players: 1}, campaignId)
+                .then(function () {
+                  return {
+                    status: 'Data inserted'
+                  };
+                })
+            });
+        })
+        .catch(function () {
+          return {
+            status: 'Failed',
+            error: 'Data insertion failed'
+          };
+        });
+    }  
   },
   verifyPrice: function (req) {
     return userPrice.getValidUserPrices(req, 'user_price', 'ticket_id')
