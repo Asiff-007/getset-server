@@ -3,6 +3,7 @@ var Class = require('js-class'),
   userPrice = require('../dao/userPrice'),
   util = require('../modules/util'),
   config = require('../resources/config'),
+  sys_config = require('../resources/sys_config'),
   tableName = 'user_price',
   db = require('../dao/db');
 
@@ -12,7 +13,7 @@ module.exports = new (Class({ //jshint ignore:line
     model.price_won_on = util.getDate();
     model.ticket_id = ticketId; //want to add random ticket_id
 
-    if (config.coupen_less.includes(campaignId)) {
+    if (sys_config.coupen_less.includes(campaignId)) {
       return db.save(model,tableName)
         .then(function () {
           return {

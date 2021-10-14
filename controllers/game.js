@@ -2,7 +2,6 @@
 
 var game = require('../models/game'),
     userPrice = require('../models/userPrice'),
-    config = require('../resources/config'),
     sys_config = require('../resources/sys_config');
 
 module.exports = {
@@ -12,9 +11,7 @@ module.exports = {
     };
 
     if (req.validate(null, null, rules)) {
-      console.log(config.coupen_less[0]);
-      if (config.coupen_less.includes(req.query.campaign_id)) {
-        console.log('coupenless worked');
+      if (sys_config.coupen_less.includes(req.query.campaign_id)) {
         game.getPrice({campaign_id:req.query.campaign_id})
           .then(function (price) {
             resp.render(process.cwd() +
