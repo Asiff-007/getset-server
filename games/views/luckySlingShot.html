@@ -470,10 +470,9 @@ h3
                 document.getElementById('game_prize_title_head').innerHTML = prize + "!";
                 document.getElementById('goto_selfie').style.display = 'inline-block';
                 document.getElementById('game_warn_title').style.display = 'block';
-                document.getElementById('warn_title').innerHTML = "Show this QR Code to Redeem Prize";
+                document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
                 document.getElementById("qrcode").style.display = 'block';
                 var unique_id = uid();
-                console.log("code :: ", unique_id);
                 new QRCode(document.getElementById("qrcode"), {
                         text: unique_id,
                         width: Math.max(window.innerWidth * 20 / 100, 64),
