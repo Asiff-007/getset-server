@@ -3,13 +3,12 @@
 var game = require('../models/game'),
     userPrice = require('../models/userPrice'),
     util = require('../modules/util'),
-    customId = require("custom-id"),
+    customId = require('custom-id'),
     sys_config = require('../resources/sys_config');
 
 module.exports = {
   index: function (req, resp) {
-    var now = util.getDate().toISOString();
-    var ticketId = customId({uniqueId: now});
+    var ticketId = customId({uniqueId: util.getDate().toISOString()});
     var rules = {
       campaign_id: {type: 'int', required: true}
     };
