@@ -19,7 +19,7 @@ module.exports = {
               {
                 price: price.name,
                 price_id: price.id,
-                ticket_id: '0000',
+                ticket_id: '29',
                 price_expiry: price.expiry,
                 isplayed: false,
                 campaign_id: req.query.campaign_id,
