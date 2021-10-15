@@ -26,6 +26,7 @@ module.exports = {
     [2,
       {
         url: '/games/views/luckySlingShot.html',
+        play_validity_in_days: 0.0833333 / 24, // 5 minutes
         selfie_frame_data: {
           frame_path: '../assets/popees_frame.png',
           data: {
