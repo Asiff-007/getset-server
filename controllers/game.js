@@ -26,7 +26,10 @@ module.exports = {
                 price_expiry: price.expiry,
                 isplayed: false,
                 campaign_id: req.query.campaign_id,
-                url: sys_config.server.url
+                url: sys_config.server.url,
+                play_validity_days: sys_config.game_data
+                                      .get(req.query.campaign_id)
+                                      .play_validity_in_days
               });
           });
       }else {

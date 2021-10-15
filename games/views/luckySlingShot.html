@@ -178,7 +178,7 @@ h3
       var price_expiry = "<%= price_expiry %>";
       var url = "<%= url %>";
       const date_expiry = new Date(price_expiry).toDateString();
-      const play_validity_in_days = 0.0833333 / 24; // 5 minutes
+      const play_validity_in_days = <%= play_validity_days %>;
       const prize_validity_in_days = 30;
 
       var is_played_cookie = getCookie("is_played");
