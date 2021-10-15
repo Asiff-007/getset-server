@@ -31,7 +31,10 @@ body
     justify-content: center;
     z-index: 999;
 }
-
+.selfie_canvas {
+    margin: 0;
+    width: 100vw;
+}
 .video_stream
 {
     object-fit: fill;
@@ -109,11 +112,12 @@ body
     <div class="container">
         <div class="video_stream">
             <video id="video" autoplay></video>
-            <canvas id="canvas" width="<%= width %>" height="<%= height %>" style="display: none;"></canvas>
+            <canvas class="selfie_canvas" id="canvas" width="<%= width %>" height="<%= height %>" style="display: none;"></canvas>
         </div>
         <div class="footer">
             <button id="snap" class="bn632-hover bn27">Snap Photo</button>
-            <button id="download" style="display: none;" class="bn632-hover bn27" onclick=download()>Download</button>
+            <button id="share_to" style="display: none;" class="bn632-hover bn27">Share</button>
+            <button id="retake" style="display: none;" class="bn632-hover bn27" onclick="location.reload()">Retake</button>
         </div>
     </div>
     <script>
@@ -133,11 +137,36 @@ body
             height: "<%= inner_height %>"
         };
 
-        function download() {
+        var ratio = img_resolution.height / img_resolution.width;
+
+        const btn = document.getElementById('share_to');
+        btn.addEventListener('click', shareTo);
+        async function shareTo() {
             var link = document.createElement('a');
-            link.download = 'winner_selfie.jpg';
+            link.download = 'winner_selfie.png';
             link.href = document.getElementById('canvas').toDataURL();
-            link.click();
+
+            const blob = await (await fetch(link.href)).blob();
+            const filesArray = [
+                new File(
+                [blob],
+                link.download,
+                {
+                    type: blob.type,
+                    lastModified: new Date().getTime()
+                }
+                )
+            ];
+
+            var shareData = {
+                files: filesArray
+            };
+
+            if (navigator.canShare && navigator.canShare(shareData)){
+                await navigator.share(shareData);
+            } else {
+                link.click();
+            }
         }
 
         window.addEventListener("DOMContentLoaded", function() {
@@ -190,8 +219,10 @@ body
                                         inner_frame.offset_x, inner_frame.offset_y,
                                         inner_frame.width, inner_frame.height);
                     context.drawImage(frame_img, 0, 0, img_resolution.width, img_resolution.height);
-                    document.getElementById('download').style.display = 'block';
+                    document.getElementById('share_to').style.display = 'block';
+                    document.getElementById('retake').style.display = 'block';
                     document.getElementById('canvas').style.display = 'block';
+                    document.getElementById('canvas').style.height = window.innerWidth * ratio;
                 }
 			});
 		}, false);
