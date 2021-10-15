@@ -262,7 +262,6 @@ h3
             }
           }
         };
-        // todo : move url to config
         httpRequest.open('POST', `${url}/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}`,true);
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
