@@ -174,7 +174,7 @@ h3
       var campaign_id = "<%= campaign_id %>";
       var is_played = "<%= isplayed %>";
       var price_id = "<%= price_id %>";
-      var ticket_id = "<%= ticket_id %>";
+      var ticket_id;
       var price_expiry = "<%= price_expiry %>";
       var url = "<%= url %>";
       const date_expiry = new Date(price_expiry).toDateString();
@@ -549,6 +549,7 @@ h3
                 if (isChrome && !isIOS()) {
                     document.getElementById('goto_selfie').style.display = 'inline-block';
                 }
+                ticket_id = uid();
                 createUserPrize();
             }
             is_ready_for_reveal = false;
