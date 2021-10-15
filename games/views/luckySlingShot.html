@@ -216,6 +216,25 @@ h3
           return (Date.now().toString(36) + Math.random().toString(36).substr(2)).toUpperCase();
       };
 
+      var isChromium = window.chrome;
+      var winNav = window.navigator;
+      var vendorName = winNav.vendor;
+      var isOpera = typeof window.opr !== "undefined";
+      var isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+      var isIOSChrome = winNav.userAgent.match("CriOS");
+      var isChrome = false;
+
+      if (isIOSChrome) {
+          // Chrome in iOS
+          isChrome = true;
+      } else if (isChromium !== null &&
+        typeof isChromium !== "undefined" &&
+        vendorName === "Google Inc." &&
+        isOpera === false &&
+        isIEedge === false) {
+            isChrome = true;
+      }
+
       // Lights
       const pointLight = new THREE.HemisphereLight(0xffeeb1, 0x080820, 2);
       const ambientLight = new THREE.AmbientLight(0xffffff);
@@ -468,7 +487,9 @@ h3
                 document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
             } else {
                 document.getElementById('game_prize_title_head').innerHTML = prize + "!";
-                document.getElementById('goto_selfie').style.display = 'inline-block';
+                if (isChrome) {
+                    document.getElementById('goto_selfie').style.display = 'inline-block';
+                }
                 document.getElementById('game_warn_title').style.display = 'block';
                 document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
                 document.getElementById("qrcode").style.display = 'block';
