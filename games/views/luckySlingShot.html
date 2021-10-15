@@ -174,7 +174,7 @@ h3
       var campaign_id = "<%= campaign_id %>";
       var is_played = "<%= isplayed %>";
       var price_id = "<%= price_id %>";
-      var ticket_id = "<%= ticket_id %>";
+      var ticket_id = "1234";
       var price_expiry = "<%= price_expiry %>";
       var url = "<%= url %>";
       const date_expiry = new Date(price_expiry).toDateString();
@@ -324,6 +324,19 @@ h3
         httpRequest.onreadystatechange = function() {
           if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
             if (httpRequest.status == 200) {
+                // var resp = JSON.parse(httpRequest.response);
+                // ticket_id = resp.ticket_id;
+                new QRCode(document.getElementById("qrcode"), {
+                        text: ticket_id,
+                        width: Math.max(window.innerWidth * 20 / 100, 64),
+                        height: Math.max(window.innerWidth * 20 / 100, 64)
+                    });
+                setCookie("qr_code", ticket_id, prize_validity_in_days);
+                setCookie("prize", prize, prize_validity_in_days);
+                setCookie("is_played", true, play_validity_in_days);
+                document.getElementById('game_warn_title').style.display = 'block';
+                document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
+                document.getElementById("qrcode").style.display = 'block';
                 return
             }
             else if (httpRequest.status == 400) {
@@ -530,25 +543,14 @@ h3
             if (prize == "") {
                 document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
                 document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
+                setCookie("is_played", true, play_validity_in_days);
             } else {
                 document.getElementById('game_prize_title_head').innerHTML = prize + "!";
                 if (isChrome && !isIOS()) {
                     document.getElementById('goto_selfie').style.display = 'inline-block';
                 }
-                document.getElementById('game_warn_title').style.display = 'block';
-                document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
-                document.getElementById("qrcode").style.display = 'block';
-                var unique_id = uid();
-                new QRCode(document.getElementById("qrcode"), {
-                        text: unique_id,
-                        width: Math.max(window.innerWidth * 20 / 100, 64),
-                        height: Math.max(window.innerWidth * 20 / 100, 64)
-                    });
-                setCookie("qr_code", unique_id, prize_validity_in_days);
-                setCookie("prize", prize, prize_validity_in_days);
+                createUserPrize();
             }
-            setCookie("is_played", true, play_validity_in_days);
-            createUserPrize();
             is_ready_for_reveal = false;
           }
       }
