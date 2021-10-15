@@ -168,15 +168,15 @@ h3
       //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
       //import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
       import { GLTFLoader } from"../lib/GLTFLoader.js";
-
+      
       var prize = "<%= price %>";
       var campaign_id = "<%= campaign_id %>";
       var is_played = "<%= isplayed %>";
       var price_id = "<%= price_id %>";
       var ticket_id = "<%= ticket_id %>";
       var price_expiry = "<%= price_expiry %>";
+      var date_expiry = new Date(price_expiry).toDateString();
       var url = "<%= url %>";
-      const date_expiry = new Date(price_expiry).toDateString();
 
       var ball_ref;
       var band_ref;
@@ -191,6 +191,8 @@ h3
       var target_pos;
       var mixer;
       var is_ready_for_reveal = false;
+      var validity;
+      var resp;
 
       const glb_loader = new GLTFLoader();
       const canvas = document.querySelector('canvas.webgl');
@@ -279,6 +281,17 @@ h3
 
       document.getElementById('goto_selfie').style.display = 'none';
 
+      let cookie =document.cookie.split(',');
+
+      if (document.cookie.length > 0) {
+        let cookiePrize = cookie[0].split('=');
+        let cookieTicketId = cookie[1].split('=');
+        is_played = 'true';
+        prize = cookiePrize[1];
+        ticket_id = cookieTicketId[1];
+        date_expiry = new Date(cookie[3]).toLocaleString();
+      }
+
       if (is_played == "true") {
           scene.background = spaceTexture;
           document.getElementById('game_warn_title').style.display = 'block';
@@ -300,6 +313,10 @@ h3
         httpRequest.onreadystatechange = function() {
           if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
             if (httpRequest.status == 200) {
+                resp = JSON.parse(httpRequest.response);
+                ticket_id = resp.ticket_id;
+                validity = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toUTCString();
+                document.cookie = "prize = " + prize + ", ticketId = " + ticket_id + ", validity = " + validity + "; expires=" + validity;
                 return
             }
             else if (httpRequest.status == 400) {
