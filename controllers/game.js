@@ -2,10 +2,15 @@
 
 var game = require('../models/game'),
     userPrice = require('../models/userPrice'),
+    util = require('../modules/util'),
+    Hashids = require('hashids/cjs'),
     sys_config = require('../resources/sys_config');
 
 module.exports = {
   index: function (req, resp) {
+    var now = util.getDate().toISOString();
+    var hashids = new Hashids(now, 8);
+    var ticketId = hashids.encode(1);
     var rules = {
       campaign_id: {type: 'int', required: true}
     };
@@ -19,7 +24,7 @@ module.exports = {
               {
                 price: price.name,
                 price_id: price.id,
-                ticket_id: '29',
+                ticket_id: ticketId,
                 price_expiry: price.expiry,
                 isplayed: false,
                 campaign_id: req.query.campaign_id,
