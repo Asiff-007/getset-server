@@ -235,6 +235,19 @@ h3
             isChrome = true;
       }
 
+      function isIOS () {
+          return [
+              'iPad Simulator',
+              'iPhone Simulator',
+              'iPod Simulator',
+              'iPad',
+              'iPhone',
+              'iPod'
+            ].includes(navigator.platform)
+            // iPad on iOS 13 detection
+            || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+      }
+
       // Lights
       const pointLight = new THREE.HemisphereLight(0xffeeb1, 0x080820, 2);
       const ambientLight = new THREE.AmbientLight(0xffffff);
@@ -487,7 +500,7 @@ h3
                 document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
             } else {
                 document.getElementById('game_prize_title_head').innerHTML = prize + "!";
-                if (isChrome) {
+                if (isChrome && !isIOS()) {
                     document.getElementById('goto_selfie').style.display = 'inline-block';
                 }
                 document.getElementById('game_warn_title').style.display = 'block';
