@@ -13,7 +13,7 @@ module.exports = new (Class({ //jshint ignore:line
     model.price_won_on = util.getDate();
     model.ticket_id = ticketId; //want to add random ticket_id
 
-    if (sys_config.coupen_less.includes(campaignId)) {
+    if (sys_config.coupen_less.includes(parseInt(campaignId))) {
       return db.save(model,tableName)
         .then(function () {
           return {
