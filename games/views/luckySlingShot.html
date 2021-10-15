@@ -156,12 +156,13 @@ h3
     <div class="footer">
         <a href="/camera_capture?campaign_id=<%= campaign_id %>"><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
         <div id="qrcode" class="qrcode" style="display: none;"></div>
-        <div id="game_warn_title" class="warn_text" style="display: none;"><h4 id='warn_title' class="game_text">You have already played with this coupon,<br>Try with another</h4></div>
-        <button id="startGame" class="bn632-hover bn27">Play game</button>
+        <div id="game_warn_title" class="warn_text" style="display: none;"><h4 id='warn_title' class="game_text">You have already played once,<br>Try again after 1 Hour</h4></div>
+        <button id="startGame" style="display: none;" class="bn632-hover bn27">Play game</button>
     </div>
 
     <canvas class="webgl"></canvas>
     <script src="../lib/three.js"></script>
+    <script src="../lib/cookie.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script type="module">
       //import * as THREE from 'three'
@@ -177,6 +178,12 @@ h3
       var price_expiry = "<%= price_expiry %>";
       var url = "<%= url %>";
       const date_expiry = new Date(price_expiry).toDateString();
+      const play_validity_in_days = 0.0333333 / 24; // 2 minutes
+      const prize_validity_in_days = 30;
+
+      var is_played_cookie = getCookie("is_played");
+      var qr_code_cookie = getCookie("qr_code");
+      var prize_cookie = getCookie("prize");
 
       var ball_ref;
       var band_ref;
@@ -279,20 +286,37 @@ h3
 
       document.getElementById('goto_selfie').style.display = 'none';
 
-      if (is_played == "true") {
-          scene.background = spaceTexture;
-          document.getElementById('game_warn_title').style.display = 'block';
-          document.getElementById('startGame').style.display = 'none';
-          document.getElementById('game_prize_title').style.display = 'block';
-          document.getElementById('game_prize_desc').style.display = 'block';
-          if (prize == "") {
+      if (qr_code_cookie == "") {
+          if (is_played_cookie == "true") {
+              scene.background = spaceTexture;
+              document.getElementById('game_warn_title').style.display = 'block';
+              document.getElementById('startGame').style.display = 'none';
+              document.getElementById('game_prize_desc').style.display = 'block';
+              document.getElementById('game_prize_title').style.display = 'block';
               document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
               document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
           } else {
-              document.getElementById('game_prize_title_head').innerHTML = prize + "!";
+              document.getElementById('startGame').style.display = 'block';
+          }
+      } else {
+          scene.background = spaceTexture;
+          document.getElementById('game_prize_desc').style.display = 'block';
+          document.getElementById('game_prize_title').style.display = 'block';
+          document.getElementById('game_prize_title_head').innerHTML = prize_cookie + "!";
+          document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
+          document.getElementById('game_warn_title').style.display = 'block';
+          document.getElementById("qrcode").style.display = 'block';
+          new QRCode(document.getElementById("qrcode"), {
+              text: qr_code_cookie,
+              width: Math.max(window.innerWidth * 20 / 100, 64),
+              height: Math.max(window.innerWidth * 20 / 100, 64)
+            });
+          if (is_played_cookie == "true") {
+              document.getElementById('startGame').style.display = 'none';
+          } else {
+              document.getElementById('startGame').style.display = 'block';
           }
       }
-
     //   const lightHelper = new THREE.PointLightHelper(pointLight);
     //   scene.add(lightHelper);
       function createUserPrize () {
@@ -427,6 +451,14 @@ h3
         scene.background = spaceTexture;
 
         document.getElementById('startGame').style.display = 'none';
+        document.getElementById('qrcode').style.display = 'none';
+        document.getElementById('game_prize_desc').style.display = 'none';
+        document.getElementById('game_warn_title').style.display = 'none';
+        document.getElementById('game_prize_title').style.display = 'none';
+        const myNode = document.getElementById("qrcode");
+        while (myNode.lastElementChild) {
+            myNode.removeChild(myNode.lastElementChild);
+        }
         is_ready = true;
       }
 
@@ -512,7 +544,10 @@ h3
                         width: Math.max(window.innerWidth * 20 / 100, 64),
                         height: Math.max(window.innerWidth * 20 / 100, 64)
                     });
+                setCookie("qr_code", unique_id, prize_validity_in_days);
+                setCookie("prize", prize, prize_validity_in_days);
             }
+            setCookie("is_played", true, play_validity_in_days);
             createUserPrize();
             is_ready_for_reveal = false;
           }
