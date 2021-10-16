@@ -309,8 +309,8 @@ h3
           document.getElementById("qrcode").style.display = 'block';
           new QRCode(document.getElementById("qrcode"), {
               text: qr_code_cookie,
-              width: Math.max(window.innerWidth * 20 / 100, 64),
-              height: Math.max(window.innerWidth * 20 / 100, 64)
+              width: 200,
+              height: 200
             });
           if (is_played_cookie == "true") {
               document.getElementById('startGame').style.display = 'none';
@@ -325,12 +325,13 @@ h3
         httpRequest.onreadystatechange = function() {
           if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
             if (httpRequest.status == 200) {
+                var qr_code = `${url}/game?campaign_id=${campaign_id}&ticket_id=${ticket_id}`;
                 new QRCode(document.getElementById("qrcode"), {
-                        text: ticket_id,
-                        width: Math.max(window.innerWidth * 20 / 100, 64),
-                        height: Math.max(window.innerWidth * 20 / 100, 64)
+                        text: qr_code,
+                        width: 128,
+                        height: 128
                     });
-                setCookie("qr_code", escape(ticket_id), prize_validity_in_days);
+                setCookie("qr_code", escape(qr_code), prize_validity_in_days);
                 setCookie("prize", escape(prize), prize_validity_in_days);
                 setCookie("is_played", true, play_validity_in_days);
                 document.getElementById('game_warn_title').style.display = 'block';
