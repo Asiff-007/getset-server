@@ -58,7 +58,9 @@ body
 
 h2, h1
 {
-    font-size: 3em;
+    font-size: 1.5em;
+    padding-left: 30px;
+    padding-right: 30px;
 }
 
 h3
@@ -327,8 +329,8 @@ h3
                         width: Math.max(window.innerWidth * 20 / 100, 64),
                         height: Math.max(window.innerWidth * 20 / 100, 64)
                     });
-                setCookie("qr_code", ticket_id, prize_validity_in_days);
-                setCookie("prize", prize, prize_validity_in_days);
+                setCookie("qr_code", escape(ticket_id), prize_validity_in_days);
+                setCookie("prize", escape(prize), prize_validity_in_days);
                 setCookie("is_played", true, play_validity_in_days);
                 document.getElementById('game_warn_title').style.display = 'block';
                 document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
