@@ -58,7 +58,9 @@ body
 
 h2, h1
 {
-    font-size: 3em;
+    font-size: 1.5em;
+    padding-left: 30px;
+    padding-right: 30px;
 }
 
 h3
@@ -156,12 +158,13 @@ h3
     <div class="footer">
         <a href="/camera_capture?campaign_id=<%= campaign_id %>"><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
         <div id="qrcode" class="qrcode" style="display: none;"></div>
-        <div id="game_warn_title" class="warn_text" style="display: none;"><h4 id='warn_title' class="game_text">You have already played with this coupon,<br>Try with another</h4></div>
-        <button id="startGame" class="bn632-hover bn27">Play game</button>
+        <div id="game_warn_title" class="warn_text" style="display: none;"><h4 id='warn_title' class="game_text">You have already played once,<br>Try again after 1 Hour</h4></div>
+        <button id="startGame" style="display: none;" class="bn632-hover bn27">Play game</button>
     </div>
 
     <canvas class="webgl"></canvas>
     <script src="../lib/three.js"></script>
+    <script src="../lib/cookie.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script type="module">
       //import * as THREE from 'three'
@@ -177,6 +180,13 @@ h3
       var price_expiry = "<%= price_expiry %>";
       var date_expiry = new Date(price_expiry).toDateString();
       var url = "<%= url %>";
+      const date_expiry = new Date(price_expiry).toDateString();
+      const play_validity_in_days = <%= play_validity_days %>;
+      const prize_validity_in_days = 30;
+
+      var is_played_cookie = getCookie("is_played");
+      var qr_code_cookie = getCookie("qr_code");
+      var prize_cookie = getCookie("prize");
 
       var ball_ref;
       var band_ref;
@@ -213,10 +223,6 @@ h3
       var current_pos = new THREE.Vector2();
 
       var ball_speed = -50;
-
-      const uid = function() {
-          return (Date.now().toString(36) + Math.random().toString(36).substr(2)).toUpperCase();
-      };
 
       var isChromium = window.chrome;
       var winNav = window.navigator;
@@ -281,31 +287,37 @@ h3
 
       document.getElementById('goto_selfie').style.display = 'none';
 
-      let cookie =document.cookie.split(',');
-
-      if (document.cookie.length > 0) {
-        let cookiePrize = cookie[0].split('=');
-        let cookieTicketId = cookie[1].split('=');
-        is_played = 'true';
-        prize = cookiePrize[1];
-        ticket_id = cookieTicketId[1];
-        date_expiry = new Date(cookie[3]).toLocaleString();
-      }
-
-      if (is_played == "true") {
-          scene.background = spaceTexture;
-          document.getElementById('game_warn_title').style.display = 'block';
-          document.getElementById('startGame').style.display = 'none';
-          document.getElementById('game_prize_title').style.display = 'block';
-          document.getElementById('game_prize_desc').style.display = 'block';
-          if (prize == "") {
+      if (qr_code_cookie == "") {
+          if (is_played_cookie == "true") {
+              scene.background = spaceTexture;
+              document.getElementById('game_warn_title').style.display = 'block';
+              document.getElementById('startGame').style.display = 'none';
+              document.getElementById('game_prize_desc').style.display = 'block';
+              document.getElementById('game_prize_title').style.display = 'block';
               document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
               document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
           } else {
-              document.getElementById('game_prize_title_head').innerHTML = prize + "!";
+              document.getElementById('startGame').style.display = 'block';
+          }
+      } else {
+          scene.background = spaceTexture;
+          document.getElementById('game_prize_desc').style.display = 'block';
+          document.getElementById('game_prize_title').style.display = 'block';
+          document.getElementById('game_prize_title_head').innerHTML = prize_cookie + "!";
+          document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
+          document.getElementById('game_warn_title').style.display = 'block';
+          document.getElementById("qrcode").style.display = 'block';
+          new QRCode(document.getElementById("qrcode"), {
+              text: qr_code_cookie,
+              width: Math.max(window.innerWidth * 20 / 100, 64),
+              height: Math.max(window.innerWidth * 20 / 100, 64)
+            });
+          if (is_played_cookie == "true") {
+              document.getElementById('startGame').style.display = 'none';
+          } else {
+              document.getElementById('startGame').style.display = 'block';
           }
       }
-
     //   const lightHelper = new THREE.PointLightHelper(pointLight);
     //   scene.add(lightHelper);
       function createUserPrize () {
@@ -313,11 +325,18 @@ h3
         httpRequest.onreadystatechange = function() {
           if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
             if (httpRequest.status == 200) {
-                resp = JSON.parse(httpRequest.response);
-                ticket_id = resp.ticket_id;
-                validity = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toUTCString();
-                document.cookie = "prize = " + prize + ", ticketId = " + ticket_id + ", validity = " + validity + "; expires=" + validity;
-                return
+                new QRCode(document.getElementById("qrcode"), {
+                        text: ticket_id,
+                        width: Math.max(window.innerWidth * 20 / 100, 64),
+                        height: Math.max(window.innerWidth * 20 / 100, 64)
+                    });
+                setCookie("qr_code", escape(ticket_id), prize_validity_in_days);
+                setCookie("prize", escape(prize), prize_validity_in_days);
+                setCookie("is_played", true, play_validity_in_days);
+                document.getElementById('game_warn_title').style.display = 'block';
+                document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
+                document.getElementById("qrcode").style.display = 'block';
+                return;
             }
             else if (httpRequest.status == 400) {
                 console.log('There was an error 400');
@@ -444,6 +463,14 @@ h3
         scene.background = spaceTexture;
 
         document.getElementById('startGame').style.display = 'none';
+        document.getElementById('qrcode').style.display = 'none';
+        document.getElementById('game_prize_desc').style.display = 'none';
+        document.getElementById('game_warn_title').style.display = 'none';
+        document.getElementById('game_prize_title').style.display = 'none';
+        const myNode = document.getElementById("qrcode");
+        while (myNode.lastElementChild) {
+            myNode.removeChild(myNode.lastElementChild);
+        }
         is_ready = true;
       }
 
@@ -515,22 +542,14 @@ h3
             if (prize == "") {
                 document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
                 document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
+                setCookie("is_played", true, play_validity_in_days);
             } else {
                 document.getElementById('game_prize_title_head').innerHTML = prize + "!";
                 if (isChrome && !isIOS()) {
                     document.getElementById('goto_selfie').style.display = 'inline-block';
                 }
-                document.getElementById('game_warn_title').style.display = 'block';
-                document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
-                document.getElementById("qrcode").style.display = 'block';
-                var unique_id = uid();
-                new QRCode(document.getElementById("qrcode"), {
-                        text: unique_id,
-                        width: Math.max(window.innerWidth * 20 / 100, 64),
-                        height: Math.max(window.innerWidth * 20 / 100, 64)
-                    });
+                createUserPrize();
             }
-            createUserPrize();
             is_ready_for_reveal = false;
           }
       }
@@ -672,5 +691,29 @@ h3
 
       tick();
     </script>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyBgEpR_BExdEkXN-hQZKC2LSsh9qIbB29w",
+      authDomain: "getset-for-shops.firebaseapp.com",
+      projectId: "getset-for-shops",
+      storageBucket: "getset-for-shops.appspot.com",
+      messagingSenderId: "733025079803",
+      appId: "1:733025079803:web:fc76e53ef4d25971f4fb5e",
+      measurementId: "G-MMMQEK1JEC"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
 </body>
 </html>
