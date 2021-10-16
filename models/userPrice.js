@@ -16,10 +16,16 @@ module.exports = new (Class({ //jshint ignore:line
     if (sys_config.coupen_less.includes(parseInt(campaignId))) {
       return db.save(model,tableName)
         .then(function () {
-          return {
-            ticket_id: ticketId,
-            status: 'Data inserted'
-          };
+          return db.increment('price', {given: 1}, model.price_id)
+          .then(function () {
+            return db.increment('campaign', {total_players: 1}, campaignId)
+              .then(function () {
+                return {
+                  ticket_id: ticketId,
+                  status: 'Data inserted'
+                };
+              })
+            })
         })
         .catch(function () {
           return {
