@@ -2,14 +2,14 @@
 var Class = require('js-class'),
   price = require('./price'),
   config = require('../resources/config'),
+  sys_config = require('../resources/sys_config'),
   _ = require('lodash');
 
 module.exports = new (Class({ //jshint ignore:line
   getPrice: function (req) {
     var expiryFactor = 1,
       priceIndexArray = [],
-      factor = 1,
-      priceGivenRatio = 2;
+      factor = 1;
 
     return price.getList(req)
       .then(function (priceList) {
@@ -20,7 +20,7 @@ module.exports = new (Class({ //jshint ignore:line
           expiryFactor++;
           _.times(probability, function () {
             priceIndexArray.push(key);
-            if (factor % priceGivenRatio === 0) {
+            if (factor % sys_config.game_data.get(req.campaign_id).priceGivenRatio === 0) {
               priceIndexArray.push(config.price_status.no_price);
             }
             factor++;
