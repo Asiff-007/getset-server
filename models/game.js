@@ -22,7 +22,7 @@ module.exports = new (Class({ //jshint ignore:line
           expiryFactor++;
           _.times(probability, function () {
             priceIndexArray.push(key);
-            if (factor % sys_config.game_data.get(req.campaign_id).priceGivenRatio === 0) {
+            if (factor % priceGivenRatio === 0) {
               priceIndexArray.push(config.price_status.no_price);
             }
             factor++;
