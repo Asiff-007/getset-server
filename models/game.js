@@ -9,11 +9,13 @@ module.exports = new (Class({ //jshint ignore:line
   getPrice: function (req) {
     var expiryFactor = 1,
       priceIndexArray = [],
+      priceGivenRatio,
       factor = 1;
 
     return price.getList(req)
       .then(function (priceList) {
         priceList = _.orderBy(priceList, ['expiry'], 'desc');
+        priceGivenRatio = sys_config.game_data.get(req.campaign_id).priceGivenRatio != null ? sys_config.game_data.get(req.campaign_id).priceGivenRatio : config.price_status.default_price_ratio;
 
         _.each(priceList, function (price, key) {
           var probability = expiryFactor * (price.count - price.given);
