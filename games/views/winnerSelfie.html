@@ -31,7 +31,10 @@ body
     justify-content: center;
     z-index: 999;
 }
-
+.selfie_canvas {
+    margin: 0;
+    width: 100vw;
+}
 .video_stream
 {
     object-fit: fill;
@@ -109,11 +112,12 @@ body
     <div class="container">
         <div class="video_stream">
             <video id="video" autoplay></video>
-            <canvas id="canvas" width="<%= width %>" height="<%= height %>" style="display: none;"></canvas>
+            <canvas class="selfie_canvas" id="canvas" width="<%= width %>" height="<%= height %>" style="display: none;"></canvas>
         </div>
         <div class="footer">
             <button id="snap" class="bn632-hover bn27">Snap Photo</button>
             <button id="share_to" style="display: none;" class="bn632-hover bn27">Share</button>
+            <button id="retake" style="display: none;" class="bn632-hover bn27" onclick="location.reload()">Retake</button>
         </div>
     </div>
     <script>
@@ -132,6 +136,8 @@ body
             width: "<%= inner_width %>",
             height: "<%= inner_height %>"
         };
+
+        var ratio = img_resolution.height / img_resolution.width;
 
         const btn = document.getElementById('share_to');
         btn.addEventListener('click', shareTo);
@@ -214,7 +220,9 @@ body
                                         inner_frame.width, inner_frame.height);
                     context.drawImage(frame_img, 0, 0, img_resolution.width, img_resolution.height);
                     document.getElementById('share_to').style.display = 'block';
+                    document.getElementById('retake').style.display = 'block';
                     document.getElementById('canvas').style.display = 'block';
+                    document.getElementById('canvas').style.height = window.innerWidth * ratio;
                 }
 			});
 		}, false);

@@ -4,6 +4,8 @@ module.exports = {
     url:'https://test.getset.shop'
   },
 
+  coupen_less: [2],
+
   game_data: new Map([
     [1,
       {
@@ -24,6 +26,7 @@ module.exports = {
     [2,
       {
         url: '/games/views/luckySlingShot.html',
+        play_validity_in_days: 0.0833333 / 24, // 5 minutes
         selfie_frame_data: {
           frame_path: '../assets/popees_frame.png',
           data: {
