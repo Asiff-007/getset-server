@@ -51,7 +51,8 @@ var sys_config = require('./sys_config'),
         claimed: 'Claimed',
         active: 'Active',
         inactive: 'Inactive',
-        no_price: 'Noprize'
+        no_price: 'Noprize',
+        default_price_given_ratio: 5
       },
 
       campaign_status: {
