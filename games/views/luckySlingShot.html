@@ -52,12 +52,6 @@ body
     background-color: white;
 }
 
-@media screen and (prefers-color-scheme: dark) {
-  .qrcode {
-    background-color: white;
-  }
-}
-
 .warn_text {
     padding: 1em;
 }
@@ -125,16 +119,6 @@ h3
     box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
 }
 
-.blink {
-  animation: blinker 1s linear infinite;
-}
-
-@keyframes blinker {
-  50% {
-    opacity: 0;
-  }
-}
-
 @keyframes bn13bouncy {
     0% {
         top: 0em;
@@ -169,8 +153,7 @@ h3
     <div class="main">
         <div id="game_prize_desc" style="display: none;"><h2 id="game_prize_title_desc" class="game_text win_title">You have won</h2></div>
         <div id="game_prize_title" style="display: none;"><h1 id="game_prize_title_head" class="game_text win_desc"></h1></div>
-        <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3>
-        <h3 id="tutorial_text" style="display: none;" class="game_text win_desc blink">Swipe downwards to<br>shoot ball</h3>
+        <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
     </div>
     <div class="footer">
         <a href="/camera_capture?campaign_id=<%= campaign_id %>"><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
@@ -195,6 +178,7 @@ h3
       var price_id = "<%= price_id %>";
       var ticket_id = "<%= ticket_id %>";
       var price_expiry = "<%= price_expiry %>";
+      var date_expiry = new Date(price_expiry).toDateString();
       var url = "<%= url %>";
       const date_expiry = new Date(price_expiry).toDateString();
       const play_validity_in_days = <%= play_validity_days %>;
@@ -219,8 +203,14 @@ h3
       var is_ready_for_reveal = false;
       var validity;
       var resp;
-      var tutorial_complete = false;
-      var sprite;
+
+      var buttonPress = new Audio('../assets/sound/button_click.wav');
+      var bgMusic = new Audio('../assets/sound/lucky_slingshot/bg_music.mp3');
+      var winning = new Audio('../assets/sound/winning.mp3');
+      var boxHit = new Audio('../assets/sound/lucky_slingshot/box_hit.wav');
+      var emptyBox = new Audio('../assets/sound/empty_box.wav');
+      var ballRelease = new Audio('../assets/sound/lucky_slingshot/ball_release.mp3');
+      var wind = new Audio('../assets/sound/lucky_slingshot/wind.mp3');
 
       const glb_loader = new GLTFLoader();
       const canvas = document.querySelector('canvas.webgl');
@@ -327,8 +317,8 @@ h3
           document.getElementById("qrcode").style.display = 'block';
           new QRCode(document.getElementById("qrcode"), {
               text: qr_code_cookie,
-              width: 200,
-              height: 200
+              width: Math.max(window.innerWidth * 20 / 100, 64),
+              height: Math.max(window.innerWidth * 20 / 100, 64)
             });
           if (is_played_cookie == "true") {
               document.getElementById('startGame').style.display = 'none';
@@ -343,13 +333,12 @@ h3
         httpRequest.onreadystatechange = function() {
           if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
             if (httpRequest.status == 200) {
-                var qr_code = `${url}/game?campaign_id=${campaign_id}&ticket_id=${ticket_id}`;
                 new QRCode(document.getElementById("qrcode"), {
-                        text: qr_code,
-                        width: 128,
-                        height: 128
+                        text: ticket_id,
+                        width: Math.max(window.innerWidth * 20 / 100, 64),
+                        height: Math.max(window.innerWidth * 20 / 100, 64)
                     });
-                setCookie("qr_code", escape(qr_code), prize_validity_in_days);
+                setCookie("qr_code", escape(ticket_id), prize_validity_in_days);
                 setCookie("prize", escape(prize), prize_validity_in_days);
                 setCookie("is_played", true, play_validity_in_days);
                 document.getElementById('game_warn_title').style.display = 'block';
@@ -471,6 +460,10 @@ h3
           }
           is_ready = false;
           ball_ref.alive = true;
+          ballRelease.volume = 0.6;
+          ballRelease.play();
+          wind.loop = true;
+          wind.play();
       }
 
       function startGame() {
@@ -478,24 +471,14 @@ h3
         populateGift();
         addSlingshot();
         addBall();
+        buttonPress.play();
+        bgMusic.loop = true;
+        bgMusic.volume = 0.5;
+        bgMusic.play();
 
         scene.background = spaceTexture;
 
         document.getElementById('startGame').style.display = 'none';
-        if (getCookie("tutorial_complete") == '') {
-            const map = new THREE.TextureLoader().load('../assets/lucky_slingshot/hand.png');
-            const material = new THREE.SpriteMaterial({map: map});
-            sprite = new THREE.Sprite( material );
-
-            sprite.scale.set(.5, .5);
-            sprite.position.set(.3, -.5);
-
-            sprite.needs_update = true;
-            scene.add(sprite);
-            document.getElementById('tutorial_text').style.display = 'block';
-        } else {
-            tutorial_complete = true;
-        }
         document.getElementById('qrcode').style.display = 'none';
         document.getElementById('game_prize_desc').style.display = 'none';
         document.getElementById('game_warn_title').style.display = 'none';
@@ -540,17 +523,6 @@ h3
 
 
       function handleMove(point) {
-          if (!tutorial_complete) {
-              document.getElementById('tutorial_text').style.display = 'none';
-              setCookie("tutorial_complete", true);
-
-              if (sprite & sprite.needs_update) {
-                  sprite.needs_update = false;
-                  scene.remove(sprite);
-                  sprite.remove();
-              }
-              tutorial_complete = true;
-          }
           current_pos.x = point.x;
           current_pos.y = point.y;
           
@@ -583,11 +555,16 @@ h3
             document.getElementById('game_prize_reveal_prompt').style.display = 'none';
             document.getElementById('game_prize_desc').style.display = 'block';
             document.getElementById('game_prize_title').style.display = 'block';
+            
+            bgMusic.volume = 0.1;
+
             if (prize == "") {
+                emptyBox.play();
                 document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
                 document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
                 setCookie("is_played", true, play_validity_in_days);
             } else {
+                winning.play();
                 document.getElementById('game_prize_title_head').innerHTML = prize + "!";
                 if (isChrome && !isIOS()) {
                     document.getElementById('goto_selfie').style.display = 'inline-block';
@@ -699,6 +676,9 @@ h3
               ball_ref.rotateY(Math.PI * -1 * delta);
 
               if (ball_ref.position.distanceTo(new THREE.Vector3(target_pos.x, target_pos.y, target_pos.z)) < 10) {
+                  wind.pause();
+                  bgMusic.volume = 0.2;
+                  boxHit.play();
                   ball_ref.alive = false;
                   scene.remove(ball_ref);
                   is_ready_for_reveal = true;
@@ -725,13 +705,6 @@ h3
           }
           if (mixer) {
               mixer.update(delta);
-          }
-          if (sprite && sprite.needs_update) {
-              if (sprite.position.y < -1) {
-                sprite.position.y = -0.5;
-              } else {
-                sprite.translateY(-0.4 * delta);
-              }
           }
           // Render
           renderer.render(scene, camera);
