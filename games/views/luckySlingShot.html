@@ -214,6 +214,7 @@ h3
       var validity;
       var resp;
       var tutorial_complete = false;
+      var sprite;
 
       const glb_loader = new GLTFLoader();
       const canvas = document.querySelector('canvas.webgl');
@@ -476,6 +477,15 @@ h3
 
         document.getElementById('startGame').style.display = 'none';
         if (getCookie("tutorial_complete") == '') {
+            const map = new THREE.TextureLoader().load('../assets/lucky_slingshot/hand.png');
+            const material = new THREE.SpriteMaterial({map: map});
+            sprite = new THREE.Sprite( material );
+
+            sprite.scale.set(.5, .5);
+            sprite.position.set(.3, -.5);
+
+            sprite.needs_update = true;
+            scene.add(sprite);
             document.getElementById('tutorial_text').style.display = 'block';
         } else {
             tutorial_complete = true;
@@ -527,6 +537,13 @@ h3
           if (!tutorial_complete) {
               document.getElementById('tutorial_text').style.display = 'none';
               setCookie("tutorial_complete", true);
+
+              if (sprite & sprite.needs_update) {
+                  sprite.needs_update = false;
+                  scene.remove(sprite);
+                  sprite.remove();
+              }
+              tutorial_complete = true;
           }
           current_pos.x = point.x;
           current_pos.y = point.y;
@@ -702,6 +719,13 @@ h3
           }
           if (mixer) {
               mixer.update(delta);
+          }
+          if (sprite && sprite.needs_update) {
+              if (sprite.position.y < -1) {
+                sprite.position.y = -0.5;
+              } else {
+                sprite.translateY(-0.4 * delta);
+              }
           }
           // Render
           renderer.render(scene, camera);
