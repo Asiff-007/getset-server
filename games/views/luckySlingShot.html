@@ -222,6 +222,14 @@ h3
       var tutorial_complete = false;
       var sprite;
 
+      var buttonPress = new Audio('../assets/sound/button_click.wav');
+      var bgMusic = new Audio('../assets/sound/lucky_slingshot/bg_music.mp3');
+      var winning = new Audio('../assets/sound/winning.mp3');
+      var boxHit = new Audio('../assets/sound/lucky_slingshot/box_hit.wav');
+      var emptyBox = new Audio('../assets/sound/empty_box.wav');
+      var ballRelease = new Audio('../assets/sound/lucky_slingshot/ball_release.mp3');
+      var wind = new Audio('../assets/sound/lucky_slingshot/wind.mp3');
+
       const glb_loader = new GLTFLoader();
       const canvas = document.querySelector('canvas.webgl');
       const scene = new THREE.Scene();
@@ -471,6 +479,10 @@ h3
           }
           is_ready = false;
           ball_ref.alive = true;
+          ballRelease.volume = 0.6;
+          ballRelease.play();
+          wind.loop = true;
+          wind.play();
       }
 
       function startGame() {
@@ -478,6 +490,10 @@ h3
         populateGift();
         addSlingshot();
         addBall();
+        buttonPress.play();
+        bgMusic.loop = true;
+        bgMusic.volume = 0.3;
+        bgMusic.play();
 
         scene.background = spaceTexture;
 
@@ -521,6 +537,16 @@ h3
             y: (event.clientY - rect.top ) * canvas.height / rect.height,
           };
       }
+
+      document.addEventListener('visibilitychange', function () {
+          var state = document.visibilityState;
+
+          if (state == 'hidden') {
+              bgMusic.pause();
+          } else {
+            bgMusic.play();
+          }
+      })
 
       window.addEventListener('resize', () =>
       {
@@ -583,11 +609,16 @@ h3
             document.getElementById('game_prize_reveal_prompt').style.display = 'none';
             document.getElementById('game_prize_desc').style.display = 'block';
             document.getElementById('game_prize_title').style.display = 'block';
+            
+            bgMusic.volume = 0.05;
+
             if (prize == "") {
+                emptyBox.play();
                 document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
                 document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
                 setCookie("is_played", true, play_validity_in_days);
             } else {
+                winning.play();
                 document.getElementById('game_prize_title_head').innerHTML = prize + "!";
                 if (isChrome && !isIOS()) {
                     document.getElementById('goto_selfie').style.display = 'inline-block';
@@ -699,6 +730,9 @@ h3
               ball_ref.rotateY(Math.PI * -1 * delta);
 
               if (ball_ref.position.distanceTo(new THREE.Vector3(target_pos.x, target_pos.y, target_pos.z)) < 10) {
+                  wind.pause();
+                  bgMusic.volume = 0.1;
+                  boxHit.play();
                   ball_ref.alive = false;
                   scene.remove(ball_ref);
                   is_ready_for_reveal = true;
