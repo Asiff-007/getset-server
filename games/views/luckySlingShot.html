@@ -52,6 +52,12 @@ body
     background-color: white;
 }
 
+@media screen and (prefers-color-scheme: dark) {
+  .qrcode {
+    background-color: white;
+  }
+}
+
 .warn_text {
     padding: 1em;
 }
@@ -119,6 +125,16 @@ h3
     box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
 }
 
+.blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
 @keyframes bn13bouncy {
     0% {
         top: 0em;
@@ -153,7 +169,8 @@ h3
     <div class="main">
         <div id="game_prize_desc" style="display: none;"><h2 id="game_prize_title_desc" class="game_text win_title">You have won</h2></div>
         <div id="game_prize_title" style="display: none;"><h1 id="game_prize_title_head" class="game_text win_desc"></h1></div>
-        <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
+        <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3>
+        <h3 id="tutorial_text" style="display: none;" class="game_text win_desc blink">Swipe downwards to<br>shoot ball</h3>
     </div>
     <div class="footer">
         <a href="/camera_capture?campaign_id=<%= campaign_id %>"><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
@@ -178,7 +195,6 @@ h3
       var price_id = "<%= price_id %>";
       var ticket_id = "<%= ticket_id %>";
       var price_expiry = "<%= price_expiry %>";
-      var date_expiry = new Date(price_expiry).toDateString();
       var url = "<%= url %>";
       const date_expiry = new Date(price_expiry).toDateString();
       const play_validity_in_days = <%= play_validity_days %>;
@@ -203,6 +219,8 @@ h3
       var is_ready_for_reveal = false;
       var validity;
       var resp;
+      var tutorial_complete = false;
+      var sprite;
 
       var buttonPress = new Audio('../assets/sound/button_click.wav');
       var bgMusic = new Audio('../assets/sound/lucky_slingshot/bg_music.mp3');
@@ -317,8 +335,8 @@ h3
           document.getElementById("qrcode").style.display = 'block';
           new QRCode(document.getElementById("qrcode"), {
               text: qr_code_cookie,
-              width: Math.max(window.innerWidth * 20 / 100, 64),
-              height: Math.max(window.innerWidth * 20 / 100, 64)
+              width: 200,
+              height: 200
             });
           if (is_played_cookie == "true") {
               document.getElementById('startGame').style.display = 'none';
@@ -333,12 +351,13 @@ h3
         httpRequest.onreadystatechange = function() {
           if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
             if (httpRequest.status == 200) {
+                var qr_code = `${url}/game?campaign_id=${campaign_id}&ticket_id=${ticket_id}`;
                 new QRCode(document.getElementById("qrcode"), {
-                        text: ticket_id,
-                        width: Math.max(window.innerWidth * 20 / 100, 64),
-                        height: Math.max(window.innerWidth * 20 / 100, 64)
+                        text: qr_code,
+                        width: 128,
+                        height: 128
                     });
-                setCookie("qr_code", escape(ticket_id), prize_validity_in_days);
+                setCookie("qr_code", escape(qr_code), prize_validity_in_days);
                 setCookie("prize", escape(prize), prize_validity_in_days);
                 setCookie("is_played", true, play_validity_in_days);
                 document.getElementById('game_warn_title').style.display = 'block';
@@ -479,6 +498,20 @@ h3
         scene.background = spaceTexture;
 
         document.getElementById('startGame').style.display = 'none';
+        if (getCookie("tutorial_complete") == '') {
+            const map = new THREE.TextureLoader().load('../assets/lucky_slingshot/hand.png');
+            const material = new THREE.SpriteMaterial({map: map});
+            sprite = new THREE.Sprite( material );
+
+            sprite.scale.set(.5, .5);
+            sprite.position.set(.3, -.5);
+
+            sprite.needs_update = true;
+            scene.add(sprite);
+            document.getElementById('tutorial_text').style.display = 'block';
+        } else {
+            tutorial_complete = true;
+        }
         document.getElementById('qrcode').style.display = 'none';
         document.getElementById('game_prize_desc').style.display = 'none';
         document.getElementById('game_warn_title').style.display = 'none';
@@ -523,6 +556,17 @@ h3
 
 
       function handleMove(point) {
+          if (!tutorial_complete) {
+              document.getElementById('tutorial_text').style.display = 'none';
+              setCookie("tutorial_complete", true);
+
+              if (sprite & sprite.needs_update) {
+                  sprite.needs_update = false;
+                  scene.remove(sprite);
+                  sprite.remove();
+              }
+              tutorial_complete = true;
+          }
           current_pos.x = point.x;
           current_pos.y = point.y;
           
@@ -705,6 +749,13 @@ h3
           }
           if (mixer) {
               mixer.update(delta);
+          }
+          if (sprite && sprite.needs_update) {
+              if (sprite.position.y < -1) {
+                sprite.position.y = -0.5;
+              } else {
+                sprite.translateY(-0.4 * delta);
+              }
           }
           // Render
           renderer.render(scene, camera);
