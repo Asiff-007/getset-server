@@ -473,7 +473,7 @@ h3
         addBall();
         buttonPress.play();
         bgMusic.loop = true;
-        bgMusic.volume = 0.5;
+        bgMusic.volume = 0.3;
         bgMusic.play();
 
         scene.background = spaceTexture;
@@ -556,7 +556,7 @@ h3
             document.getElementById('game_prize_desc').style.display = 'block';
             document.getElementById('game_prize_title').style.display = 'block';
             
-            bgMusic.volume = 0.1;
+            bgMusic.volume = 0.05;
 
             if (prize == "") {
                 emptyBox.play();
@@ -677,7 +677,7 @@ h3
 
               if (ball_ref.position.distanceTo(new THREE.Vector3(target_pos.x, target_pos.y, target_pos.z)) < 10) {
                   wind.pause();
-                  bgMusic.volume = 0.2;
+                  bgMusic.volume = 0.1;
                   boxHit.play();
                   ball_ref.alive = false;
                   scene.remove(ball_ref);
