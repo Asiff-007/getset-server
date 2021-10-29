@@ -602,6 +602,10 @@ h3
             
             bgMusic.volume = 0.05;
 
+            setTimeout(function(){
+                bgMusic.pause();
+            }, 10000)
+
             if (prize == "") {
                 emptyBox.play();
                 document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
