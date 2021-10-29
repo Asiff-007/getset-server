@@ -538,6 +538,16 @@ h3
           };
       }
 
+      document.addEventListener('visibilitychange', function () {
+          var state = document.visibilityState;
+
+          if (state == 'hidden') {
+              bgMusic.pause();
+          } else {
+            bgMusic.play();
+          }
+      })
+
       window.addEventListener('resize', () =>
       {
           // Update sizes
@@ -601,10 +611,6 @@ h3
             document.getElementById('game_prize_title').style.display = 'block';
             
             bgMusic.volume = 0.05;
-
-            setTimeout(function(){
-                bgMusic.pause();
-            }, 10000)
 
             if (prize == "") {
                 emptyBox.play();
