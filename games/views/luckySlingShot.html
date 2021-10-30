@@ -568,14 +568,12 @@ h3
       function handleMove(point) {
           if (!tutorial_complete) {
               document.getElementById('tutorial_text').style.display = 'none';
-              setCookie("tutorial_complete", true);
-
-              if (sprite & sprite.needs_update) {
+              if (sprite) {
                   sprite.needs_update = false;
                   scene.remove(sprite);
-                  sprite.remove();
               }
               tutorial_complete = true;
+              setCookie("tutorial_complete", true);
           }
           current_pos.x = point.x;
           current_pos.y = point.y;
