@@ -45,11 +45,11 @@
 
       .shop_name {
         margin: 0;
-        font-size: 13px;
+        font-size: 12px;
       }
 
       .campaign_name {
-        font-size: 18px;
+        font-size: 17px;
         top: 0em;
         color: yellow;
       }
@@ -182,6 +182,11 @@
       var selectedObj;
       var globalgltf;
       var isMobile = true;
+      var buttonPress = new Audio('../assets/sound/button_click.wav');
+      var bgMusic = new Audio('../assets/sound/mistery_box/bg_music.mp3');
+      var winning = new Audio('../assets/sound/mistery_box/winning.mp3');
+      var boxOpen = new Audio('../assets/sound/mistery_box/box_open.wav');
+      var emptyBox = new Audio('../assets/sound/empty_box.wav');
 
       camera.position.set(0, 3, 17);
 
@@ -210,6 +215,9 @@
       function startGame() {
         var light2 = new THREE.DirectionalLight(0xffffff, 2, 1000);
         var light3 = new THREE.DirectionalLight(0xffedb6, 2, 1000 );
+        buttonPress.play();
+        bgMusic.loop = true;
+        bgMusic.play();
 
         light2.position.set(0,0,5);
         light3.position.set(0,1,-1);
@@ -275,6 +283,8 @@
             selectedObj.position.x = 0;
             selectedObj.position.y = 0;
             selectedObj.position.z = 7;
+            bgMusic.pause();
+            boxOpen.play();
 
             document.getElementById('game_terms').style.display = 'none';
             document.getElementById('game_title').style.display = 'none';
@@ -283,12 +293,14 @@
     
             setTimeout(function(){
               if(price ==''){
+                emptyBox.play();
                 document.getElementById('game_price_title').style.display = 'block';
                 document.getElementById('game_empty_desc').style.display = 'block';
                 document.getElementById('game_empty').style.display = 'block';
                 document.getElementById('game_price_title_head').innerHTML = "EMPTY BOX";
                 priceId = 0;
               }else{
+                winning.play();
                 document.getElementById('game_price_desc').style.display = 'block';
                 document.getElementById('game_price_title').style.display = 'block';
                 document.getElementById('game_warn_foot').style.display = 'block';

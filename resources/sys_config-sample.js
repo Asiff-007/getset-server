@@ -10,6 +10,7 @@ module.exports = {
     [1,
       {
         url: '/games/views/misteryBox.html',
+        price_given_ratio: 2,
         selfie_frame_data: {
           frame_path: '../assets/popees_frame.png',
           data: {
@@ -26,6 +27,7 @@ module.exports = {
     [2,
       {
         url: '/games/views/luckySlingShot.html',
+        price_given_ratio : 2,
         play_validity_in_days: 0.0833333 / 24, // 5 minutes
         selfie_frame_data: {
           frame_path: '../assets/popees_frame.png',

@@ -4,6 +4,7 @@ var game = require('../models/game'),
     userPrice = require('../models/userPrice'),
     util = require('../modules/util'),
     customId = require('custom-id'),
+    config = require('../resources/config'),
     sys_config = require('../resources/sys_config');
 
 module.exports = {
@@ -15,7 +16,7 @@ module.exports = {
 
     if (req.validate(null, null, rules)) {
       if (sys_config.coupen_less.includes(req.query.campaign_id)) {
-        game.getPrice({campaign_id:req.query.campaign_id})
+        game.getPrice({campaign_id:req.query.campaign_id, status:config.price_status.active})
           .then(function (price) {
             resp.render(process.cwd() +
             sys_config.game_data.get(req.query.campaign_id).url,
@@ -50,7 +51,7 @@ module.exports = {
                 url: sys_config.server.url
               });
             }else {
-              game.getPrice({campaign_id:req.query.campaign_id})
+              game.getPrice({campaign_id:req.query.campaign_id, status:config.price_status.active})
                 .then(function (price) {
                   resp.render(process.cwd() +
                   sys_config.game_data.get(req.query.campaign_id).url,
