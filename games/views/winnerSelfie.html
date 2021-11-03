@@ -120,7 +120,24 @@ body
             <button id="retake" style="display: none;" class="bn632-hover bn27" onclick="location.reload()">Retake</button>
         </div>
     </div>
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgEpR_BExdEkXN-hQZKC2LSsh9qIbB29w",
+            authDomain: "getset-for-shops.firebaseapp.com",
+            projectId: "getset-for-shops",
+            storageBucket: "getset-for-shops.appspot.com",
+            messagingSenderId: "733025079803",
+            appId: "1:733025079803:web:fc76e53ef4d25971f4fb5e",
+            measurementId: "G-MMMQEK1JEC"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
         var img_src = "<%= selfie_frame %>";
         var img_resolution = {
             height: "<%= height %>",
@@ -142,6 +159,7 @@ body
         const btn = document.getElementById('share_to');
         btn.addEventListener('click', shareTo);
         async function shareTo() {
+            logEvent(analytics, "share_selfie_btn_click");
             var link = document.createElement('a');
             link.download = 'winner_selfie.png';
             link.href = document.getElementById('canvas').toDataURL();
@@ -206,6 +224,7 @@ body
 
 			// Trigger photo take
 			document.getElementById('snap').addEventListener('click', function() {
+                logEvent(analytics, "selfie_snap_btn_click");
                 video.pause();
                 video.style.display = 'none';
                 document.getElementById('snap').style.display = 'none';
