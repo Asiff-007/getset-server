@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Slingshot</title>
+</head>
+<style type="text/css">
+*
+{
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body
+{
+    height: 100vh;
+    font-family: 'Poppins';
+    overscroll-behavior: none;
+}
+
+.webgl
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+    z-index: -1;
+}
+
+.main
+{
+    position: absolute;
+    margin: auto;
+    top: 8%;
+    width: 100%;
+}
+.footer
+{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    margin: auto;
+    bottom: 8%;
+    width: 100%;
+}
+
+.qrcode {
+    padding: .5em;
+    background-color: white;
+}
+
+.warn_text {
+    padding: 1em;
+}
+
+h2, h1
+{
+    font-size: 1.5em;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+h3
+{
+    font-size: 2.5em;
+}
+
+.game_text
+{
+    color: white;
+    text-align: center;
+    font-weight: unset;
+}
+.bn632-hover
+{
+  width: 310px;
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  margin: 20px;
+  height: 55px;
+  text-align:center;
+  border: none;
+  background-size: 300% 100%;
+  border-radius: 50px;
+  moz-transition: all .4s ease-in-out;
+  -o-transition: all .4s ease-in-out;
+  -webkit-transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out;
+}
+
+.bn632-hover:hover
+{
+  background-position: 100% 0;
+  moz-transition: all .4s ease-in-out;
+  -o-transition: all .4s ease-in-out;
+  -webkit-transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out;
+}
+
+.bn632-hover:focus
+{
+  outline: none;
+}
+
+.bn632-hover.bn27
+{
+    background-image: linear-gradient(
+      to right,
+      #ed6ea0,
+      #ec8c69,
+      #f7186a,
+      #fbb03b
+    );
+    box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
+}
+
+@keyframes bn13bouncy {
+    0% {
+        top: 0em;
+    }
+    40% {
+        top: 0em;
+    }
+    43% {
+        top: -0.9em;
+    }
+    46% {
+        top: 0em;
+    }
+    48% {
+        top: -0.4em;
+    }
+    50% {
+        top: 0em;
+    }
+    100% {
+        top: 0em;
+    }
+}
+@font-face
+{
+    font-family: "poppins";
+    src: url(../assets/Poppins-Medium.ttf);
+}
+
+</style>
+<body>
+    <div class="main">
+        <div id="game_prize_desc" style="display: none;"><h2 id="game_prize_title_desc" class="game_text win_title">You have won</h2></div>
+        <div id="game_prize_title" style="display: none;"><h1 id="game_prize_title_head" class="game_text win_desc"></h1></div>
+        <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
+    </div>
+    <div class="footer">
+        <a><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
+        <div id="qrcode" class="qrcode" style="display: none;"></div>
+        <div id="game_warn_title" class="warn_text" style="display: none;"><h4 id='warn_title' class="game_text">You have already played with this coupon<br>Try with another one</h4></div>
+        <button id="startGame" class="bn632-hover bn27">Play game</button>
+    </div>
+
+    <canvas class="webgl"></canvas>
+    <script src="../lib/three.js"></script>
+    <script type="module">
+      //import * as THREE from 'three'
+      //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+      //import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+      import { GLTFLoader } from"../lib/GLTFLoader.js";
+      import { logEvent, analytics } from '../lib/google_analytics.js';
+      
+      var prize = "<%= price %>";
+      var campaign_id = "<%= campaign_id %>";
+      var is_played = "<%= isplayed %>";
+      var price_id = "<%= price_id %>";
+      var ticket_id = "<%= ticket_id %>";
+      var price_expiry = "<%= price_expiry %>";
+      var url = "<%= url %>";
+      var ticket_id = "<%= isplayed %>";
+      const date_expiry = new Date(price_expiry).toDateString();
+
+      var ball_ref;
+      var band_ref;
+      var scale_diff = 0;
+      var ball_initial_pos = new THREE.Vector3(0, -1.5 , -5);
+      var gltf_global;
+      var is_ready = false;
+      var is_pressed = false;
+      var gift_clone;
+      var gift_boxes = Array();
+      var final_gift;
+      var target_pos;
+      var mixer;
+      var is_ready_for_reveal = false;
+
+      var buttonPress = new Audio('../assets/sound/button_click.wav');
+      var bgMusic = new Audio('../assets/sound/lucky_slingshot/bg_music.mp3');
+      var winning = new Audio('../assets/sound/winning.mp3');
+      var boxHit = new Audio('../assets/sound/lucky_slingshot/box_hit.wav');
+      var emptyBox = new Audio('../assets/sound/empty_box.wav');
+      var ballRelease = new Audio('../assets/sound/lucky_slingshot/ball_release.mp3');
+      var wind = new Audio('../assets/sound/lucky_slingshot/wind.mp3');
+
+      const glb_loader = new GLTFLoader();
+      const canvas = document.querySelector('canvas.webgl');
+      const scene = new THREE.Scene();
+      const geometry = new THREE.TorusGeometry(.1, .05, 16, 100);
+      const material = new THREE.MeshStandardMaterial();
+      material.color = new THREE.Color(0xff0000);
+
+      const tl = new THREE.TextureLoader();
+      var mouse = new THREE.Vector2();
+
+      var mouse_drag_diff = 0;
+      var mouse_drag_threshold = 45;
+
+      var is_ball_dragged = false;
+
+      var initial_pos = new THREE.Vector2();
+      var current_pos = new THREE.Vector2();
+
+      var ball_speed = -50;
+
+      var isChromium = window.chrome;
+      var winNav = window.navigator;
+      var vendorName = winNav.vendor;
+      var isOpera = typeof window.opr !== "undefined";
+      var isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+      var isIOSChrome = winNav.userAgent.match("CriOS");
+      var isChrome = false;
+
+      if (isIOSChrome) {
+          // Chrome in iOS
+          isChrome = true;
+      } else if (isChromium !== null &&
+        typeof isChromium !== "undefined" &&
+        vendorName === "Google Inc." &&
+        isOpera === false &&
+        isIEedge === false) {
+            isChrome = true;
+      }
+
+      function isIOS () {
+          return [
+              'iPad Simulator',
+              'iPhone Simulator',
+              'iPod Simulator',
+              'iPad',
+              'iPhone',
+              'iPod'
+            ].includes(navigator.platform)
+            // iPad on iOS 13 detection
+            || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+      }
+
+      // Lights
+      const pointLight = new THREE.HemisphereLight(0xffeeb1, 0x080820, 2);
+      const ambientLight = new THREE.AmbientLight(0xffffff);
+
+      scene.add(pointLight, ambientLight);
+
+      /**
+       * Sizes
+       */
+      const sizes = {
+          width: window.innerWidth,
+          height: window.innerHeight
+      };
+
+
+      /**
+       * Camera
+       */
+      // Base camera
+      const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 1000);
+      camera.position.x = 0;
+      camera.position.y = 0;
+      camera.position.z = 2;
+      scene.add(camera);
+
+      const startScreenBg = tl.load('../assets/lucky_slingshot/gamebanner_popees.png');
+      const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.png');
+      scene.background = startScreenBg;
+
+      document.getElementById('goto_selfie').style.display = 'none';
+
+      if (is_played == "true") {
+          scene.background = spaceTexture;
+          document.getElementById('startGame').style.display = 'none';
+          document.getElementById('game_prize_desc').style.display = 'block';
+          document.getElementById('game_prize_title').style.display = 'block';
+          document.getElementById('game_warn_title').style.display = 'block';
+          if (prize == "") {
+              document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
+              document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
+          } else {
+              document.getElementById('game_prize_title_head').innerHTML = prize + "!";
+          }
+      }
+
+    //   const lightHelper = new THREE.PointLightHelper(pointLight);
+    //   scene.add(lightHelper);
+      function createUserPrize () {
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function() {
+          if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+            if (httpRequest.status == 200) {
+                return;
+            }
+            else if (httpRequest.status == 400) {
+                console.log('There was an error 400');
+            }
+            else {
+                console.log('something else other than 200 was returned');
+            }
+          }
+        };
+        httpRequest.open('POST', `${url}/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}`,true);
+        httpRequest.setRequestHeader("Content-type", "application/json");
+        httpRequest.send(JSON.stringify({
+          'price_id' : price_id,
+          'played' : true
+        }));
+      }
+
+      var j = 0;
+      function addStar() {
+          var z = -30;
+          const sphereGeometry = new THREE.SphereGeometry(0.05);
+          const material = new THREE.MeshStandardMaterial({color: 0xffffff});
+          const star = new THREE.Mesh(sphereGeometry, material);
+
+          const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
+          z -= j*.5;
+          j++;
+
+          star.position.set(x, y, z);
+          scene.add(star);
+      }
+
+      function populateGift() {
+          glb_loader.load( '../assets/lucky_slingshot/giftbox/giftbox.gltf', function ( gltf ) {
+              var z = -30; var i = 0;
+              gltf_global = gltf;
+              Array(100).fill().forEach(() => {
+                  gift_clone = gltf.scene.clone();
+
+                  const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(60));
+                  z -= i*.5;
+                  i++;
+
+                  gift_clone.position.set(x, y, z);
+                  gift_clone.scale.set(1.5, 1.5, 1.5);
+                  scene.add(gift_clone);
+                  gift_boxes.push(gift_clone);
+              });
+          
+          }, undefined, function (error) {
+              console.error(error);
+              is_ready = false;
+          } );
+      }
+
+      function addSlingshot() {
+          glb_loader.load( '../assets/lucky_slingshot/stick/stick.gltf', function ( gltf ) {
+              var slingshot_clone = gltf.scene.clone();
+              
+              slingshot_clone.position.set(0, -5.5, -5);
+              slingshot_clone.scale.set(3.5, 3.5, 3.5);
+              scene.add(slingshot_clone);
+          }, undefined, function (error) {
+              console.error( error );
+              is_ready = false;
+          } );
+          glb_loader.load( '../assets/lucky_slingshot/rubber_band/rubberband.gltf', function ( gltf ) {
+              var band_clone = gltf.scene.clone();
+              
+              band_clone.position.set(0, -5.5, -5);
+              band_clone.scale.set(3.5, 3.5, 3.5);
+              band_ref = band_clone;
+              scene.add(band_clone);
+          }, undefined, function (error) {
+              console.error( error );
+              is_ready = false;
+          } );
+      }
+
+      function addBall() {
+          
+        glb_loader.load( '../assets/lucky_slingshot/ball/ball.gltf', function ( gltf ) {
+              var ball_clone = new THREE.Group();
+
+              gltf.scene.traverse(function (child) {
+                  if (child.isMesh) {
+                      var mesh = new THREE.Mesh(child.geometry, child.material);
+                      ball_clone.add(mesh);
+                  }
+              });
+
+              ball_clone.position.set(ball_initial_pos.x, ball_initial_pos.y, ball_initial_pos.z);
+              ball_clone.scale.set(3.5, 3.5, 3.5);
+              scene.add(ball_clone);
+              ball_ref = ball_clone;
+          }, undefined, function (error) {
+              console.error( error );
+              is_ready = false;
+          } );
+      }
+
+      function looseBall() {
+          for (var i = 0; i< gift_boxes.length; i++) {
+            var random = Math.floor(Math.random() * gift_boxes.length);
+            if(ball_ref.position.distanceTo(gift_boxes[random].position) > 300) {
+                final_gift = gift_boxes[random];
+                target_pos = {
+                    x: gift_boxes[random].position.x,
+                    y: gift_boxes[random].position.y,
+                    z: gift_boxes[random].position.z
+                };
+              }
+          }
+          is_ready = false;
+          ball_ref.alive = true;
+          
+          ballRelease.volume = 0.6;
+          ballRelease.play();
+          wind.loop = true;
+          wind.play();
+      }
+
+      function startGame() {
+        Array(1000).fill().forEach(addStar);
+        populateGift();
+        addSlingshot();
+        addBall();
+        
+        buttonPress.play();
+        bgMusic.loop = true;
+        bgMusic.volume = 0.3;
+        bgMusic.play();
+
+        scene.background = spaceTexture;
+
+        document.getElementById('startGame').style.display = 'none';
+        document.getElementById('qrcode').style.display = 'none';
+        document.getElementById('game_prize_desc').style.display = 'none';
+        document.getElementById('game_warn_title').style.display = 'none';
+        document.getElementById('game_prize_title').style.display = 'none';
+        const myNode = document.getElementById("qrcode");
+        while (myNode.lastElementChild) {
+            myNode.removeChild(myNode.lastElementChild);
+        }
+        is_ready = true;
+      }
+
+      function goToSelfiePage() {
+          logEvent(analytics, "go_to_selfie_page_btn", { campaign_id: campaign_id });
+          window.location = window.location.origin + "/camera_capture?campaign_id=<%= campaign_id %>";
+      }
+
+      document.getElementById('startGame').addEventListener("click", startGame);
+      document.getElementById('goto_selfie').addEventListener("click", goToSelfiePage);
+
+      function getCanvasRelativePosition(event, isTouch = false) {
+          const rect = canvas.getBoundingClientRect();
+
+          if (isTouch) {
+              event.clientY = event.changedTouches[0].clientY;
+              event.clientX = event.changedTouches[0].clientX;
+          }
+          return {
+            x: (event.clientX - rect.left) * canvas.width  / rect.width,
+            y: (event.clientY - rect.top ) * canvas.height / rect.height,
+          };
+      }
+
+      document.addEventListener('visibilitychange', function () {
+          var state = document.visibilityState;
+
+          if (state == 'hidden') {
+              bgMusic.pause();
+          } else {
+            bgMusic.play();
+          }
+      });
+
+      window.addEventListener('resize', () =>
+      {
+          // Update sizes
+          sizes.width = window.innerWidth
+          sizes.height = window.innerHeight
+
+          // Update camera
+          camera.aspect = sizes.width / sizes.height
+          camera.updateProjectionMatrix()
+
+          // Update renderer
+          renderer.setSize(sizes.width, sizes.height)
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      });
+
+
+
+      function handleMove(point) {
+          current_pos.x = point.x;
+          current_pos.y = point.y;
+          
+          scale_diff = current_pos.y - initial_pos.y;
+          if (current_pos.y > initial_pos.y) {
+              mouse_drag_diff = initial_pos.distanceTo(current_pos);
+          } else {
+              mouse_drag_diff = 0;
+          }
+      }
+
+      function handleDown(point) {
+          is_pressed = true;
+          is_ball_dragged = true;
+
+          mouse.x = point.x;
+          mouse.y = point.y;
+
+          initial_pos.x = mouse.x;
+          initial_pos.y = mouse.y;
+
+          if (is_ready_for_reveal) {
+            logEvent(analytics, "prize_open", { campaign_id: campaign_id });
+            mixer = new THREE.AnimationMixer(final_gift);
+            gltf_global.animations.forEach(function (clip) {
+                mixer.clipAction(clip).clampWhenFinished = true;
+                mixer.clipAction(clip).setLoop(THREE.LoopOnce);
+                mixer.clipAction(clip).play();
+            });
+
+            document.getElementById('game_prize_reveal_prompt').style.display = 'none';
+            document.getElementById('game_prize_desc').style.display = 'block';
+            document.getElementById('game_prize_title').style.display = 'block';
+            if (prize == "") {
+                emptyBox.play();
+                document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
+                document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
+            } else {
+                winning.play();
+                logEvent(analytics, "prize_won", { campaign_id: campaign_id });
+                document.getElementById('game_prize_title_head').innerHTML = prize + "!";
+                if (isChrome && !isIOS()) {
+                    document.getElementById('goto_selfie').style.display = 'inline-block';
+                }
+                createUserPrize();
+            }
+            is_ready_for_reveal = false;
+          }
+      }
+
+      function handleUp() {
+          is_pressed = false;
+          is_ball_dragged = false;
+
+          initial_pos.x = null;
+          initial_pos.y = null;
+
+          if (is_ready) {
+              if (mouse_drag_diff > mouse_drag_threshold) {
+                  looseBall();
+              } else if (ball_ref) {
+                  // reset position
+                  ball_ref.position.lerp(ball_initial_pos, 1);
+              }
+          }
+          if (band_ref) {
+            band_ref.scale.set(3.5, 3.5, 3.5);
+          }
+
+          // reset drag diff
+          mouse_drag_diff = 0;
+          scale_diff = 0;
+      }
+
+      function handleMouseMove() {
+          if (is_pressed && is_ready) {
+              const point = getCanvasRelativePosition(event);
+              event.preventDefault();
+              handleMove(point);
+          }
+      }
+
+      function handleMouseDown() {
+          const point = getCanvasRelativePosition(event);
+          handleDown(point);
+      }
+
+      function handleMouseUp() {
+          handleUp();
+      }
+
+      function handleTouchStart() {
+          const point = getCanvasRelativePosition(event, true);
+          handleDown(point);
+      }
+
+      function handleTouchEnd() {
+          handleUp();
+      }
+
+      function handleTouchMove() {
+          if (is_pressed && is_ready) {
+              const point = getCanvasRelativePosition(event, true);
+              event.preventDefault();
+              handleMove(point);
+          }
+      }
+
+      window.addEventListener('mousemove', handleMouseMove, false);
+      window.addEventListener('mousedown', handleMouseDown, false);
+      window.addEventListener('mouseup', handleMouseUp, false);
+      window.addEventListener('touchstart', handleTouchStart, false);
+      window.addEventListener('touchend', handleTouchEnd, false);
+      window.addEventListener('touchmove', handleTouchMove, false);
+
+
+      // Controls
+      // const controls = new OrbitControls(camera, canvas);
+      // controls.enableDamping = true
+
+      /**
+       * Renderer
+       */
+      const renderer = new THREE.WebGLRenderer({
+          canvas: canvas
+      });
+      renderer.setSize(sizes.width, sizes.height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      /**
+       * Animate
+       */
+
+      const clock = new THREE.Clock();
+
+      const tick = () =>
+      {
+
+          const delta = clock.getDelta();
+          const elapsedTime = clock.getElapsedTime();
+
+          // Update Orbital Controls
+          //controls.update()
+
+          if (ball_ref && ball_ref.alive) {
+              ball_ref.position.lerp(new THREE.Vector3(target_pos.x, target_pos.y, target_pos.z - 40), 0.009);
+              camera.position.lerp(new THREE.Vector3(ball_ref.position.x, ball_ref.position.y, ball_ref.position.z + 8), 0.5);
+              ball_ref.rotateX(Math.PI * -3 * delta);
+              ball_ref.rotateY(Math.PI * -1 * delta);
+
+              if (ball_ref.position.distanceTo(new THREE.Vector3(target_pos.x, target_pos.y, target_pos.z)) < 10) {
+                  wind.pause();
+                  bgMusic.volume = 0.1;
+                  boxHit.play();
+                  ball_ref.alive = false;
+                  scene.remove(ball_ref);
+                  is_ready_for_reveal = true;
+                  document.getElementById('game_prize_reveal_prompt').style.display = 'block';
+                  camera.position.lerp(new THREE.Vector3(target_pos.x, target_pos.y + 1, target_pos.z + 5), 0.75);
+                  final_gift.lookAt(camera.position);
+              }
+          }
+
+          gift_boxes.forEach(element => {
+              // prevent final gift being rotated
+              if (final_gift && final_gift == element) {
+                  return;
+              }
+              element.rotateX(Math.PI * .01 * delta);
+              element.rotateY(Math.PI * .1 * delta);
+          });
+          if (is_ball_dragged && ball_ref && ball_ref.position.z < -2) {
+              ball_ref.position.z = ball_ref.position.z + (.1 * mouse_drag_diff * delta);
+              ball_ref.position.y = ball_ref.position.y - (.007 * mouse_drag_diff * delta);
+          }
+          if (is_ball_dragged && band_ref && band_ref.scale.z > -1.5 && band_ref.scale.z < 10.5) {
+              band_ref.scale.set(3.5, 3.5, band_ref.scale.z + (scale_diff * 0.5 * delta));
+          }
+          if (mixer) {
+              mixer.update(delta);
+          }
+          // Render
+          renderer.render(scene, camera);
+
+          // Call tick again on the next frame
+          window.requestAnimationFrame(tick);
+      }
+
+      tick();
+    </script>
+</body>
+</html>
