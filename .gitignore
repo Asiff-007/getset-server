@@ -5,7 +5,7 @@ coverage/lcov.info
 coverage/coverage.json
 coverage/result_istanbul
 resources/sys_config.js
-games/sys_config.js
+games/sys_front_end_config.js
 resources/database.json
 *.swp
 *.swo
