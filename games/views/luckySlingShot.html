@@ -541,7 +541,7 @@ h3
       }
 
       function goToSelfiePage() {
-          logEvent(analytics, "go_to_selfie_page_btn");
+          logEvent(analytics, "go_to_selfie_page_btn", { campaign_id: campaign_id });
           window.location = window.location.origin + "/camera_capture?campaign_id=<%= campaign_id %>";
       }
 
@@ -620,6 +620,7 @@ h3
           initial_pos.y = mouse.y;
 
           if (is_ready_for_reveal) {
+            logEvent(analytics, "prize_open", { campaign_id: campaign_id });
             mixer = new THREE.AnimationMixer(final_gift);
             gltf_global.animations.forEach(function (clip) {
                 mixer.clipAction(clip).clampWhenFinished = true;
@@ -640,7 +641,7 @@ h3
                 setCookie("is_played", true, play_validity_in_days);
             } else {
                 winning.play();
-                logEvent(analytics, "prize_open");
+                logEvent(analytics, "prize_won", { campaign_id: campaign_id });
                 document.getElementById('game_prize_title_head').innerHTML = prize + "!";
                 if (isChrome && !isIOS()) {
                     document.getElementById('goto_selfie').style.display = 'inline-block';
