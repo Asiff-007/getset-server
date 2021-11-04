@@ -120,7 +120,11 @@ body
             <button id="retake" style="display: none;" class="bn632-hover bn27" onclick="location.reload()">Retake</button>
         </div>
     </div>
-    <script>
+    <script type="module">
+        import { logEvent, analytics } from '../lib/google_analytics.js';
+
+        var params = new URLSearchParams(location.search);
+        var campaign_id = params.get('campaign_id');
         var img_src = "<%= selfie_frame %>";
         var img_resolution = {
             height: "<%= height %>",
@@ -142,6 +146,7 @@ body
         const btn = document.getElementById('share_to');
         btn.addEventListener('click', shareTo);
         async function shareTo() {
+            logEvent(analytics, "share_selfie_btn_click", { campaign_id: campaign_id });
             var link = document.createElement('a');
             link.download = 'winner_selfie.png';
             link.href = document.getElementById('canvas').toDataURL();
@@ -206,6 +211,7 @@ body
 
 			// Trigger photo take
 			document.getElementById('snap').addEventListener('click', function() {
+                logEvent(analytics, "selfie_snap_btn_click", { campaign_id: campaign_id });
                 video.pause();
                 video.style.display = 'none';
                 document.getElementById('snap').style.display = 'none';
