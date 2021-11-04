@@ -184,27 +184,11 @@ h3
     <script src="../lib/cookie.js"></script>
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
-      import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-analytics.js";
-
       //import * as THREE from 'three'
       //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
       //import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
       import { GLTFLoader } from"../lib/GLTFLoader.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyBgEpR_BExdEkXN-hQZKC2LSsh9qIbB29w",
-        authDomain: "getset-for-shops.firebaseapp.com",
-        projectId: "getset-for-shops",
-        storageBucket: "getset-for-shops.appspot.com",
-        messagingSenderId: "733025079803",
-        appId: "1:733025079803:web:fc76e53ef4d25971f4fb5e",
-        measurementId: "G-MMMQEK1JEC"
-      };
-
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
+      import { logEvent, analytics } from '../lib/google_analytics.js';
 
       var prize = "<%= price %>";
       var campaign_id = "<%= campaign_id %>";
