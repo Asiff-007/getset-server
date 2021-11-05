@@ -52,12 +52,6 @@ body
     background-color: white;
 }
 
-@media screen and (prefers-color-scheme: dark) {
-  .qrcode {
-    background-color: white;
-  }
-}
-
 .warn_text {
     padding: 1em;
 }
@@ -125,16 +119,6 @@ h3
     box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
 }
 
-.blink {
-  animation: blinker 1s linear infinite;
-}
-
-@keyframes blinker {
-  50% {
-    opacity: 0;
-  }
-}
-
 @keyframes bn13bouncy {
     0% {
         top: 0em;
@@ -169,42 +153,33 @@ h3
     <div class="main">
         <div id="game_prize_desc" style="display: none;"><h2 id="game_prize_title_desc" class="game_text win_title">You have won</h2></div>
         <div id="game_prize_title" style="display: none;"><h1 id="game_prize_title_head" class="game_text win_desc"></h1></div>
-        <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3>
-        <h3 id="tutorial_text" style="display: none;" class="game_text win_desc blink">Swipe downwards to<br>shoot ball</h3>
+        <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3></div>
     </div>
     <div class="footer">
         <a><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
         <div id="qrcode" class="qrcode" style="display: none;"></div>
-        <div id="game_warn_title" class="warn_text" style="display: none;"><h4 id='warn_title' class="game_text">You have already played once,<br>Try again after 1 Hour</h4></div>
-        <button id="startGame" style="display: none;" class="bn632-hover bn27">Play game</button>
+        <div id="game_warn_title" class="warn_text" style="display: none;"><h4 id='warn_title' class="game_text">You have already played with this coupon<br>Try with another one</h4></div>
+        <button id="startGame" class="bn632-hover bn27">Play game</button>
     </div>
 
     <canvas class="webgl"></canvas>
     <script src="../lib/three.js"></script>
-    <script src="../lib/cookie.js"></script>
-    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script type="module">
       //import * as THREE from 'three'
       //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
       //import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
       import { GLTFLoader } from"../lib/GLTFLoader.js";
       import { logEvent, analytics } from '../lib/google_analytics.js';
-
+      
       var prize = "<%= price %>";
       var campaign_id = "<%= campaign_id %>";
       var is_played = "<%= isplayed %>";
       var price_id = "<%= price_id %>";
-      var coupen = "<%= coupen %>"
       var ticket_id = "<%= ticket_id %>";
       var price_expiry = "<%= price_expiry %>";
       var url = "<%= url %>";
+      var ticket_id = "<%= isplayed %>";
       const date_expiry = new Date(price_expiry).toDateString();
-      const play_validity_in_days = <%= play_validity_days %>;
-      const prize_validity_in_days = 30;
-
-      var is_played_cookie = getCookie("is_played");
-      var qr_code_cookie = getCookie("qr_code");
-      var prize_cookie = getCookie("prize");
 
       var ball_ref;
       var band_ref;
@@ -219,10 +194,6 @@ h3
       var target_pos;
       var mixer;
       var is_ready_for_reveal = false;
-      var validity;
-      var resp;
-      var tutorial_complete = false;
-      var sprite;
 
       var buttonPress = new Audio('../assets/sound/button_click.wav');
       var bgMusic = new Audio('../assets/sound/lucky_slingshot/bg_music.mp3');
@@ -315,37 +286,20 @@ h3
 
       document.getElementById('goto_selfie').style.display = 'none';
 
-      if (qr_code_cookie == "") {
-          if (is_played_cookie == "true") {
-              scene.background = spaceTexture;
-              document.getElementById('game_warn_title').style.display = 'block';
-              document.getElementById('startGame').style.display = 'none';
-              document.getElementById('game_prize_desc').style.display = 'block';
-              document.getElementById('game_prize_title').style.display = 'block';
+      if (is_played == "true") {
+          scene.background = spaceTexture;
+          document.getElementById('startGame').style.display = 'none';
+          document.getElementById('game_prize_desc').style.display = 'block';
+          document.getElementById('game_prize_title').style.display = 'block';
+          document.getElementById('game_warn_title').style.display = 'block';
+          if (prize == "") {
               document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
               document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
           } else {
-              document.getElementById('startGame').style.display = 'block';
-          }
-      } else {
-          scene.background = spaceTexture;
-          document.getElementById('game_prize_desc').style.display = 'block';
-          document.getElementById('game_prize_title').style.display = 'block';
-          document.getElementById('game_prize_title_head').innerHTML = prize_cookie + "!";
-          document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
-          document.getElementById('game_warn_title').style.display = 'block';
-          document.getElementById("qrcode").style.display = 'block';
-          new QRCode(document.getElementById("qrcode"), {
-              text: qr_code_cookie,
-              width: 200,
-              height: 200
-            });
-          if (is_played_cookie == "true") {
-              document.getElementById('startGame').style.display = 'none';
-          } else {
-              document.getElementById('startGame').style.display = 'block';
+              document.getElementById('game_prize_title_head').innerHTML = prize + "!";
           }
       }
+
     //   const lightHelper = new THREE.PointLightHelper(pointLight);
     //   scene.add(lightHelper);
       function createUserPrize () {
@@ -353,18 +307,6 @@ h3
         httpRequest.onreadystatechange = function() {
           if (httpRequest.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
             if (httpRequest.status == 200) {
-                var qr_code = `${url}/game?campaign_id=${campaign_id}&ticket_id=${ticket_id}`;
-                new QRCode(document.getElementById("qrcode"), {
-                        text: qr_code,
-                        width: 128,
-                        height: 128
-                    });
-                setCookie("qr_code", escape(qr_code), prize_validity_in_days);
-                setCookie("prize", escape(prize), prize_validity_in_days);
-                setCookie("is_played", true, play_validity_in_days);
-                document.getElementById('game_warn_title').style.display = 'block';
-                document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
-                document.getElementById("qrcode").style.display = 'block';
                 return;
             }
             else if (httpRequest.status == 400) {
@@ -375,7 +317,7 @@ h3
             }
           }
         };
-        httpRequest.open('POST', `${url}/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}&coupen=${coupen}`,true);
+        httpRequest.open('POST', `${url}/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}`,true);
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
           'price_id' : price_id,
@@ -481,6 +423,7 @@ h3
           }
           is_ready = false;
           ball_ref.alive = true;
+          
           ballRelease.volume = 0.6;
           ballRelease.play();
           wind.loop = true;
@@ -492,6 +435,7 @@ h3
         populateGift();
         addSlingshot();
         addBall();
+        
         buttonPress.play();
         bgMusic.loop = true;
         bgMusic.volume = 0.3;
@@ -500,20 +444,6 @@ h3
         scene.background = spaceTexture;
 
         document.getElementById('startGame').style.display = 'none';
-        if (getCookie("tutorial_complete") == '') {
-            const map = new THREE.TextureLoader().load('../assets/lucky_slingshot/hand.png');
-            const material = new THREE.SpriteMaterial({map: map});
-            sprite = new THREE.Sprite( material );
-
-            sprite.scale.set(.5, .5);
-            sprite.position.set(.3, -.5);
-
-            sprite.needs_update = true;
-            scene.add(sprite);
-            document.getElementById('tutorial_text').style.display = 'block';
-        } else {
-            tutorial_complete = true;
-        }
         document.getElementById('qrcode').style.display = 'none';
         document.getElementById('game_prize_desc').style.display = 'none';
         document.getElementById('game_warn_title').style.display = 'none';
@@ -554,7 +484,7 @@ h3
           } else {
             bgMusic.play();
           }
-      })
+      });
 
       window.addEventListener('resize', () =>
       {
@@ -574,15 +504,6 @@ h3
 
 
       function handleMove(point) {
-          if (!tutorial_complete) {
-              document.getElementById('tutorial_text').style.display = 'none';
-              if (sprite) {
-                  sprite.needs_update = false;
-                  scene.remove(sprite);
-              }
-              tutorial_complete = true;
-              setCookie("tutorial_complete", true);
-          }
           current_pos.x = point.x;
           current_pos.y = point.y;
           
@@ -616,14 +537,10 @@ h3
             document.getElementById('game_prize_reveal_prompt').style.display = 'none';
             document.getElementById('game_prize_desc').style.display = 'block';
             document.getElementById('game_prize_title').style.display = 'block';
-            
-            bgMusic.volume = 0.05;
-
             if (prize == "") {
                 emptyBox.play();
                 document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
                 document.getElementById('game_prize_title_head').innerHTML = "It's an empty box!";
-                setCookie("is_played", true, play_validity_in_days);
             } else {
                 winning.play();
                 logEvent(analytics, "prize_won", { campaign_id: campaign_id });
@@ -767,13 +684,6 @@ h3
           }
           if (mixer) {
               mixer.update(delta);
-          }
-          if (sprite && sprite.needs_update) {
-              if (sprite.position.y < -1) {
-                sprite.position.y = -0.5;
-              } else {
-                sprite.translateY(-0.4 * delta);
-              }
           }
           // Render
           renderer.render(scene, camera);
