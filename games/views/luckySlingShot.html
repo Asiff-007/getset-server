@@ -193,6 +193,7 @@ h3
       var campaign_id = "<%= campaign_id %>";
       var is_played = "<%= isplayed %>";
       var price_id = "<%= price_id %>";
+      var coupen = "<%= coupen %>"
       var ticket_id = "<%= ticket_id %>";
       var price_expiry = "<%= price_expiry %>";
       var url = "<%= url %>";
@@ -373,7 +374,7 @@ h3
             }
           }
         };
-        httpRequest.open('POST', `${url}/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}`,true);
+        httpRequest.open('POST', `${url}/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}&coupen=${coupen}`,true);
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
           'price_id' : price_id,

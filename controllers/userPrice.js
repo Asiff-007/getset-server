@@ -8,7 +8,7 @@ module.exports = {
       price_id: {type: 'int', required: true}
     };
     if (req.validate(rules)) {
-      userPrice.create(req.body,req.query.campaign_id,req.query.ticket_id)
+      userPrice.create(req.body,req.query.campaign_id,req.query.ticket_id,req.query.coupen)
         .then(resp.success, resp.error);
     }
   },

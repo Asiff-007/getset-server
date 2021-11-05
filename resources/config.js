@@ -58,6 +58,11 @@ var sys_config = require('./sys_config'),
       campaign_status: {
         active: 'Active',
         pending: 'Pending'
+      },
+
+      coupen_status: {
+        yes: 'Yes',
+        no: 'No'
       }
     };
 
