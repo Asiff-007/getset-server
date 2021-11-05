@@ -17,24 +17,24 @@ module.exports = {
 
     if (req.validate(null, null, rules)) {
       campaignDb.getRecord({id:req.query.campaign_id})
-        .then( function (campaign) {
-          if(campaign.status !== 'Failed') {
-            if (!campaign.coupen) {
+        .then( function (response) {
+          if(response.status !== 'Failed') {
+            if (!response.coupen) {
               game.getPrice({campaign_id:req.query.campaign_id, status:config.price_status.active})
                 .then(function (price) {
                   resp.render(process.cwd() +
-                  sys_config.game_data.get(campaign.game_id).url,
+                  sys_config.game_data.get(response.game_id).url,
                     {
                       price: price.name,
                       price_id: price.id,
                       ticket_id: ticketId,
-                      coupen: config.coupen_status.no,
+                      coupon: config.coupen_status.no,
                       price_expiry: price.expiry,
                       isplayed: false,
                       campaign_id: req.query.campaign_id,
                       url: sys_config.server.url,
                       play_validity_days: sys_config.game_data
-                                          .get(campaign.game_id)
+                                          .get(response.game_id)
                                           .play_validity_in_days
                     });
                 });
@@ -45,12 +45,12 @@ module.exports = {
                     var user = userprice[0];
                     if (user.played) {
                       resp.render(process.cwd() +
-                      sys_config.game_data.get(campaign.game_id).url,
+                      sys_config.game_data.get(response.game_id).url,
                         {
                           price: user.prizeName,
                           price_id: user.prizeId,
                           ticket_id: req.query.ticket_id,
-                          coupen: config.coupen_status.yes,
+                          coupon: config.coupen_status.yes,
                           price_expiry: user.prizeExpiry,
                           isplayed: true,
                           campaign_id: req.query.campaign_id,
@@ -60,12 +60,12 @@ module.exports = {
                       game.getPrice({campaign_id:req.query.campaign_id, status:config.price_status.active})
                         .then(function (price) {
                           resp.render(process.cwd() +
-                          sys_config.game_data.get(campaign.game_id).url,
+                          sys_config.game_data.get(response.game_id).url,
                             {
                               price: price.name,
                               price_id: price.id,
                               ticket_id: req.query.ticket_id,
-                              coupen: config.coupen_status.yes,
+                              coupon: config.coupen_status.yes,
                               price_expiry: price.expiry,
                               isplayed: false,
                               campaign_id: req.query.campaign_id,
