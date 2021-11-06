@@ -8,7 +8,8 @@ module.exports = {
       price_id: {type: 'int', required: true}
     };
     if (req.validate(rules)) {
-      userPrice.create(req.body,req.query.campaign_id,req.query.ticket_id)
+      var query = req.query
+      userPrice.create(req.body,query.campaign_id,query.ticket_id,query.coupon)
         .then(resp.success, resp.error);
     }
   },

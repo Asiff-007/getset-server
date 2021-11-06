@@ -41,6 +41,15 @@ module.exports = new (Class({ //jshint ignore:line
       };
     });
   },
+  getRecord:function (query) {
+    return db.getRecord(query, tableName, 'id')
+    .catch(function () {
+      return {
+        status: 'Failed',
+        error: 'Data reading failed'
+      };
+    });
+  },
   update:function (id,update) {
     return db.update(id,update,tableName)
       .then(function () {
