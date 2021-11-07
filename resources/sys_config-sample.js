@@ -44,6 +44,14 @@ module.exports = {
     ]
   ]),
 
+  campaign_data: new Map([
+    [1,
+      {
+        price_given_ratio : 3
+      }
+    ]
+  ]),
+
   /* Memcache server details */
   memcache: {
     servers: ['localhost:11211'],
