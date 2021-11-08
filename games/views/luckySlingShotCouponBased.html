@@ -179,6 +179,7 @@ h3
       var price_expiry = "<%= price_expiry %>";
       var url = "<%= url %>";
       var ticket_id = "<%= isplayed %>";
+      var coupon = "<%= coupon %>";
       const date_expiry = new Date(price_expiry).toDateString();
 
       var ball_ref;
@@ -317,7 +318,7 @@ h3
             }
           }
         };
-        httpRequest.open('POST', `${url}/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}`,true);
+        httpRequest.open('POST', `${url}/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}&coupon=${coupon}`,true);
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
           'price_id' : price_id,
