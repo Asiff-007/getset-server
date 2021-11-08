@@ -8,12 +8,12 @@ var Class = require('js-class'),
   db = require('../dao/db');
 
 module.exports = new (Class({ //jshint ignore:line
-  create: function (model,campaignId,ticketId) {
+  create: function (model,campaignId,ticketId,coupon) {
     model.claim_status = config.price_status.not_claimed;
     model.price_won_on = util.getDate();
     model.ticket_id = ticketId; //want to add random ticket_id
 
-    if (sys_config.coupen_less.includes(parseInt(campaignId))) {
+    if (coupon == config.coupen_status.no) {
       return db.save(model,tableName)
         .then(function () {
           return db.increment('price', {given: 1}, model.price_id)
