@@ -174,7 +174,7 @@ h3
       var prize = "<%= price %>";
       var campaign_id = "<%= campaign_id %>";
       var is_played = "<%= isplayed %>";
-      var price_id = "<%= price_id %>";
+      var price_id = parseInt("<%= price_id %>") | 0;
       var ticket_id = "<%= ticket_id %>";
       var price_expiry = "<%= price_expiry %>";
       var url = "<%= url %>";
