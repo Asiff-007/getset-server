@@ -82,12 +82,10 @@
             },
             "name" : "boxmat",
             "pbrMetallicRoughness" : {
-                "baseColorFactor" : [
-                    1,
-                    0.9567851424217224,
-                    0.964846134185791,
-                    1
-                ],
+                "baseColorTexture" : {
+                    "index" : 0,
+                    "texCoord" : 0
+                },
                 "metallicFactor" : 0
             }
         },
@@ -96,13 +94,13 @@
             "name" : "ribbon",
             "pbrMetallicRoughness" : {
                 "baseColorFactor" : [
-                    0.8468739986419678,
-                    0.004776863381266594,
-                    0.13843165338039398,
+                    0.8468740582466125,
+                    0.39298927783966064,
+                    0.027520552277565002,
                     1
                 ],
-                "metallicFactor" : 0,
-                "roughnessFactor" : 0.5
+                "metallicFactor" : 0.550000011920929,
+                "roughnessFactor" : 0.19545453786849976
             }
         },
         {
@@ -116,7 +114,7 @@
             "name" : "boxmatLogo",
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
-                    "index" : 0,
+                    "index" : 1,
                     "texCoord" : 0
                 },
                 "metallicFactor" : 0
@@ -148,7 +146,7 @@
             ]
         },
         {
-            "name" : "Cube",
+            "name" : "Cube.001",
             "primitives" : [
                 {
                     "attributes" : {
@@ -175,6 +173,10 @@
         {
             "sampler" : 0,
             "source" : 0
+        },
+        {
+            "sampler" : 0,
+            "source" : 0
         }
     ],
     "images" : [
@@ -188,7 +190,7 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 56,
+            "count" : 76,
             "max" : [
                 0.7140978574752808,
                 1.3952988386154175,
@@ -204,13 +206,13 @@
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 56,
+            "count" : 76,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 56,
+            "count" : 76,
             "type" : "VEC2"
         },
         {
@@ -222,7 +224,7 @@
         {
             "bufferView" : 4,
             "componentType" : 5126,
-            "count" : 2170,
+            "count" : 2622,
             "max" : [
                 0.7218238711357117,
                 1.5043097734451294,
@@ -238,13 +240,13 @@
         {
             "bufferView" : 5,
             "componentType" : 5126,
-            "count" : 2170,
+            "count" : 2622,
             "type" : "VEC3"
         },
         {
             "bufferView" : 6,
             "componentType" : 5126,
-            "count" : 2170,
+            "count" : 2622,
             "type" : "VEC2"
         },
         {
@@ -256,7 +258,7 @@
         {
             "bufferView" : 8,
             "componentType" : 5126,
-            "count" : 193,
+            "count" : 262,
             "max" : [
                 0.64356929063797,
                 1.2539509534835815,
@@ -272,13 +274,13 @@
         {
             "bufferView" : 9,
             "componentType" : 5126,
-            "count" : 193,
+            "count" : 262,
             "type" : "VEC3"
         },
         {
             "bufferView" : 10,
             "componentType" : 5126,
-            "count" : 193,
+            "count" : 262,
             "type" : "VEC2"
         },
         {
@@ -290,7 +292,7 @@
         {
             "bufferView" : 12,
             "componentType" : 5126,
-            "count" : 1074,
+            "count" : 1579,
             "max" : [
                 0.6975114345550537,
                 1.2121014595031738,
@@ -306,13 +308,13 @@
         {
             "bufferView" : 13,
             "componentType" : 5126,
-            "count" : 1074,
+            "count" : 1579,
             "type" : "VEC3"
         },
         {
             "bufferView" : 14,
             "componentType" : 5126,
-            "count" : 1074,
+            "count" : 1579,
             "type" : "VEC2"
         },
         {
@@ -367,108 +369,108 @@
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 672,
+            "byteLength" : 912,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 672,
-            "byteOffset" : 672
+            "byteLength" : 912,
+            "byteOffset" : 912
         },
         {
             "buffer" : 0,
-            "byteLength" : 448,
-            "byteOffset" : 1344
+            "byteLength" : 608,
+            "byteOffset" : 1824
         },
         {
             "buffer" : 0,
             "byteLength" : 168,
-            "byteOffset" : 1792
+            "byteOffset" : 2432
         },
         {
             "buffer" : 0,
-            "byteLength" : 26040,
-            "byteOffset" : 1960
+            "byteLength" : 31464,
+            "byteOffset" : 2600
         },
         {
             "buffer" : 0,
-            "byteLength" : 26040,
-            "byteOffset" : 28000
+            "byteLength" : 31464,
+            "byteOffset" : 34064
         },
         {
             "buffer" : 0,
-            "byteLength" : 17360,
-            "byteOffset" : 54040
+            "byteLength" : 20976,
+            "byteOffset" : 65528
         },
         {
             "buffer" : 0,
             "byteLength" : 6624,
-            "byteOffset" : 71400
+            "byteOffset" : 86504
         },
         {
             "buffer" : 0,
-            "byteLength" : 2316,
-            "byteOffset" : 78024
+            "byteLength" : 3144,
+            "byteOffset" : 93128
         },
         {
             "buffer" : 0,
-            "byteLength" : 2316,
-            "byteOffset" : 80340
+            "byteLength" : 3144,
+            "byteOffset" : 96272
         },
         {
             "buffer" : 0,
-            "byteLength" : 1544,
-            "byteOffset" : 82656
+            "byteLength" : 2096,
+            "byteOffset" : 99416
         },
         {
             "buffer" : 0,
             "byteLength" : 672,
-            "byteOffset" : 84200
+            "byteOffset" : 101512
         },
         {
             "buffer" : 0,
-            "byteLength" : 12888,
-            "byteOffset" : 84872
+            "byteLength" : 18948,
+            "byteOffset" : 102184
         },
         {
             "buffer" : 0,
-            "byteLength" : 12888,
-            "byteOffset" : 97760
+            "byteLength" : 18948,
+            "byteOffset" : 121132
         },
         {
             "buffer" : 0,
-            "byteLength" : 8592,
-            "byteOffset" : 110648
+            "byteLength" : 12632,
+            "byteOffset" : 140080
         },
         {
             "buffer" : 0,
             "byteLength" : 3336,
-            "byteOffset" : 119240
+            "byteOffset" : 152712
         },
         {
             "buffer" : 0,
             "byteLength" : 100,
-            "byteOffset" : 122576
+            "byteOffset" : 156048
         },
         {
             "buffer" : 0,
             "byteLength" : 300,
-            "byteOffset" : 122676
+            "byteOffset" : 156148
         },
         {
             "buffer" : 0,
             "byteLength" : 400,
-            "byteOffset" : 122976
+            "byteOffset" : 156448
         },
         {
             "buffer" : 0,
             "byteLength" : 28,
-            "byteOffset" : 123376
+            "byteOffset" : 156848
         },
         {
             "buffer" : 0,
             "byteLength" : 84,
-            "byteOffset" : 123404
+            "byteOffset" : 156876
         }
     ],
     "samplers" : [
@@ -479,7 +481,7 @@
     ],
     "buffers" : [
         {
-            "byteLength" : 123488,
+            "byteLength" : 156960,
             "uri" : "giftbox.bin"
         }
     ]
