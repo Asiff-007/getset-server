@@ -68,9 +68,13 @@ h3
     font-size: 2.5em;
 }
 
+.win_desc {
+    font-size: 2em;
+}
+
 .game_text
 {
-    color: white;
+    color: rgb(10, 85, 0);
     text-align: center;
     font-weight: unset;
 }
@@ -79,7 +83,7 @@ h3
   width: 310px;
   font-size: 1.5em;
   font-weight: 600;
-  color: #fff;
+  color: rgb(0, 65, 22);
   cursor: pointer;
   margin: 20px;
   height: 55px;
@@ -111,12 +115,12 @@ h3
 {
     background-image: linear-gradient(
       to right,
-      #ed6ea0,
-      #ec8c69,
-      #f7186a,
-      #fbb03b
+      #83ff49,
+      #47ff8d,
+      #005e0c,
+      #ffd900
     );
-    box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
+    box-shadow: 0 4px 15px 0 rgba(219, 255, 202, 0.75);
 }
 
 @keyframes bn13bouncy {
@@ -169,16 +173,18 @@ h3
       //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
       //import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
       import { GLTFLoader } from"../lib/GLTFLoader.js";
-      import { logEvent, analytics } from '../lib/google_analytics.js';
+      //import { logEvent, analytics } from '../lib/google_analytics.js';
+      function logEvent(a, b) {};
+      var analytics = {};
       
       var prize = "<%= price %>";
       var campaign_id = "<%= campaign_id %>";
       var is_played = "<%= isplayed %>";
-      var price_id = "<%= price_id %>";
+      var price_id = parseInt("<%= price_id %>") | 0;
       var ticket_id = "<%= ticket_id %>";
       var price_expiry = "<%= price_expiry %>";
       var url = "<%= url %>";
-      var ticket_id = "<%= isplayed %>";
+      var coupon = "<%= coupon %>";
       const date_expiry = new Date(price_expiry).toDateString();
 
       var ball_ref;
@@ -280,8 +286,8 @@ h3
       camera.position.z = 2;
       scene.add(camera);
 
-      const startScreenBg = tl.load('../assets/lucky_slingshot/gamebanner_popees.png');
-      const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.png');
+      const startScreenBg = tl.load('../assets/lucky_slingshot/gamebanner_mayflower.jpg');
+      const spaceTexture = tl.load('../assets/lucky_slingshot/gamebg_mayflower.jpg');
       scene.background = startScreenBg;
 
       document.getElementById('goto_selfie').style.display = 'none';
@@ -317,7 +323,7 @@ h3
             }
           }
         };
-        httpRequest.open('POST', `${url}/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}`,true);
+        httpRequest.open('POST', `${url}/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}&coupon=${coupon}`,true);
         httpRequest.setRequestHeader("Content-type", "application/json");
         httpRequest.send(JSON.stringify({
           'price_id' : price_id,
@@ -341,7 +347,7 @@ h3
       }
 
       function populateGift() {
-          glb_loader.load( '../assets/lucky_slingshot/giftbox/giftbox.gltf', function ( gltf ) {
+          glb_loader.load( '../assets/lucky_slingshot/giftbox_mayflower/giftbox.gltf', function ( gltf ) {
               var z = -30; var i = 0;
               gltf_global = gltf;
               Array(100).fill().forEach(() => {
@@ -548,8 +554,8 @@ h3
                 if (isChrome && !isIOS()) {
                     document.getElementById('goto_selfie').style.display = 'inline-block';
                 }
-                createUserPrize();
             }
+            createUserPrize();
             is_ready_for_reveal = false;
           }
       }

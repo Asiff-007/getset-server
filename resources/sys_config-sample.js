@@ -41,6 +41,25 @@ module.exports = {
           }
         }
       }
+    ],
+    ,
+    [3,
+      {
+        url: '/games/views/luckySlingShotCouponBased.html',
+        price_given_ratio : 2,
+        play_validity_in_days: 0.0833333 / 24, // 5 minutes
+        selfie_frame_data: {
+          frame_path: '../assets/mayflower_frame.png',
+          data: {
+            height: 1920,
+            width: 1024,
+            offset_x: 100,
+            offset_y: 72,
+            inner_width: 824,
+            inner_height: 1465
+          }
+        }
+      }
     ]
   ]),
 
