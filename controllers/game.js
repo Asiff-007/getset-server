@@ -18,7 +18,6 @@ module.exports = {
     if (req.validate(null, null, rules)) {
       campaignDb.getRecord({id:req.query.campaign_id})
         .then( function (response) {
-          if(response.status !== 'Failed') {
             if (!response.coupen) {
               game.getPrice({campaign_id:req.query.campaign_id, status:config.price_status.active})
                 .then(function (price) {
@@ -78,9 +77,9 @@ module.exports = {
                   }
                 });
             }
-          } else {
-            resp.sendStatus(404);
-          }
+        })
+        .catch(function(){
+          resp.sendStatus(404);
         });
     }
   }
