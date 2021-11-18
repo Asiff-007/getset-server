@@ -10,7 +10,7 @@ module.exports = new (Class({ //jshint ignore:line
     var expiryFactor = 1,
       priceIndexArray = [],
       priceGivenRatio,
-      factor = 1;
+      emptyPriceCount;
 
     return price.getList(req)
       .then(function (priceList) {
@@ -25,12 +25,14 @@ module.exports = new (Class({ //jshint ignore:line
           expiryFactor++;
           _.times(probability, function () {
             priceIndexArray.push(key);
-            if (factor % priceGivenRatio === 0) {
-              priceIndexArray.push(config.price_status.no_price);
-            }
-            factor++;
           });
         });
+
+        emptyPriceCount = priceIndexArray.length * priceGivenRatio;
+        _.times(emptyPriceCount, function () {
+          priceIndexArray.push(config.price_status.no_price);
+        })
+        
         var key = priceIndexArray[_.random(0, priceIndexArray.length)];
         if (key === config.price_status.no_price ||priceIndexArray.length === 0) {
           return '';

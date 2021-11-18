@@ -52,7 +52,7 @@ var sys_config = require('./sys_config'),
         active: 'Active',
         inactive: 'Inactive',
         no_price: 'Noprize',
-        default_price_given_ratio: 5
+        default_price_given_ratio: .2 //1 - equal chance, 0 - no empty box, <1 - decrease empty box, >1 - increase empty box;
       },
 
       campaign_status: {
