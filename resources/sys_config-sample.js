@@ -66,7 +66,7 @@ module.exports = {
   campaign_data: new Map([
     [1,
       {
-        price_given_ratio : 3
+        price_given_ratio : 3 //1 - equal chance, 0 - no empty box, <1 - decrease empty box, >1 - increase empty box; 
       }
     ]
   ]),
