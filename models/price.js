@@ -2,6 +2,7 @@
 
 var Class = require('js-class'),
   db = require('../dao/db'),
+  price = require('../dao/price'),
   campaign = require('./campaign'),
   _ = require('lodash'),
   tableName = 'price';
@@ -23,8 +24,8 @@ module.exports = new (Class({ //jshint ignore:line
         };
       });
   },
-  getList: function(criteria) {
-    return db.getList(criteria, tableName, 'campaign_id');
+  getList: function(criteria, ignoreExpired) {
+    return price.getList(criteria, ignoreExpired);
   },
   update: function (id, data) {
     return campaign.updatePriceCount(_.merge({id: id}, data))
