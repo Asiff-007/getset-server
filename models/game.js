@@ -12,7 +12,7 @@ module.exports = new (Class({ //jshint ignore:line
       priceGivenRatio,
       emptyPriceCount;
 
-    return price.getList(req)
+    return price.getList(req, true)
       .then(function (priceList) {
         priceList = _.orderBy(priceList, ['expiry'], 'desc');
         if( sys_config.campaign_data.get(req.campaign_id)) {
@@ -22,7 +22,6 @@ module.exports = new (Class({ //jshint ignore:line
 
         _.each(priceList, function (price, key) {
           var probability = expiryFactor * (price.count - price.given);
-          expiryFactor++;
           _.times(probability, function () {
             priceIndexArray.push(key);
           });

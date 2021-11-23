@@ -58,7 +58,7 @@ module.exports = new (Class({ //jshint ignore:line
     return userPrice.getValidUserPrices(req, 'user_price', 'ticket_id')
       .then(function (data) {
         if (Object.keys(data).length != 0) {
-          if (data.expiry <= util.getDate()) {
+          if (data.expiry <= util.getToday()) {
             return {
               status: 'failed',
               error: 'Price is expired'

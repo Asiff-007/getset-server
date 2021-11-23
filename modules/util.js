@@ -14,6 +14,10 @@ module.exports = new (Class({ //jshint ignore:line
     } else {
       return new Date();
     }
+  },
+  getToday: function () {
+    const date = new Date()
+    return date.toISOString().split('T')[0];
   }
 }))();
 

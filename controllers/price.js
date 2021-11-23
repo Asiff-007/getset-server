@@ -22,7 +22,7 @@ module.exports = {
     };
 
     if (req.validate(null, null, rules)) {
-      price.getList(req.query)
+      price.getList(req.query, false)
         .then(resp.success, resp.error);
     }
   },
