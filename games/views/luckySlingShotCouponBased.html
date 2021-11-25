@@ -173,10 +173,8 @@ h3
       //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
       //import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
       import { GLTFLoader } from"../lib/GLTFLoader.js";
-      //import { logEvent, analytics } from '../lib/google_analytics.js';
-      function logEvent(a, b) {};
-      var analytics = {};
-      
+      import { logEvent, analytics } from '../lib/google_analytics.js';
+
       var prize = "<%= price %>";
       var campaign_id = "<%= campaign_id %>";
       var is_played = "<%= isplayed %>";
