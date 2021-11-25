@@ -30,7 +30,8 @@ module.exports = {
                   offset_x: frame_data.data.offset_x,
                   offset_y: frame_data.data.offset_y,
                   inner_width: frame_data.data.inner_width,
-                  inner_height: frame_data.data.inner_height
+                  inner_height: frame_data.data.inner_height,
+                  selfie_caption: frame_data.caption
                 });
           } else {
             resp.sendStatus(404);

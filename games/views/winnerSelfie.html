@@ -126,6 +126,7 @@ body
         var params = new URLSearchParams(location.search);
         var campaign_id = params.get('campaign_id');
         var img_src = "<%= selfie_frame %>";
+        var selfie_caption = "<%= selfie_caption %>";
         var img_resolution = {
             height: "<%= height %>",
             width: "<%= width %>"
@@ -164,7 +165,8 @@ body
             ];
 
             var shareData = {
-                files: filesArray
+                files: filesArray,
+                text: selfie_caption
             };
 
             if (navigator.canShare && navigator.canShare(shareData)){
