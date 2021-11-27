@@ -362,9 +362,6 @@
         var xValues = ["Monday.", "Tuesday", "Wedneday", "Thursday", "Friday" , "Satday" , "Sunday"];
         var players = document.getElementById('players').innerHTML.split(',');
         var claimed = document.getElementById('claimed').innerHTML.split(',');
-        
-        var y1Values = [players[0], players[1], players[2], players[3], players[4], players[5], players[6]];
-        var y2Values = [claimed[0], claimed[1], claimed[2], claimed[3], claimed[4], claimed[5], claimed[6]];
         var barColors = ["#330079", "#ead64b"];
                 
         new Chart("myChart", {
@@ -373,12 +370,12 @@
             labels: xValues,
             datasets: [{
                 backgroundColor: barColors[0],
-                data: y1Values,
+                data: players,
                 label:"Players"
             },
             {
                 backgroundColor: barColors[1],
-                data: y2Values,
+                data: claimed,
                 label:"Claimed"
             }
         ]
