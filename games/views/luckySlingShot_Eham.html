@@ -488,6 +488,7 @@ h3
       }
 
       function startGame() {
+        logEvent(analytics, "play_btn_click", { campaign_id: campaign_id });
         Array(1000).fill().forEach(addStar);
         populateGift();
         addSlingshot();
