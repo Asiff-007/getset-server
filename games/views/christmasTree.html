@@ -401,28 +401,13 @@ h3
 
       function populateGift() {
           glb_loader.load( '../assets/lucky_slingshot/giftbox/giftbox.gltf', function ( gltf ) {
-              var z = -30; var i = 0;
-              gltf_global = gltf;
-              var a = 4 / 360;
-              var l = 1;
-            //   Array(100).fill().forEach(() => {
-            //       gift_clone = gltf.scene.clone();
-
-            //       const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(60));
-            //       z -= i*.5;
-            //       i++;
-
-            //       gift_clone.position.set(x, y, z);
-            //       gift_clone.scale.set(1.5, 1.5, 1.5);
-            //       scene.add(gift_clone);
-            //       gift_boxes.push(gift_clone);
-            //   });
-            var points = [], l;
+            gltf_global = gltf;
+            var l;
             var count = 5;
             var height = 5;
             var offset = -0.4;
             var radius_offset = 0.9;
-            for (i = 0; i < count * 2; i++) {
+            for (var i = 0; i < count * 2; i++) {
                 for( var j = 0; j < height; j++) {
                     if (i % 2 == 1) {
                         l = count * 2;
@@ -430,7 +415,6 @@ h3
                         l = count * 4;
                     }
                     var a = i / count * Math.PI;
-                    points.push( new THREE.Vector2(Math.cos(a) * l, Math.sin(a) * l));
                     if (i % 2 == 0) {
                         gift_clone = gltf.scene.clone();
                         gift_clone.position.set(Math.cos(a) * l*0.05 * (height - j) * radius_offset, j * 2 + offset, Math.sin(a) * l*0.05 * (height - j) * radius_offset);
