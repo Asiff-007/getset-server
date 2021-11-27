@@ -18,7 +18,7 @@ module.exports = new (Class({ //jshint ignore:line
     .where('corporate.id',id)
     .andWhere('user_price.price_won_on','>',date)
     .select(
-        'corporate.name as outletName',
+        'corporate.name as corporateName',
         'corporate.email as email',
         'shop.id as shopId',
         'shop.name as shopName',

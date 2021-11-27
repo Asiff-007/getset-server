@@ -29,6 +29,14 @@
             font: 16px 'Arial';color: #707070;line-height: 10px;
         }
 
+        .text7 {
+            font: bold 20px 'Arial';color: #707070;line-height: 10px;
+        }
+
+        .text8 {
+            font: bold 30px 'Arial';color: #330079;line-height: 10px;
+        }
+
         .t3 {
             margin-bottom : 8px;
             padding-bottom: 0%;
@@ -55,15 +63,25 @@
             margin-left: 15px;
         }
 
+        .t8 {
+            margin : 0px;
+            padding: 0%;
+        }
+
+        .t9 {
+            margin-bottom : 0px;
+            padding-bottom: 0%;
+        }
+
         .page {
             align-items: center;
-            width: 900px;
-            padding-left: 300px;
+            width: 820px;
+            padding-left: 220px;
         }
         
         .title {
           position: relative;
-          left: -90px;
+          left: -60px;
             text-align: center;
         }
 
@@ -119,7 +137,7 @@
             border-color: #330079;
             border-radius: 25px;
             width: 290px;
-            height: 260px;
+            height: 275px;
             align-items: center;
             padding: 1em;
             padding-top: 1.5em;
@@ -127,23 +145,27 @@
 
         .section3 {
             margin-left: 10px;
-            margin-right: 0px;
-            margin-top: 30px;
-            width: 300px;
+            margin-right: 0;
+            margin-top: 55px;
+            width: 325px;
             height: 300px;
-            text-align: center;
-            padding: 1em;
-            padding-top: 5em;
+            border-style: solid;
+            border-color: #330079;
+            border-radius: 25px;
+            padding-top: 0;
+            padding-top: 1em;
         }
 
         .section4 {
-            margin-left: 20px;
-            margin-right: 0;
-            margin-top: 90px;
-            width: 340px;
-            height: 300px;
-            padding-top: 20px;
-            vertical-align: middle;
+            margin-left: 170px;
+            margin-right: 0px;
+            margin-top: 0px;
+            margin-bottom: 0;
+            width: 350px;
+            height: 250px;
+            text-align: center;
+            padding: 1em;
+            padding-top: 5em;
         }
 
         .section5 {
@@ -225,10 +247,10 @@
         }
 
         .divider {
-            margin-top: 90px;
+            margin-top: 0px;
             background-color: #330079;
             height: 3px;
-            width: 90%;
+            width: 85%;
         }
 
         .divider2 {
@@ -241,19 +263,19 @@
         .secpos1 {
           position: absolute;
           top: 155px;
-          left: 700px;
+          left: 600px;
         }
 
         .secpos3 {
             position: absolute;
             top: 320px;
-            left: 700px;
+            left: 600px;
         }
 
         .secpos5 {
             position: absolute;
             top: 680px;
-            left: 700px;
+            left: 500px;
         }
 
         body {
@@ -268,7 +290,7 @@
                 <div>
                     <P class="text2 title1">01/10/2021 - 07/10/2021</P>
                     <P class="text1 title2">Weekly Summery of the Consumer Experience</P>
-                    <P class="text1 title2">{{datas.outletName}}</P>
+                    <P class="text1 title2">{{datas.corporateName}}</P>
                 </div>
             </div>
             <div>
@@ -297,73 +319,54 @@
                       </ul> 
                 </div>
                 <div class="secpos3 section3">
-                    <P class="text2 py-1">Most played between</P>
-                    <P class="text1 py-1">{{datas.mostPlayedTime.time}}</P>
-                    <P class="text2 py-1">Most played on</P>
-                    <P class="text1 py-1">{{datas.mostPlayedDay.day}}</P>
-                </div>
-            </div>
-            <div>
-                <div class="section4">
-                        <div>
-                            <P class="text1 t5">166</P>
-                            <P class="text2 t6">Selﬁes Captured</P>
-                            <P class="text1 t5">144</P>
-                            <P class="text2 t6">Selﬁes Captured</P>
-                        </div>
-                        <div><img src="https://firebasestorage.googleapis.com/v0/b/keralaweather-d92fc.appspot.com/o/report%2Fmobile.png?alt=media&token=fc6e646d-738a-44ed-b87d-abfb64b0c480" alt="" class="img3"></div>
-                </div>
-                <div class="secpos5 section5">
                     <P class="text1 tbh">Most Active Shops</P>
                     <TABLE cellpadding=0 cellspacing=0 class="tb t7 text5">
                         <TR>
-                            <TD ><P class="t7">Shop Name.</P></TD>
-                            <TD ><P class="t7">Players.</P></TD>
+                            <TD ><P class="t7">Shop Name </P></TD>
+                            <TD ><P class="t7">Players </P></TD>
                             <TD ><P class="t7">Claimed </P></TD>
                         </TR>
+                        {{#each datas.mostActiveShop}}
                         <TR>
-                            <TD ><P class="list2 t7">Shop One</P></TD>
-                            <TD class="td t7"><P >100</P></TD>
-                            <TD class="td t7"><P >78 </P></TD>
+                            <TD ><P class="list2 t7">{{this.shopName}}</P></TD>
+                            <TD class="td t7"><P >{{this.players}}</P></TD>
+                            <TD class="td t7"><P >{{this.claimed}} </P></TD>
                         </TR>
-                        <TR>
-                            <TD ><P class="list2 t7">Shop Two</P></TD>
-                            <TD class="td t7"><P >90</P></TD>
-                            <TD class="td t7"><P >68 </P></TD>
-                        </TR>
-                        <TR>
-                            <TD ><P class="list2 t7">Shop Three</P></TD>
-                            <TD class="td t7"><P class="">82</P></TD>
-                            <TD class="td t7"><P class="">63 </P></TD>
-                        </TR>
-                        <TR>
-                            <TD ><P class="list2 t7">Shop Four</P></TD>
-                            <TD class="td t7"><P class="">78</P></TD>
-                            <TD class="td t7"><P class="">59</P></TD>
-                        </TR>
+                        {{/each}}
                       </TABLE>
                 </div>
             </div>
+                <div class="section4">
+                    <P class="text7 t8">Most played between</P>
+                    <P class="text8 t9">{{datas.mostPlayedTime.time}}</P>
+                    <P class="text7 t9">Most played on</P>
+                    <P class="text8 t9">{{datas.mostPlayedDay.day}}</P>
+                </div>
             <div class="divider"></div>
             <div class="divider2"></div>
-            <canvas id="myChart" style="width:100%;max-width:700px;margin-top: 10px; margin-left: 80px;"></canvas>
+            <canvas id="myChart" data="123" style="width:100%;max-width:700px;margin-top: 10px; margin-left: 20px;"></canvas>
             <div>
                 <div class="section6">
                     <div><img src="https://firebasestorage.googleapis.com/v0/b/keralaweather-d92fc.appspot.com/o/report%2Fgetset%20loogo.png?alt=media&token=87501ee0-597c-4205-a1a5-76d18da4a98a" alt="" class="img4"></div>
                     <div>
-                        <P class="text6 footer">Generated on: 01/10/2021 - 00:00 Hrs</P>
+                        <P class="text6 footer">Generated on: {{datas.generatedOn}}</P>
                     </div>
                 </div>
+                <p hidden id='players'>{{datas.chartPlayers}}</p>
+                <p hidden id='claimed'>{{datas.chartClaimed}}</p>
             </div>
 
     </div>
     
     <script>
         var xValues = ["Monday.", "Tuesday", "Wedneday", "Thursday", "Friday" , "Satday" , "Sunday"];
-        var y1Values = [55, 49, 44, 24, 15, 16, 20];
-        var y2Values = [40, 25, 22, 12, 8, 10, 10];
-        var barColors = ["#330079", "#ead64b"];
+        var players = document.getElementById('players').innerHTML.split(',');
+        var claimed = document.getElementById('claimed').innerHTML.split(',');
         
+        var y1Values = [players[0], players[1], players[2], players[3], players[4], players[5], players[6]];
+        var y2Values = [claimed[0], claimed[1], claimed[2], claimed[3], claimed[4], claimed[5], claimed[6]];
+        var barColors = ["#330079", "#ead64b"];
+                
         new Chart("myChart", {
           type: "bar",
           data: {
