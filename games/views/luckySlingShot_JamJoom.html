@@ -332,7 +332,7 @@ h3
           document.getElementById('game_prize_desc').style.display = 'block';
           document.getElementById('game_prize_title').style.display = 'block';
           document.getElementById('game_prize_title_head').innerHTML = prize_cookie + "!";
-          document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
+          document.getElementById('warn_title').innerHTML = "നിങ്ങളുടെ ഓഫർ നേടാൻ ഈ QR കോഡ് കൗണ്ടറിൽ കാണിക്കുക";
           document.getElementById('game_warn_title').style.display = 'block';
           document.getElementById("qrcode").style.display = 'block';
           new QRCode(document.getElementById("qrcode"), {
@@ -363,7 +363,7 @@ h3
                 setCookie("prize", escape(prize), prize_validity_in_days);
                 setCookie("is_played", true, play_validity_in_days);
                 document.getElementById('game_warn_title').style.display = 'block';
-                document.getElementById('warn_title').innerHTML = "Show this QR Code at counter to redeem prize!!";
+                document.getElementById('warn_title').innerHTML = "നിങ്ങളുടെ ഓഫർ നേടാൻ ഈ QR കോഡ് കൗണ്ടറിൽ കാണിക്കുക";
                 document.getElementById("qrcode").style.display = 'block';
                 return;
             }
