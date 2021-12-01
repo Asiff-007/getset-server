@@ -442,52 +442,6 @@ h3
           });
       }
 
-      function addSlingshot() {
-          glb_loader.load( '../assets/lucky_slingshot/stick/stick.gltf', function ( gltf ) {
-              var slingshot_clone = gltf.scene.clone();
-              
-              slingshot_clone.position.set(0, -5.5, -5);
-              slingshot_clone.scale.set(3.5, 3.5, 3.5);
-              scene.add(slingshot_clone);
-          }, undefined, function (error) {
-              console.error( error );
-              is_ready = false;
-          } );
-          glb_loader.load( '../assets/lucky_slingshot/rubber_band/rubberband.gltf', function ( gltf ) {
-              var band_clone = gltf.scene.clone();
-              
-              band_clone.position.set(0, -5.5, -5);
-              band_clone.scale.set(3.5, 3.5, 3.5);
-              band_ref = band_clone;
-              scene.add(band_clone);
-          }, undefined, function (error) {
-              console.error( error );
-              is_ready = false;
-          } );
-      }
-
-      function addBall() {
-          
-        glb_loader.load( '../assets/lucky_slingshot/ball/ball.gltf', function ( gltf ) {
-              var ball_clone = new THREE.Group();
-
-              gltf.scene.traverse(function (child) {
-                  if (child.isMesh) {
-                      var mesh = new THREE.Mesh(child.geometry, child.material);
-                      ball_clone.add(mesh);
-                  }
-              });
-
-              ball_clone.position.set(ball_initial_pos.x, ball_initial_pos.y, ball_initial_pos.z);
-              ball_clone.scale.set(3.5, 3.5, 3.5);
-              scene.add(ball_clone);
-              ball_ref = ball_clone;
-          }, undefined, function (error) {
-              console.error( error );
-              is_ready = false;
-          } );
-      }
-
       function looseBall() {
           for (var i = 0; i< gift_boxes.length; i++) {
             var random = Math.floor(Math.random() * gift_boxes.length);
@@ -518,9 +472,6 @@ h3
         addTree();
         populateGift();
 
-
-        // addSlingshot();
-        //addBall();
         buttonPress.play();
         bgMusic.loop = true;
         bgMusic.volume = 0.3;
