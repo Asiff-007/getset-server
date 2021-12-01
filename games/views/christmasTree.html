@@ -76,7 +76,7 @@ h3
 
 .game_text
 {
-    color: white;
+    color: rgb(0, 0, 0);
     text-align: center;
     font-weight: unset;
 }
@@ -206,10 +206,6 @@ h3
       var qr_code_cookie = getCookie("qr_code");
       var prize_cookie = getCookie("prize");
 
-      var ball_ref;
-      var band_ref;
-      var scale_diff = 0;
-      var ball_initial_pos = new THREE.Vector3(0, -1.5 , -5);
 			var temp_vector = new THREE.Vector3();
       var gltf_global;
       var is_ready = false;
@@ -246,16 +242,6 @@ h3
       const tl = new THREE.TextureLoader();
 			var raycaster = new THREE.Raycaster();
       var mouse = new THREE.Vector2();
-
-      var mouse_drag_diff = 0;
-      var mouse_drag_threshold = 45;
-
-      var is_ball_dragged = false;
-
-      var initial_pos = new THREE.Vector2();
-      var current_pos = new THREE.Vector2();
-
-      var ball_speed = -50;
 
       var isChromium = window.chrome;
       var winNav = window.navigator;
@@ -549,29 +535,6 @@ h3
           renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
       });
 
-
-
-      function handleMove(point) {
-          if (!tutorial_complete) {
-              document.getElementById('tutorial_text').style.display = 'none';
-              if (sprite) {
-                  sprite.needs_update = false;
-                  scene.remove(sprite);
-              }
-              tutorial_complete = true;
-              setCookie("tutorial_complete", true);
-          }
-          current_pos.x = point.x;
-          current_pos.y = point.y;
-          
-          scale_diff = current_pos.y - initial_pos.y;
-          if (current_pos.y > initial_pos.y) {
-              mouse_drag_diff = initial_pos.distanceTo(current_pos);
-          } else {
-              mouse_drag_diff = 0;
-          }
-      }
-
       function handleDown(point) {
 
         if (is_ready && !is_box_selected) {
@@ -583,7 +546,6 @@ h3
 						for (var i = 0; i < gift_boxes.length; i++) {
 							if (intersects[0].object.parent.parent == gift_boxes[i]) {
 								final_gift = gift_boxes[i];
-								// is_ready_for_reveal = true;
 								is_box_selected = true;
 								target_pos = new THREE.Vector3();
 								final_gift.getWorldPosition(target_pos);
@@ -625,71 +587,12 @@ h3
           }
       }
 
-      function handleUp() {
-          is_pressed = false;
-          is_ball_dragged = false;
-
-          initial_pos.x = null;
-          initial_pos.y = null;
-
-          if (is_ready) {
-              if (mouse_drag_diff > mouse_drag_threshold) {
-                  looseBall();
-              } else if (ball_ref) {
-                  // reset position
-                  ball_ref.position.lerp(ball_initial_pos, 1);
-              }
-          }
-          if (band_ref) {
-            band_ref.scale.set(3.5, 3.5, 3.5);
-          }
-
-          // reset drag diff
-          mouse_drag_diff = 0;
-          scale_diff = 0;
-      }
-
-      function handleMouseMove() {
-          if (is_pressed && is_ready) {
-              const point = getCanvasRelativePosition(event);
-              event.preventDefault();
-              handleMove(point);
-          }
-      }
-
       function handleMouseDown() {
           const point = getCanvasRelativePosition(event, true);
           handleDown(point);
       }
 
-      function handleMouseUp() {
-          handleUp();
-      }
-
-      function handleTouchStart() {
-          const point = getCanvasRelativePosition(event, true);
-          handleDown(point);
-      }
-
-      function handleTouchEnd() {
-          handleUp();
-      }
-
-      function handleTouchMove() {
-          if (is_pressed && is_ready) {
-              const point = getCanvasRelativePosition(event, true);
-              event.preventDefault();
-              handleMove(point);
-          }
-      }
-
-    //   window.addEventListener('mousemove', handleMouseMove, false);
-      // window.addEventListener('mousedown', handleMouseDown, false);
-    //   window.addEventListener('mouseup', handleMouseUp, false);
       window.addEventListener('touchstart', handleMouseDown, false);
-    //   window.addEventListener('touchend', handleTouchEnd, false);
-    //   window.addEventListener('touchmove', handleTouchMove, false);
-
 
       // Controls
       // const controls = new OrbitControls(camera, canvas);
@@ -720,11 +623,13 @@ h3
           //controls.update()
 
 					if (final_gift && is_box_selected && is_zooming) {
-						camera.position.lerp(target_pos, 0.2);
+						camera.position.lerp(target_pos, 0.06);
+						camera.lookAt(target_pos)
 					}
 
 					if (final_gift && camera.getWorldPosition(temp_vector).distanceTo(target_pos) < 5) {
 						is_zooming = false;
+						document.getElementById('game_prize_reveal_prompt').style.display = 'block';
 						is_ready_for_reveal = true;
 					}
 
