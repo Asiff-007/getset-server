@@ -210,6 +210,7 @@ h3
       var band_ref;
       var scale_diff = 0;
       var ball_initial_pos = new THREE.Vector3(0, -1.5 , -5);
+			var temp_vector = new THREE.Vector3();
       var gltf_global;
       var is_ready = false;
       var is_pressed = false;
@@ -220,6 +221,7 @@ h3
       var target_pos;
       var mixer;
       var is_ready_for_reveal = false;
+			var is_zooming = true;
       var validity;
       var resp;
       var tutorial_complete = false;
@@ -458,26 +460,6 @@ h3
           });
       }
 
-      function looseBall() {
-          for (var i = 0; i< gift_boxes.length; i++) {
-            var random = Math.floor(Math.random() * gift_boxes.length);
-            if(ball_ref.position.distanceTo(gift_boxes[random].position) > 300) {
-                final_gift = gift_boxes[random];
-                target_pos = {
-                    x: gift_boxes[random].position.x,
-                    y: gift_boxes[random].position.y,
-                    z: gift_boxes[random].position.z
-                };
-              }
-          }
-          is_ready = false;
-          ball_ref.alive = true;
-          ballRelease.volume = 0.6;
-          ballRelease.play();
-          wind.loop = true;
-          wind.play();
-      }
-
       function startGame() {
         logEvent(analytics, "play_btn_click", { campaign_id: campaign_id });
         // Array(1000).fill().forEach(addStar);
@@ -603,6 +585,8 @@ h3
 								final_gift = gift_boxes[i];
 								// is_ready_for_reveal = true;
 								is_box_selected = true;
+								target_pos = new THREE.Vector3();
+								final_gift.getWorldPosition(target_pos);
 								break;
 							}
 						}
@@ -735,8 +719,13 @@ h3
           // Update Orbital Controls
           //controls.update()
 
-					if (final_gift && is_box_selected) {
-						camera.position.lerp(new THREE.Vector3(final_gift.position.x, final_gift.position.y + 1, final_gift.position.z + 5), 0.5);
+					if (final_gift && is_box_selected && is_zooming) {
+						camera.position.lerp(target_pos, 0.2);
+					}
+
+					if (final_gift && camera.getWorldPosition(temp_vector).distanceTo(target_pos) < 5) {
+						is_zooming = false;
+						is_ready_for_reveal = true;
 					}
 
           if (mixer) {
