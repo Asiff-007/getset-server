@@ -1,42 +1,79 @@
-var pdf = require("pdf-creator-node");
-var fs = require("fs");
-var util = require('../modules/util');
+var pdf = require('pdf-creator-node');
+var fs = require('fs');
 var report = require('../models/report');
+var nodemailer = require('nodemailer');
+var db = require('../dao/db');
+var config = require('../resources/config');
+var _ = require('lodash');
 
 module.exports = {
-    index: function (req, resp) {
+  index: function () {
+    'use strict';
+    // Read HTML Template
+    var html = fs.readFileSync('report.html', 'utf8');
+    var options = {
+      format: 'A4',
+      orientation: 'portrait'
+    };
+    var week = new Date();
+    week.setDate(week.getDate() - 100);
+    db.getList({report_status: config.price_status.active},'corporate')
+     .then(function (corporateList) {
+       _.each(corporateList,function (corporate) {
+         if (corporate.email !== null) {
+           report.getRecord(corporate.id , week)
+           .then(function(res) {
 
-      // Read HTML Template
-      var html = fs.readFileSync("report.html", "utf8");
+             var document = {
+               html: html,
+               data: {
+                 datas: res
+               },
+               path: './report.pdf'
+             };
 
-      var options = {
-          format: "A4",
-          orientation: "portrait",
-      };
+             pdf
+             .create(document, options)
+             .then(function(res) {
+               console.log(res);
 
-      var week = new Date();
-      week.setDate(week.getDate()-100);
+               var transporter = nodemailer.createTransport({
+                 service: 'gmail',
+                 auth: {
+                   user: 'asiffma566@gmail.com',
+                   pass: 'Asif@566'
+                 }
+               });
 
-      report.getRecord(1 , week)
-        .then(function(res){
-
-          var document = {
-            html: html,
-            data: {
-              datas: res,
-            },
-            path: "./report.pdf",
-            type: "",
-          };
-        
-          pdf
-          .create(document, options)
-          .then((res) => {
-            console.log(res);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-        })
-  
-}}
+               var mailOptions = {
+                 from: 'asiffma566@gmail.com',
+                 to: corporate.email,
+                 subject: 'Sending Email using Node.js',
+                 text: 'That was easy!',
+                 attachments: [
+                   {
+                     path:'./report.pdf',
+                     contentType: 'application/pdf'
+                   }
+                 ]
+               };
+               transporter.sendMail(mailOptions, function(error, info) {
+                 if (error) {
+                   console.log(error);
+                   process.exit();
+                 } else {
+                   console.log('Email sent: ' + info.response);
+                   process.exit();
+                 }
+               });
+             })
+             .catch(function(error) {
+               console.error(error);
+               process.exit();
+             });
+           });
+         }
+       });
+     });
+  }
+};
