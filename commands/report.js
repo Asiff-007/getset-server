@@ -17,7 +17,7 @@ module.exports = {
     };
     var week = new Date();
     week.setDate(week.getDate() - 100);
-    db.getList({report_status: config.price_status.active},'corporate')
+    db.getList({report_status: config.report.report_status.active},'corporate')
      .then(function (corporateList) {
        _.each(corporateList,function (corporate) {
          if (corporate.email !== null) {
@@ -40,16 +40,16 @@ module.exports = {
                var transporter = nodemailer.createTransport({
                  service: 'gmail',
                  auth: {
-                   user: 'asiffma566@gmail.com',
-                   pass: 'Asif@566'
+                   user: config.report.user,
+                   pass: config.report.password
                  }
                });
 
                var mailOptions = {
-                 from: 'asiffma566@gmail.com',
+                 from: config.report.user,
                  to: corporate.email,
-                 subject: 'Sending Email using Node.js',
-                 text: 'That was easy!',
+                 subject: config.report.subject,
+                 text: config.report.text,
                  attachments: [
                    {
                      path:'./report.pdf',

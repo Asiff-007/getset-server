@@ -52,7 +52,7 @@ var sys_config = require('./sys_config'),
         active: 'Active',
         inactive: 'Inactive',
         no_price: 'Noprize',
-        default_price_given_ratio: .2 //1 - equal chance, 0 - no empty box, <1 - decrease empty box, >1 - increase empty box;
+        default_price_given_ratio: 0.2
       },
 
       campaign_status: {
@@ -63,6 +63,17 @@ var sys_config = require('./sys_config'),
       coupen_status: {
         yes: 'Yes',
         no: 'No'
+      },
+
+      report: {
+        report_status:{
+          active: 'Active',
+          inactive: 'Inactive'
+        },
+        user: 'asiffma566@gmail.com',
+        password: 'Asif@566',
+        subject: 'Sending Email using Node.js',
+        text: 'That was easy!'
       }
     };
 
