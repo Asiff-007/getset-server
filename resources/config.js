@@ -73,7 +73,8 @@ var sys_config = require('./sys_config'),
         user: 'asiffma566@gmail.com',
         password: 'Asif@566',
         subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
+        text: 'That was easy!',
+        service: 'gmail'
       }
     };
 

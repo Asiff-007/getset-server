@@ -38,7 +38,7 @@ module.exports = {
                console.log(res);
 
                var transporter = nodemailer.createTransport({
-                 service: 'gmail',
+                 service: config.report.service,
                  auth: {
                    user: config.report.user,
                    pass: config.report.password
