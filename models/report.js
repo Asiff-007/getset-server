@@ -19,6 +19,7 @@ module.exports = new (Class({ //jshint ignore:line
         time = [],
         chartPlayers = [],
         chartClaimed = [],
+        reportPeriod,
         days =
         [
             'Monday',
@@ -127,6 +128,10 @@ module.exports = new (Class({ //jshint ignore:line
               'desc')
               .slice(0,5);
           generatedOn = new Date().toLocaleString();
+          reportPeriod = {
+              start:(new Date(date).toLocaleDateString().split(',')[0]),
+              end:new Date().toLocaleDateString().split(',')[0]
+            };
           return {
             corporateName: corporateName,
             totalPlayers: totalPlayers,
@@ -137,7 +142,8 @@ module.exports = new (Class({ //jshint ignore:line
             mostActiveShop: mostActiveShop,
             chartPlayers: chartPlayers,
             chartClaimed: chartClaimed,
-            generatedOn: generatedOn
+            generatedOn: generatedOn,
+            reportPeriod: reportPeriod
           };
         });
   }
