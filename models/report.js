@@ -42,7 +42,7 @@ module.exports = new (Class({ //jshint ignore:line
           }).length;
           claimedPrizes = _.filter(data,
               [
-                  'claimStatus',config.price_status.not_claimed
+                  'claimStatus',prizeClaimed
               ]);
           _.forIn(_.countBy(claimedPrizes,'priceName'),
               function(value, key) {
@@ -98,15 +98,19 @@ module.exports = new (Class({ //jshint ignore:line
           });
           mostPlayedDay = _.orderBy(day,['players'],'desc')[0];
           mostPlayedTime = _.orderBy(time,['count'],'desc')[0];
-          _.forIn(_.countBy(data,'shopName'), function(value, key) {
+          _.forIn(_.countBy(data,'shopId'), function(value, key) {
             var shopClaimed = _.filter(claimedPrizes,
                 [
-                    'shopName',key
+                    'shopId',parseInt(key)
                 ])
                 .length;
             shops.push(
                 {
-                  shopName: key,
+                  shopId:key,
+                  shopName: _.filter(data,
+                    [
+                        'shopId',parseInt(key)
+                    ])[0].shopName,
                   players: value ,
                   claimed: shopClaimed
                 });
@@ -121,12 +125,12 @@ module.exports = new (Class({ //jshint ignore:line
               chartClaimed.push(0);
             }
           });
-          mostActiveShop = _.orderBy(shops,['players'],'desc').slice(0,5);
+          mostActiveShop = _.orderBy(shops,['players'],'desc').slice(0,4);
           mostClaimedPrizes = _.orderBy(
               mostClaimedPrizes,
               ['count'],
               'desc')
-              .slice(0,5);
+              .slice(0,4);
           generatedOn = new Date().toLocaleString();
           reportPeriod = {
               start:(new Date(date).toLocaleDateString().split(',')[0]),

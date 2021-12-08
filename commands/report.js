@@ -16,7 +16,7 @@ module.exports = {
       orientation: 'portrait'
     };
     var week = new Date();
-    week.setDate(week.getDate() - 100);
+    week.setDate(week.getDate() - 7);
     db.getList({report_status: config.report.report_status.active},'corporate')
      .then(function (corporateList) {
        _.each(corporateList,function (corporate) {
@@ -29,13 +29,13 @@ module.exports = {
                data: {
                  datas: res
                },
-               path: './report.pdf'
+               path: './' + res.corporateName + '.pdf'
              };
 
              pdf
              .create(document, options)
-             .then(function(res) {
-               console.log(res);
+             .then(function(result) {
+               console.log(result);
 
                var transporter = nodemailer.createTransport({
                  service: config.report.service,
@@ -52,7 +52,7 @@ module.exports = {
                  text: config.report.text,
                  attachments: [
                    {
-                     path:'./report.pdf',
+                     path:'./' + res.corporateName + '.pdf',
                      contentType: 'application/pdf'
                    }
                  ]
