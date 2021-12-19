@@ -5,12 +5,14 @@ var nodemailer = require('nodemailer');
 var db = require('../dao/db');
 var config = require('../resources/config');
 var _ = require('lodash');
+var Promise = require('bluebird');
 
 module.exports = {
   index: function () {
     'use strict';
     // Read HTML Template
     var html = fs.readFileSync('report.html', 'utf8');
+    var promises = [];
     var options = {
       format: 'A4',
       orientation: 'portrait'
@@ -21,59 +23,68 @@ module.exports = {
      .then(function (corporateList) {
        _.each(corporateList,function (corporate) {
          if (corporate.email !== null) {
+           promises.push(
            report.getRecord(corporate.id , week)
            .then(function(res) {
-
-             var document = {
-               html: html,
-               data: {
-                 datas: res
-               },
-               path: './' + res.corporateName + '.pdf'
-             };
-
-             pdf
-             .create(document, options)
-             .then(function(result) {
-               console.log(result);
-
-               var transporter = nodemailer.createTransport({
-                 service: config.report.service,
-                 auth: {
-                   user: config.report.user,
-                   pass: config.report.password
-                 }
-               });
-
-               var mailOptions = {
-                 from: config.report.user,
-                 to: corporate.email,
-                 subject: config.report.subject,
-                 text: config.report.text,
-                 attachments: [
-                   {
-                     path:'./' + res.corporateName + '.pdf',
-                     contentType: 'application/pdf'
-                   }
-                 ]
+             if (res.status === 'Success') {
+               var document = {
+                 html: html,
+                 data: {
+                   datas: res
+                 },
+                 path: './' + res.corporateName + '.pdf'
                };
-               transporter.sendMail(mailOptions, function(error, info) {
-                 if (error) {
-                   console.log(error);
-                   process.exit();
-                 } else {
-                   console.log('Email sent: ' + info.response);
-                   process.exit();
-                 }
+
+               return pdf
+               .create(document, options)
+               .then(function() {
+
+                 var transporter = nodemailer.createTransport({
+                   service: config.report.service,
+                   auth: {
+                     user: config.report.user,
+                     pass: config.report.password
+                   }
+                 });
+
+                 var mailOptions = {
+                   from: config.report.user,
+                   to: corporate.email,
+                   subject: config.report.subject,
+                   text: config.report.text,
+                   attachments: [
+                     {
+                       path:'./' + res.corporateName + '.pdf',
+                       contentType: 'application/pdf'
+                     }
+                   ]
+                 };
+                 return new Promise(function(resolve, reject) {
+                   transporter.sendMail(mailOptions, function(error, info) {
+                      if (error) {
+                        console.log(error);
+                        reject(error);
+                      } else {
+                        console.log('Email sent: ' + info.response);
+                        resolve(info.response);
+                      }
+                    });
+                 });
+               })
+               .catch(function(error) {
+                 console.error(error);
+                 return error;
                });
-             })
-             .catch(function(error) {
-               console.error(error);
-               process.exit();
-             });
-           });
+             }
+           })
+           );
          }
        });
+       Promise.all(promises)
+        .then(function (data) {
+          console.log(data);
+          process.exit();
+        });
      });
   }
 };
