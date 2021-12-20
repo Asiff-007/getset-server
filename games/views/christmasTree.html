@@ -307,8 +307,8 @@ h3
 			scene.add(camera);
 			
 			const startScreenBg = tl.load(
-			'../assets/lucky_slingshot/gamebanner_popees.jpg');
-			const spaceTexture = tl.load('../assets/lucky_slingshot/popee_gameBg.jpg');
+			'../assets/christmas/gamebanner_chritmas.jpg');
+			const spaceTexture = tl.load('../assets/christmas/gamebg_chritmas.jpg');
 			scene.background = startScreenBg;
 			
 			document.getElementById('goto_selfie').style.display = 'none';
@@ -455,9 +455,11 @@ h3
 			}
 			
 			function addTree() {
-				glb_loader.load('../assets/christmas_tree/xmas_tree.glb', function(gltf) {
+				glb_loader.load('../assets/christmas/christmastree.gltf', function(gltf) {
 					var tree_clone = gltf.scene.clone();
-			
+
+					tree_clone.scale.set(2,2,2);
+					tree_clone.position.y = -1.5;
 					tree_group.add(tree_clone);
 					scene.add(tree_group);
 				}, undefined, function(error) {
@@ -477,6 +479,7 @@ h3
 			
 				addTree();
 				populateGift();
+				tree_group.position.y = -1.2;
 			
 				buttonPress.play();
 				bgMusic.loop = true;
@@ -580,6 +583,7 @@ h3
 					}
 				}
 				if (is_ready_for_reveal && is_box_selected) {
+					is_ready_for_reveal = false;
 					logEvent(analytics, "prize_open", {
 						campaign_id: campaign_id
 					});
@@ -613,7 +617,6 @@ h3
 						}
 						createUserPrize();
 					}
-					is_ready_for_reveal = false;
 				}
 			}
 			
