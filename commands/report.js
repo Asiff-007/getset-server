@@ -18,12 +18,12 @@ module.exports = {
       orientation: 'portrait'
     };
     var week = new Date();
-    week.setDate(week.getDate() - 7);
+    week.setDate(week.getDate() - 100);
     db.getList({report_status: config.report.report_status.active},'corporate')
      .then(function (corporateList) {
        _.each(corporateList,function (corporate) {
          if (corporate.email !== null) {
-           promises.push(
+           var reports =
            report.getRecord(corporate.id , week)
            .then(function(res) {
              if (res.status === 'Success') {
@@ -76,13 +76,12 @@ module.exports = {
                  return error;
                });
              }
-           })
-           );
+           });
+           promises.push(reports);
          }
        });
        Promise.all(promises)
-        .then(function (data) {
-          console.log(data);
+        .then(function () {
           process.exit();
         });
      });
