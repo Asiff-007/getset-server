@@ -39,7 +39,7 @@ module.exports = new (Class({ //jshint ignore:line
             corporateName = userPrice[0].corporateName;
             totalPlayers = _.filter(userPrice,['played',1]).length;
             totalWinners = _.filter(userPrice, function(data) {
-              return data.priceId > 0;
+              return !!data.priceId;
             }).length;
             claimedPrizes = _.filter(userPrice,
                 [

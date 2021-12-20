@@ -18,7 +18,7 @@ module.exports = {
       orientation: 'portrait'
     };
     var week = new Date();
-    week.setDate(week.getDate() - 100);
+    week.setDate(week.getDate() - 7);
     db.getList({report_status: config.report.report_status.active},'corporate')
      .then(function (corporateList) {
        _.each(corporateList,function (corporate) {
