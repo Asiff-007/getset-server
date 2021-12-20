@@ -33,7 +33,7 @@ body
 {
     position: absolute;
     margin: auto;
-    top: 8%;
+    top: 18%;
     width: 100%;
 }
 .footer
@@ -43,7 +43,7 @@ body
     flex-direction: column;
     position: absolute;
     margin: auto;
-    bottom: 8%;
+    bottom: 15%;
     width: 100%;
 }
 
@@ -76,9 +76,10 @@ h3
 
 .game_text
 {
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     text-align: center;
     font-weight: unset;
+	text-shadow: 0 0 8px #000000, 0 0 8px #ff0000;
 }
 .bn632-hover
 {
@@ -221,6 +222,7 @@ h3
 			var target_pos;
 			var mixer;
 			var is_ready_for_reveal = false;
+			var is_box_open = false;
 			var is_zooming = true;
 			var validity;
 			var resp;
@@ -303,7 +305,7 @@ h3
 				1000);
 			camera.position.x = 0;
 			camera.position.y = 3;
-			camera.position.z = 12;
+			camera.position.z = 14;
 			scene.add(camera);
 			
 			const startScreenBg = tl.load(
@@ -584,6 +586,7 @@ h3
 				}
 				if (is_ready_for_reveal && is_box_selected) {
 					is_ready_for_reveal = false;
+					is_box_open = true;
 					logEvent(analytics, "prize_open", {
 						campaign_id: campaign_id
 					});
@@ -659,7 +662,7 @@ h3
 					camera.lookAt(target_pos)
 				}
 			
-				if (final_gift && camera.getWorldPosition(temp_vector).distanceTo(
+				if (!is_box_open && final_gift && camera.getWorldPosition(temp_vector).distanceTo(
 						target_pos) < 5) {
 					is_zooming = false;
 					document.getElementById('game_prize_reveal_prompt').style.display =
