@@ -34,14 +34,14 @@ module.exports = new (Class({ //jshint ignore:line
         prizeClaimed = config.price_status.claimed,
         h,h2,ampm1,ampm2;
     return report.getData(id , date)
-        .then(function(userPrice) {
-          if (userPrice.length > 0) {
-            corporateName = userPrice[0].corporateName;
-            totalPlayers = _.filter(userPrice,['played',1]).length;
-            totalWinners = _.filter(userPrice, function(data) {
+        .then(function(userPriceList) {
+          if (userPriceList.length > 0) {
+            corporateName = userPriceList[0].corporateName;
+            totalPlayers = _.filter(userPriceList,['played',1]).length;
+            totalWinners = _.filter(userPriceList, function(data) {
               return !!data.priceId;
             }).length;
-            claimedPrizes = _.filter(userPrice,
+            claimedPrizes = _.filter(userPriceList,
                 [
                     'claimStatus',prizeClaimed
                 ]);
@@ -53,7 +53,7 @@ module.exports = new (Class({ //jshint ignore:line
                         count: value
                       });
                 });
-            _.forIn(userPrice, function(value) {
+            _.forIn(userPriceList, function(value) {
               var dayAt = days[(value.playedDate.getDay() + 6) % 7];
               var findDay = day.find(function(val) {
                 if (val.day === dayAt) {
@@ -99,7 +99,7 @@ module.exports = new (Class({ //jshint ignore:line
             });
             mostPlayedDay = _.orderBy(day,['players'],'desc')[0];
             mostPlayedTime = _.orderBy(time,['count'],'desc')[0];
-            _.forIn(_.countBy(userPrice,'shopId'), function(value, key) {
+            _.forIn(_.countBy(userPriceList,'shopId'), function(value, key) {
               var shopClaimed = _.filter(claimedPrizes,
                   [
                       'shopId',parseInt(key)
@@ -108,7 +108,7 @@ module.exports = new (Class({ //jshint ignore:line
               shops.push(
                   {
                     shopId:key,
-                    shopName: _.filter(userPrice,
+                    shopName: _.filter(userPriceList,
                       [
                           'shopId',parseInt(key)
                       ])[0].shopName,

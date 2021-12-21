@@ -23,60 +23,60 @@ module.exports = {
      .then(function (corporateList) {
        _.each(corporateList,function (corporate) {
          if (corporate.email !== null) {
-           var reports =
-           report.getRecord(corporate.id , week)
-           .then(function(res) {
-             if (res.status === 'Success') {
-               var document = {
-                 html: html,
-                 data: {
-                   datas: res
-                 },
-                 path: './' + res.corporateName + '.pdf'
-               };
 
-               return pdf
-               .create(document, options)
-               .then(function() {
+           var reports = report.getRecord(corporate.id , week)
+            .then(function(res) {
+              if (res.status === 'Success') {
+                var document = {
+                  html: html,
+                  data: {
+                    datas: res
+                  },
+                  path: './' + res.corporateName + '.pdf'
+                };
 
-                 var transporter = nodemailer.createTransport({
-                   service: config.report.service,
-                   auth: {
-                     user: config.report.user,
-                     pass: config.report.password
-                   }
-                 });
+                return pdf
+                .create(document, options)
+                .then(function() {
 
-                 var mailOptions = {
-                   from: config.report.user,
-                   to: corporate.email,
-                   subject: config.report.subject,
-                   text: config.report.text,
-                   attachments: [
-                     {
-                       path:'./' + res.corporateName + '.pdf',
-                       contentType: 'application/pdf'
-                     }
-                   ]
-                 };
-                 return new Promise(function(resolve, reject) {
-                   transporter.sendMail(mailOptions, function(error, info) {
-                      if (error) {
-                        console.log(error);
-                        reject(error);
-                      } else {
-                        console.log('Email sent: ' + info.response);
-                        resolve(info.response);
+                  var transporter = nodemailer.createTransport({
+                    service: config.report.service,
+                    auth: {
+                      user: config.report.user,
+                      pass: config.report.password
+                    }
+                  });
+
+                  var mailOptions = {
+                    from: config.report.user,
+                    to: corporate.email,
+                    subject: config.report.subject,
+                    text: config.report.text,
+                    attachments: [
+                      {
+                        path:'./' + res.corporateName + '.pdf',
+                        contentType: 'application/pdf'
                       }
-                    });
-                 });
-               })
-               .catch(function(error) {
-                 console.error(error);
-                 return error;
-               });
-             }
-           });
+                    ]
+                  };
+                  return new Promise(function(resolve, reject) {
+                    transporter.sendMail(mailOptions, function(error, info) {
+                       if (error) {
+                         console.log(error);
+                         reject(error);
+                       } else {
+                         console.log('Email sent: ' + info.response);
+                         resolve(info.response);
+                       }
+                     });
+                  });
+                })
+                .catch(function(error) {
+                  console.error(error);
+                  return error;
+                });
+              }
+            });
            promises.push(reports);
          }
        });
