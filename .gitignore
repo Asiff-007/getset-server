@@ -10,4 +10,4 @@ resources/database.json
 *.vscode
 *.swp
 *.swo
-
+report.pdf
