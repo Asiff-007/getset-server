@@ -74,6 +74,7 @@ h3
     font-size: 2.5em;
 }
 
+
 .game_text
 {
     color: rgb(255, 255, 255);
@@ -81,6 +82,11 @@ h3
     font-weight: unset;
 	text-shadow: 0 0 8px #000000, 0 0 8px #ff0000;
 }
+
+.win_title, .win_desc {
+	color: #e8fb3b;
+}
+
 .bn632-hover
 {
   width: 310px;
@@ -558,45 +564,45 @@ h3
 						}
 					}
 				}
-				if (is_ready_for_reveal && is_box_selected) {
-					is_ready_for_reveal = false;
-					is_box_open = true;
-					logEvent(analytics, "prize_open", {
+			}
+
+			function openBox() {
+				is_box_open = true;
+				logEvent(analytics, "prize_open", {
+					campaign_id: campaign_id
+				});
+				mixer = new THREE.AnimationMixer(final_gift);
+				gltf_global.animations.forEach(function(clip) {
+					mixer.clipAction(clip).clampWhenFinished = true;
+					mixer.clipAction(clip).setLoop(THREE.LoopOnce);
+					mixer.clipAction(clip).play();
+				});
+		
+				document.getElementById('game_prize_reveal_prompt').style.display = 'none';
+				document.getElementById('game_prize_desc').style.display = 'block';
+				document.getElementById('game_prize_title').style.display = 'block';
+		
+				bgMusic.volume = 0.05;
+		
+				if (prize == "") {
+					emptyBox.play();
+					document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
+					document.getElementById('game_prize_title_head').innerHTML =
+						"It's an empty box!";
+					setCookie("is_played", true, play_validity_in_days);
+				} else {
+					winning.play();
+					logEvent(analytics, "prize_won", {
 						campaign_id: campaign_id
 					});
-					mixer = new THREE.AnimationMixer(final_gift);
-					gltf_global.animations.forEach(function(clip) {
-						mixer.clipAction(clip).clampWhenFinished = true;
-						mixer.clipAction(clip).setLoop(THREE.LoopOnce);
-						mixer.clipAction(clip).play();
-					});
-			
-					document.getElementById('game_prize_reveal_prompt').style.display = 'none';
-					document.getElementById('game_prize_desc').style.display = 'block';
-					document.getElementById('game_prize_title').style.display = 'block';
-			
-					bgMusic.volume = 0.05;
-			
-					if (prize == "") {
-						emptyBox.play();
-						document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
-						document.getElementById('game_prize_title_head').innerHTML =
-							"It's an empty box!";
-						setCookie("is_played", true, play_validity_in_days);
-					} else {
-						winning.play();
-						logEvent(analytics, "prize_won", {
-							campaign_id: campaign_id
-						});
-						document.getElementById('game_prize_title_head').innerHTML = prize + "!";
-						if (isChrome && !isIOS()) {
-							document.getElementById('goto_selfie').style.display = 'inline-block';
-						}
-						createUserPrize();
+					document.getElementById('game_prize_title_head').innerHTML = prize + "!";
+					if (isChrome && !isIOS()) {
+						document.getElementById('goto_selfie').style.display = 'inline-block';
 					}
+					createUserPrize();
 				}
 			}
-			
+
 			function handleMouseDown() {
 				const point = getCanvasRelativePosition(event, true);
 				handleDown(point);
@@ -639,9 +645,7 @@ h3
 				if (!is_box_open && final_gift && camera.getWorldPosition(temp_vector).distanceTo(
 						target_pos) < 5) {
 					is_zooming = false;
-					document.getElementById('game_prize_reveal_prompt').style.display =
-						'block';
-					is_ready_for_reveal = true;
+					openBox();
 				}
 			
 				if (mixer) {
