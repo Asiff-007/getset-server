@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas tree</title>
+</head>
+<style type="text/css">
+*
+{
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body
+{
+    height: 100vh;
+    font-family: 'Poppins';
+    overscroll-behavior: none;
+}
+
+.webgl
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+    z-index: -1;
+}
+
+.main
+{
+    position: absolute;
+    margin: auto;
+    top: 8%;
+    width: 100%;
+}
+.footer
+{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    margin: auto;
+    bottom: 8%;
+    width: 100%;
+}
+
+.qrcode {
+    padding: .5em;
+    background-color: white;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  .qrcode {
+    background-color: white;
+  }
+}
+
+.warn_text {
+    padding: 1em;
+}
+
+h2, h1
+{
+    font-size: 1.5em;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+h3
+{
+    font-size: 2.5em;
+}
+
+.game_text
+{
+    color: rgb(255, 255, 255);
+    text-align: center;
+    font-weight: unset;
+	text-shadow: 0 0 8px #000000, 0 0 8px #ff0000;
+}
+.bn632-hover
+{
+  width: 310px;
+  font-size: 1.5em;
+  font-weight: 600;
+  color: rgb(255, 20, 98);
+  cursor: pointer;
+  margin: 20px;
+  height: 55px;
+  text-align:center;
+  border: none;
+  background-size: 300% 100%;
+  border-radius: 50px;
+  moz-transition: all .4s ease-in-out;
+  -o-transition: all .4s ease-in-out;
+  -webkit-transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out;
+}
+
+.bn632-hover:hover
+{
+  background-position: 100% 0;
+  moz-transition: all .4s ease-in-out;
+  -o-transition: all .4s ease-in-out;
+  -webkit-transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out;
+}
+
+.bn632-hover:focus
+{
+  outline: none;
+}
+
+.bn632-hover.bn27
+{
+    background-image: linear-gradient(
+      to right,
+      #fff1f7,
+      #ffe3d9,
+      #f7186a,
+      #e8fb3b
+    );
+    box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
+}
+
+.blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes bn13bouncy {
+    0% {
+        top: 0em;
+    }
+    40% {
+        top: 0em;
+    }
+    43% {
+        top: -0.9em;
+    }
+    46% {
+        top: 0em;
+    }
+    48% {
+        top: -0.4em;
+    }
+    50% {
+        top: 0em;
+    }
+    100% {
+        top: 0em;
+    }
+}
+@font-face
+{
+    font-family: "poppins";
+    src: url(../assets/Poppins-Medium.ttf);
+}
+
+</style>
+<body>
+    <div class="main">
+        <div id="game_prize_desc" style="display: none;"><h2 id="game_prize_title_desc" class="game_text win_title">You have won</h2></div>
+        <div id="game_prize_title" style="display: none;"><h1 id="game_prize_title_head" class="game_text win_desc"></h1></div>
+        <h3 id="game_prize_reveal_prompt" style="display: none;" class="game_text win_desc">Tap to reveal gift</h3>
+        <h3 id="tutorial_text" style="display: none;" class="game_text win_desc blink">Swipe downwards to<br>shoot ball</h3>
+    </div>
+    <div class="footer">
+        <a><button id="goto_selfie" style="display: none;" class="bn632-hover bn27"> Take a winner selfie! </button></a>
+        <div id="qrcode" class="qrcode" style="display: none;"></div>
+        <div id="game_warn_title" class="warn_text" style="display: none;"><h4 id='warn_title' class="game_text">You have already played once,<br>Try again after 1 Hour</h4></div>
+        <button id="startGame" style="display: none;" class="bn632-hover bn27">Play game</button>
+    </div>
+
+    <canvas class="webgl"></canvas>
+    <script src="../lib/three.js"></script>
+    <script src="../lib/cookie.js"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script type="module">//import * as THREE from 'three'
+			//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+			//import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+			import {
+				GLTFLoader
+			} from "../lib/GLTFLoader.js";
+			import {
+				logEvent,
+				analytics
+			} from '../lib/google_analytics.js';
+			
+			var prize = "<%= price %>";
+			var campaign_id = "<%= campaign_id %>";
+			var is_played = "<%= isplayed %>";
+			var price_id = "<%= price_id %>";
+			var coupon = "<%= coupon %>";
+			var ticket_id = "<%= ticket_id %>";
+			var price_expiry = "<%= price_expiry %>";
+			var url = "<%= url %>";
+			const date_expiry = new Date(price_expiry).toDateString();
+			const play_validity_in_days = <%= play_validity_days %> ;
+			const prize_validity_in_days = 30;
+			
+			var is_played_cookie = getCookie("is_played");
+			var qr_code_cookie = getCookie("qr_code");
+			var prize_cookie = getCookie("prize");
+			
+			var temp_vector = new THREE.Vector3();
+			var gltf_global;
+			var is_ready = false;
+			var is_pressed = false;
+			var is_box_selected = false;
+			var gift_clone;
+			var gift_boxes = Array();
+			var final_gift;
+			var target_pos;
+			var mixer;
+			var is_ready_for_reveal = false;
+			var is_box_open = false;
+			var is_zooming = true;
+			var validity;
+			var resp;
+			var tutorial_complete = false;
+			var sprite;
+			
+			var buttonPress = new Audio('../assets/sound/button_click.wav');
+			var bgMusic = new Audio('../assets/sound/lucky_slingshot/bg_music.mp3');
+			var winning = new Audio('../assets/sound/winning.mp3');
+			var boxHit = new Audio('../assets/sound/lucky_slingshot/box_hit.wav');
+			var emptyBox = new Audio('../assets/sound/empty_box.wav');
+			var ballRelease = new Audio('../assets/sound/lucky_slingshot/ball_release.mp3');
+			var wind = new Audio('../assets/sound/lucky_slingshot/wind.mp3');
+			
+			const glb_loader = new GLTFLoader();
+			const canvas = document.querySelector('canvas.webgl');
+			const scene = new THREE.Scene();
+			const geometry = new THREE.TorusGeometry(.1, .05, 16, 100);
+			const material = new THREE.MeshStandardMaterial();
+			material.color = new THREE.Color(0xff0000);
+			
+			var tree_group = new THREE.Group();
+			const tl = new THREE.TextureLoader();
+			var raycaster = new THREE.Raycaster();
+			var mouse = new THREE.Vector2();
+			
+			var isChromium = window.chrome;
+			var winNav = window.navigator;
+			var vendorName = winNav.vendor;
+			var isOpera = typeof window.opr !== "undefined";
+			var isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+			var isIOSChrome = winNav.userAgent.match("CriOS");
+			var isChrome = false;
+			
+			if (isIOSChrome) {
+				// Chrome in iOS
+				isChrome = true;
+			} else if (isChromium !== null &&
+				typeof isChromium !== "undefined" &&
+				vendorName === "Google Inc." &&
+				isOpera === false &&
+				isIEedge === false) {
+				isChrome = true;
+			}
+			
+			function isIOS() {
+				return [
+						'iPad Simulator',
+						'iPhone Simulator',
+						'iPod Simulator',
+						'iPad',
+						'iPhone',
+						'iPod'
+					].includes(navigator.platform)
+					// iPad on iOS 13 detection
+					||
+					(navigator.userAgent.includes("Mac") && "ontouchend" in document)
+			}
+			
+			// Lights
+			const pointLight = new THREE.HemisphereLight(0xffeeb1, 0x080820, 2);
+			const ambientLight = new THREE.AmbientLight(0xffffff);
+			
+			scene.add(pointLight, ambientLight);
+			
+			/**
+			 * Sizes
+			 */
+			const sizes = {
+				width: window.innerWidth,
+				height: window.innerHeight
+			};
+			
+			
+			/**
+			 * Camera
+			 */
+			// Base camera
+			const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1,
+				1000);
+			camera.position.x = 0;
+			camera.position.y = 3;
+			camera.position.z = 14;
+			scene.add(camera);
+			
+			const startScreenBg = tl.load(
+			'../assets/christmas/gamebanner_chritmas.jpg');
+			const spaceTexture = tl.load('../assets/christmas/gamebg_chritmas.jpg');
+			scene.background = startScreenBg;
+			
+			document.getElementById('goto_selfie').style.display = 'none';
+			
+			if (qr_code_cookie == "") {
+				if (is_played_cookie == "true") {
+					scene.background = spaceTexture;
+					document.getElementById('game_warn_title').style.display = 'block';
+					document.getElementById('startGame').style.display = 'none';
+					document.getElementById('game_prize_desc').style.display = 'block';
+					document.getElementById('game_prize_title').style.display = 'block';
+					document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
+					document.getElementById('game_prize_title_head').innerHTML =
+						"It's an empty box!";
+				} else {
+					document.getElementById('startGame').style.display = 'block';
+				}
+			} else {
+				scene.background = spaceTexture;
+				document.getElementById('game_prize_desc').style.display = 'block';
+				document.getElementById('game_prize_title').style.display = 'block';
+				document.getElementById('game_prize_title_head').innerHTML = prize_cookie +
+					"!";
+				document.getElementById('warn_title').innerHTML =
+					"Show this QR Code at counter to redeem prize!!";
+				document.getElementById('game_warn_title').style.display = 'block';
+				document.getElementById("qrcode").style.display = 'block';
+				new QRCode(document.getElementById("qrcode"), {
+					text: qr_code_cookie,
+					width: 200,
+					height: 200
+				});
+				if (is_played_cookie == "true") {
+					document.getElementById('startGame').style.display = 'none';
+				} else {
+					document.getElementById('startGame').style.display = 'block';
+				}
+			}
+			//   const lightHelper = new THREE.PointLightHelper(pointLight);
+			//   scene.add(lightHelper);
+			function createUserPrize() {
+				var httpRequest = new XMLHttpRequest();
+				httpRequest.onreadystatechange = function() {
+					if (httpRequest.readyState == XMLHttpRequest
+						.DONE) { // XMLHttpRequest.DONE == 4
+						if (httpRequest.status == 200) {
+							var qr_code =
+								`${url}/game?campaign_id=${campaign_id}&ticket_id=${ticket_id}`;
+							new QRCode(document.getElementById("qrcode"), {
+								text: qr_code,
+								width: 128,
+								height: 128
+							});
+							setCookie("qr_code", escape(qr_code), prize_validity_in_days);
+							setCookie("prize", escape(prize), prize_validity_in_days);
+							setCookie("is_played", true, play_validity_in_days);
+							document.getElementById('game_warn_title').style.display = 'block';
+							document.getElementById('warn_title').innerHTML =
+								"Show this QR Code at counter to redeem prize!!";
+							document.getElementById("qrcode").style.display = 'block';
+							return;
+						} else if (httpRequest.status == 400) {
+							console.log('There was an error 400');
+						} else {
+							console.log('something else other than 200 was returned');
+						}
+					}
+				};
+				httpRequest.open('POST',
+					`${url}/userPrice?campaign_id=${campaign_id}&ticket_id=${ticket_id}&coupon=${coupon}`,
+					true);
+				httpRequest.setRequestHeader("Content-type", "application/json");
+				httpRequest.send(JSON.stringify({
+					'price_id': price_id,
+					'played': true
+				}));
+			}
+			
+			var j = 0;
+			
+			function addStar() {
+				var z = -30;
+				const sphereGeometry = new THREE.SphereGeometry(0.05);
+				const material = new THREE.MeshStandardMaterial({
+					color: 0xffffff
+				});
+				const star = new THREE.Mesh(sphereGeometry, material);
+			
+				const [x, y] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(
+				100));
+				z -= j * .5;
+				j++;
+			
+				star.position.set(x, y, z);
+				scene.add(star);
+			}
+			
+			function populateGift() {
+				glb_loader.load('../assets/lucky_slingshot/giftbox/giftbox.gltf', function(
+					gltf) {
+					gltf_global = gltf;
+					var l;
+					var count = 5;
+					var height = 5;
+					var offset = -0.4;
+					var radius_offset = 0.9;
+					var gift_group = new THREE.Group();
+
+					for (var i = 0; i < count * 2; i++) {
+						for (var j = 0; j < height; j++) {
+							if (i % 2 == 1) {
+								l = count * 2;
+							} else {
+								l = count * 4;
+							}
+							var a = i / count * Math.PI;
+							if (i % 2 == 0) {
+								gift_clone = gltf.scene.clone();
+								gift_clone.position.set(Math.cos(a) * l * 0.05 * (height - j) *
+									radius_offset, j * 2 + offset, Math.sin(a) * l * 0.05 * (
+										height - j) * radius_offset);
+								gift_clone.scale.set(.6, .6, .6);
+								tree_group.add(gift_clone);
+								gift_boxes.push(gift_clone);
+							}
+						}
+					}
+			
+				}, undefined, function(error) {
+					console.error(error);
+					is_ready = false;
+				});
+			}
+			
+			function addTree() {
+				glb_loader.load('../assets/christmas/christmastree.gltf', function(gltf) {
+					var tree_clone = gltf.scene.clone();
+
+					tree_clone.scale.set(2,2,2);
+					tree_clone.position.y = -1.5;
+					tree_group.add(tree_clone);
+					scene.add(tree_group);
+				}, undefined, function(error) {
+					console.error(error);
+					is_ready = false;
+				});
+			}
+			
+			function startGame() {
+				logEvent(analytics, "play_btn_click", {
+					campaign_id: campaign_id
+				});
+
+				// TODO
+				//Array(1000).fill().forEach(addSnowFlakes);
+			
+				addTree();
+				populateGift();
+				tree_group.position.y = -1.2;
+			
+				buttonPress.play();
+				bgMusic.loop = true;
+				bgMusic.volume = 0.3;
+				bgMusic.play();
+			
+				scene.background = spaceTexture;
+			
+				document.getElementById('startGame').style.display = 'none';
+				document.getElementById('qrcode').style.display = 'none';
+				document.getElementById('game_prize_desc').style.display = 'none';
+				document.getElementById('game_warn_title').style.display = 'none';
+				document.getElementById('game_prize_title').style.display = 'none';
+				const myNode = document.getElementById("qrcode");
+				while (myNode.lastElementChild) {
+					myNode.removeChild(myNode.lastElementChild);
+				}
+				is_ready = true;
+			}
+			
+			function goToSelfiePage() {
+				logEvent(analytics, "go_to_selfie_page_btn", {
+					campaign_id: campaign_id
+				});
+				window.location = window.location.origin +
+					"/camera_capture?campaign_id=<%= campaign_id %>";
+			}
+			
+			document.getElementById('startGame').addEventListener("click", startGame);
+			document.getElementById('goto_selfie').addEventListener("click",
+			goToSelfiePage);
+			
+			function getCanvasRelativePosition(event, isTouch = false) {
+				const rect = canvas.getBoundingClientRect();
+			
+				if (isTouch) {
+					event.clientY = event.changedTouches[0].clientY;
+					event.clientX = event.changedTouches[0].clientX;
+				}
+				return {
+					x: (event.clientX / window.innerWidth) * 2 - 1,
+					y: -(event.clientY / window.innerHeight) * 2 + 1
+				};
+			}
+			
+			document.addEventListener('visibilitychange', function() {
+				var state = document.visibilityState;
+			
+				if (state == 'hidden') {
+					bgMusic.pause();
+				} else {
+					bgMusic.play();
+				}
+			})
+			
+			window.addEventListener('resize', () => {
+				// Update sizes
+				sizes.width = window.innerWidth
+				sizes.height = window.innerHeight
+			
+				// Update camera
+				camera.aspect = sizes.width / sizes.height
+				camera.updateProjectionMatrix()
+			
+				// Update renderer
+				renderer.setSize(sizes.width, sizes.height)
+				renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+			});
+			
+			function handleDown(point) {
+				if (is_ready && !is_box_selected) {
+					console.log("point:: x:", point.x, " -- y:", point.y);
+					raycaster.setFromCamera(point, camera);
+					var intersects = raycaster.intersectObjects(tree_group.children,
+					true); //array
+					if (intersects.length > 0) {
+						console.log("intersect");
+						for (var i = 0; i < gift_boxes.length; i++) {
+							if (intersects[0].object.parent.parent == gift_boxes[i]) {
+								final_gift = gift_boxes[i];
+								is_box_selected = true;
+								target_pos = new THREE.Vector3();
+								final_gift.getWorldPosition(target_pos);
+								break;
+							}
+						}
+					}
+				}
+				if (is_ready_for_reveal && is_box_selected) {
+					is_ready_for_reveal = false;
+					is_box_open = true;
+					logEvent(analytics, "prize_open", {
+						campaign_id: campaign_id
+					});
+					mixer = new THREE.AnimationMixer(final_gift);
+					gltf_global.animations.forEach(function(clip) {
+						mixer.clipAction(clip).clampWhenFinished = true;
+						mixer.clipAction(clip).setLoop(THREE.LoopOnce);
+						mixer.clipAction(clip).play();
+					});
+			
+					document.getElementById('game_prize_reveal_prompt').style.display = 'none';
+					document.getElementById('game_prize_desc').style.display = 'block';
+					document.getElementById('game_prize_title').style.display = 'block';
+			
+					bgMusic.volume = 0.05;
+			
+					if (prize == "") {
+						emptyBox.play();
+						document.getElementById('game_prize_title_desc').innerHTML = "Oops!";
+						document.getElementById('game_prize_title_head').innerHTML =
+							"It's an empty box!";
+						setCookie("is_played", true, play_validity_in_days);
+					} else {
+						winning.play();
+						logEvent(analytics, "prize_won", {
+							campaign_id: campaign_id
+						});
+						document.getElementById('game_prize_title_head').innerHTML = prize + "!";
+						if (isChrome && !isIOS()) {
+							document.getElementById('goto_selfie').style.display = 'inline-block';
+						}
+						createUserPrize();
+					}
+				}
+			}
+			
+			function handleMouseDown() {
+				const point = getCanvasRelativePosition(event, true);
+				handleDown(point);
+			}
+			
+			window.addEventListener('touchstart', handleMouseDown, false);
+			
+			// Controls
+			// const controls = new OrbitControls(camera, canvas);
+			// controls.enableDamping = true
+			
+			/**
+			 * Renderer
+			 */
+			const renderer = new THREE.WebGLRenderer({
+				canvas: canvas
+			});
+			renderer.setSize(sizes.width, sizes.height);
+			renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+			
+			/**
+			 * Animate
+			 */
+			
+			const clock = new THREE.Clock();
+			
+			const tick = () => {
+			
+				const delta = clock.getDelta();
+				const elapsedTime = clock.getElapsedTime();
+			
+				// Update Orbital Controls
+				//controls.update()
+			
+				if (final_gift && is_box_selected && is_zooming) {
+					camera.position.lerp(target_pos, 0.06);
+					camera.lookAt(target_pos)
+				}
+			
+				if (!is_box_open && final_gift && camera.getWorldPosition(temp_vector).distanceTo(
+						target_pos) < 5) {
+					is_zooming = false;
+					document.getElementById('game_prize_reveal_prompt').style.display =
+						'block';
+					is_ready_for_reveal = true;
+				}
+			
+				if (mixer) {
+					mixer.update(delta);
+				}
+				if (sprite && sprite.needs_update) {
+					if (sprite.position.y < -1) {
+						sprite.position.y = -0.5;
+					} else {
+						sprite.translateY(-0.4 * delta);
+					}
+				}
+			
+				if (!is_box_selected) {
+					tree_group.rotateY(Math.PI * 0.1 * delta);
+				}
+			
+				// Render
+				renderer.render(scene, camera);
+			
+				// Call tick again on the next frame
+				window.requestAnimationFrame(tick);
+			}
+			
+			tick();
+    </script>
+</body>
+</html>
