@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello world!</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <STYLE type="text/css">
+        .text1 {
+            font: bold 25px 'Arial';color: #330079;line-height: 15px;
+        }
+       
+        .text2 {
+            font: bold 18px 'Arial';color: #707070;line-height: 10px;
+        }
+
+        .text3 {
+            font: bold 60px 'Arial';color: #ead64b;line-height: 40px;;
+        }
+
+        .text4 {
+            font: 16px 'Arial';color: #ffffff;line-height: 15px;;
+        }
+
+        .text5 {
+            font: 17px 'Arial';color: #330079;line-height: 15px;
+        }
+
+        .text6 {
+            font: 16px 'Arial';color: #707070;line-height: 10px;
+        }
+
+        .text7 {
+            font: bold 20px 'Arial';color: #707070;line-height: 10px;
+        }
+
+        .text8 {
+            font: bold 30px 'Arial';color: #330079;line-height: 10px;
+        }
+
+        .t3 {
+            margin-bottom : 8px;
+            padding-bottom: 0%;
+        }
+
+        .t4 {
+            margin: 0%;
+            padding-left: 5px;
+        }
+
+        .t5 {
+            margin-bottom : 15px;
+            padding-bottom: 0%;
+        }
+        
+        .t6 {
+            margin-bottom : 0px;
+            padding-bottom: 0%;
+        }
+
+        .t7 {
+            margin-bottom : 0px;
+            padding-bottom: 0%;
+            margin-left: 15px;
+        }
+
+        .t8 {
+            margin : 0px;
+            padding: 0%;
+        }
+
+        .t9 {
+            margin-bottom : 0px;
+            padding-bottom: 0%;
+        }
+
+        .page {
+            align-items: center;
+            width: 820px;
+            padding-left: 220px;
+        }
+        
+        .title {
+          position: relative;
+          left: -60px;
+            text-align: center;
+        }
+
+        .title2 {
+            margin-bottom: 20px;
+        }
+        
+        .title1 {
+            margin-top: 50px;
+            margin-bottom: 40px;
+        }
+
+        .footer{
+            margin-left: 500px;
+        }
+
+        .list1 {
+            list-style-position:inside;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            left: -2em;
+            margin-top: 20px;
+            margin-bottom: 20px;
+
+        }
+
+        .list2 {
+            max-width: 100px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+
+        }
+
+        .section1 {
+            margin-left: 10px;
+            margin-right: 0px;
+            margin-top: 60px;
+            background-color: #330079;
+            border-radius: 25px;
+            width: 330px;
+            height: 130px;
+        }
+
+        .section2 {
+            margin-left: 10px;
+            margin-right: 0px;
+            margin-top: 30px;
+            border-style: solid;
+            border-color: #330079;
+            border-radius: 25px;
+            width: 290px;
+            height: 275px;
+            align-items: center;
+            padding: 1em;
+            padding-top: 1.5em;
+        }
+
+        .section3 {
+            margin-left: 10px;
+            margin-right: 0;
+            margin-top: 55px;
+            width: 325px;
+            height: 300px;
+            border-style: solid;
+            border-color: #330079;
+            border-radius: 25px;
+            padding-top: 0;
+            padding-top: 1em;
+        }
+
+        .section4 {
+            margin-left: 170px;
+            margin-right: 0px;
+            margin-top: 0px;
+            margin-bottom: 0;
+            width: 350px;
+            height: 250px;
+            text-align: center;
+            padding: 1em;
+            padding-top: 5em;
+        }
+
+        .section5 {
+            margin-left: 10px;
+            margin-right: 0;
+            margin-top: 30px;
+            width: 350px;
+            height: 300px;
+            border-style: solid;
+            border-color: #330079;
+            border-radius: 25px;
+            padding-top: 0;
+            padding-top: 1em;
+        }
+
+        .secpos6 {
+            margin-left: 10px;
+            margin-right: 0px;
+            margin-top: 60px;
+        }
+
+        .tp1 {
+            position: relative;
+            left: 110px;
+            top: -148px;
+        }
+
+        .tp2 {
+            position: relative;
+            left: 1.5em;
+            top: -1.5em;
+        }
+
+        .tb {
+            margin-top: 2em;
+            margin: 0;
+            padding: 0;
+            margin-left: 15px;
+            padding-left: 10px;
+        }
+
+        .td {
+            text-align: end;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tbh {
+            text-align: center;
+        }
+
+        .img1 {
+            position: relative;
+            width:60px;height:120px;
+            bottom: 3em;
+            left: 1em;
+        }
+
+        .img2 {
+            position: relative;
+            width:80px;height:190px;
+            margin: 0;
+            bottom: 11.5em;
+            right: -14.5em;
+        }
+
+        .img3 {
+            position: relative;
+            width:100px;height:150px;
+            margin: 0;
+            bottom: 150px;
+            left: 200px;
+        }
+        .img4 {
+            position: relative;
+            margin: 0;
+            bottom: -40px;
+            left: 10px;
+        }
+
+        .divider {
+            margin-top: 0px;
+            background-color: #330079;
+            height: 3px;
+            width: 85%;
+        }
+
+        .divider2 {
+            margin-top: 20px;
+            background-color: white;
+            height: 3px;
+            width: 110%;
+        }
+
+        .secpos1 {
+          position: absolute;
+          top: 155px;
+          left: 600px;
+        }
+
+        .secpos3 {
+            position: absolute;
+            top: 320px;
+            left: 600px;
+        }
+
+        .secpos5 {
+            position: absolute;
+            top: 680px;
+            left: 500px;
+        }
+
+        body {
+          align-content: center;
+        }
+
+    </STYLE>
+  </head>
+  <body>
+        <div class="page">
+            <div class="title">
+                <div>
+                    <P class="text2 title1">{{datas.reportPeriod.start}} - {{datas.reportPeriod.end}}</P>
+                    <P class="text1 title2">Weekly Summery of the Consumer Experience</P>
+                    <P class="text1 title2">{{datas.corporateName}}</P>
+                </div>
+            </div>
+            <div>
+                <div class="section1">
+                        <div><img src="https://firebasestorage.googleapis.com/v0/b/keralaweather-d92fc.appspot.com/o/report%2Fpic%201.png?alt=media&token=b8c41da7-256d-44db-8de3-7ac33a3b7393" alt="" class="img1"></div>
+                        <div class="tp1">
+                            <P class="text3 t3">{{datas.totalPlayers}}</P>
+                            <P class="text4 t4">Total Players</P>
+                        </div>
+                </div> 
+                <div class="secpos1 section1">
+                        <div class="tp2">
+                            <P class="text3 t3">{{datas.totalWinners}}</P>
+                            <P class="text4 t4">Total Winnwers</P>
+                        </div>
+                        <div><img src="https://firebasestorage.googleapis.com/v0/b/keralaweather-d92fc.appspot.com/o/report%2Fpic%202.png?alt=media&token=a1878fbc-1aa8-40a1-a142-8098917a1ae5" alt="" class="img2"></div>
+                </div>
+            </div>   
+            <div>
+                <div class="section2">
+                    <P class="text1 ">Top 5 claimed prizes</P>
+                    <ul class="text5">
+                      {{#each datas.mostClaimedPrizes}}
+                        <li class="list1 my-4">{{this.priceName}}</li>
+                        {{/each}}
+                      </ul> 
+                </div>
+                <div class="secpos3 section3">
+                    <P class="text1 tbh">Most Active Shops</P>
+                    <TABLE cellpadding=0 cellspacing=0 class="tb t7 text5">
+                        <TR>
+                            <TD ><P class="t7">Shop Name </P></TD>
+                            <TD ><P class="t7">Players </P></TD>
+                            <TD ><P class="t7">Claimed </P></TD>
+                        </TR>
+                        {{#each datas.mostActiveShop}}
+                        <TR>
+                            <TD ><P class="list2 t7">{{this.shopName}}</P></TD>
+                            <TD class="td t7"><P >{{this.players}}</P></TD>
+                            <TD class="td t7"><P >{{this.claimed}} </P></TD>
+                        </TR>
+                        {{/each}}
+                      </TABLE>
+                </div>
+            </div>
+                <div class="section4">
+                    <P class="text7 t8">Most played between</P>
+                    <P class="text8 t9">{{datas.mostPlayedTime.time}}</P>
+                    <P class="text7 t9">Most played on</P>
+                    <P class="text8 t9">{{datas.mostPlayedDay.day}}</P>
+                </div>
+            <div class="divider"></div>
+            <div class="divider2"></div>
+            <canvas id="myChart" data="123" style="width:100%;max-width:700px;margin-top: 10px; margin-left: 20px;"></canvas>
+            <div>
+                <div class="section6">
+                    <div><img src="https://firebasestorage.googleapis.com/v0/b/keralaweather-d92fc.appspot.com/o/report%2Fgetset%20loogo.png?alt=media&token=87501ee0-597c-4205-a1a5-76d18da4a98a" alt="" class="img4"></div>
+                    <div>
+                        <P class="text6 footer">Generated on: {{datas.generatedOn}}</P>
+                    </div>
+                </div>
+                <p hidden id='players'>{{datas.chartPlayers}}</p>
+                <p hidden id='claimed'>{{datas.chartClaimed}}</p>
+            </div>
+
+    </div>
+    
+    <script>
+        var xValues = ["Monday", "Tuesday", "Wedneday", "Thursday", "Friday" , "Satday" , "Sunday"];
+        var players = document.getElementById('players').innerHTML.split(',');
+        var claimed = document.getElementById('claimed').innerHTML.split(',');
+        var barColors = ["#330079", "#ead64b"];
+                
+        new Chart("myChart", {
+          type: "bar",
+          data: {
+            labels: xValues,
+            datasets: [{
+                backgroundColor: barColors[0],
+                data: players,
+                label:"Players"
+            },
+            {
+                backgroundColor: barColors[1],
+                data: claimed,
+                label:"Claimed"
+            }
+        ]
+          },
+          options: {
+            animation: {
+                duration: 0
+            },
+            legend: {
+                display: true,
+                labels:{
+                    usePointStyle: true
+                }
+            },
+            title: {
+              display: true,
+              text: "Total Players V/S Total Claimed"
+            }
+          }
+        });
+    </script>
+    
+  </body>
+</html>
