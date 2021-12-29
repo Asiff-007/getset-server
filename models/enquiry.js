@@ -25,9 +25,7 @@ module.exports = new (Class({ //jshint ignore:line
           text: 'Name  : ' + model.name +
           '\nContact Number : ' + model.contact_number
         };
-        transporter.sendMail(mailOptions, function(error, info) {
-          console.log('send' + info);
-        });
+        transporter.sendMail(mailOptions);
         return {
           status: 'Data inserted'
         };
