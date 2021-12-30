@@ -11,7 +11,7 @@ module.exports = new (Class({ //jshint ignore:line
     return db.save(model,tableName)
       .then(function () {
         var transporter = nodemailer.createTransport({
-          service: config.report.service,
+          host: config.report.host,
           auth: {
             user: config.report.user,
             pass: config.report.password
@@ -20,7 +20,7 @@ module.exports = new (Class({ //jshint ignore:line
 
         var mailOptions = {
           from: config.report.user,
-          to: config.report.user,
+          to: 'asiffma566@gmail.com',
           subject: config.report.subject,
           text: 'Name  : ' + model.name +
           '\nContact Number : ' + model.contact_number
