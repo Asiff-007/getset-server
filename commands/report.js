@@ -40,7 +40,7 @@ module.exports = {
                 .then(function() {
 
                   var transporter = nodemailer.createTransport({
-                    service: config.report.service,
+                    service: config.report.host,
                     auth: {
                       user: config.report.user,
                       pass: config.report.password

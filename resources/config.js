@@ -71,11 +71,11 @@ var sys_config = require('./sys_config'),
           active: 'Active',
           inactive: 'Inactive'
         },
-        user: 'asiffma566@gmail.com',
-        password: 'Asif@566',
+        user: 'no-reply@surveyorlite.com',
+        password: 'VBU4NNrqDNTk',
         subject: 'Sending Email using Node.js',
         text: 'That was easy!',
-        service: 'gmail'
+        host: 'smtp.zoho.in'
       }
     };
 
