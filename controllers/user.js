@@ -6,9 +6,7 @@ module.exports = {
   create:function (req, resp) {
     var rules = {
         name: {type: 'string', required: true},
-        mobile_no: {type: 'string', required: true},
-        campaign_id: {type: 'int', required: true},
-        ticket_id: {type: 'string', required: true}
+        mobile_no: {type: 'string', required: true}
       };
 
     if (req.validate(rules)) {
