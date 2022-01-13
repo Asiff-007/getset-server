@@ -7,9 +7,10 @@ var Class = require('js-class'),
 module.exports = new (Class({ //jshint ignore:line
   create: function (model) {
     return db.save(model,tableName)
-      .then(function () {
+      .then(function (data) {
         return {
-          status: 'Data inserted'
+          status: 'Data inserted',
+          user_id:data
         };
       })
       .catch(function () {
