@@ -35,9 +35,9 @@ module.exports = new (Class({ //jshint ignore:line
   },
   getList:function (query) {
     var today = new Date();
-    return subscription.getList(query,today)
-    .then(function(subscriptionList) {
-      if (subscriptionList.length === 0) {
+    return subscription.getSubscription(query,today)
+    .then(function(data) {
+      if (data.subscription === 'Failed') {
         return [{
           subscription: 'Failed'
         }];
