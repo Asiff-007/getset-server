@@ -4,17 +4,14 @@ var Class = require('js-class'),
   subscription = require('../dao/subscription');
 
 module.exports = new (Class({ //jshint ignore:line
-  getSubscription: function(criteria, today) {
+  isSubscribed: function(criteria) {
+    var today = new Date();
     return subscription.getList(criteria, today)
     .then(function(subscriptionList) {
       if (subscriptionList.length === 0) {
-        return {
-          subscription: 'Failed'
-        };
+        return false;
       }else {
-        return {
-          subscription: 'Success'
-        };
+        return subscriptionList;
       }
     });
   }

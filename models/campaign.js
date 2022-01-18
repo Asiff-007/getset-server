@@ -34,14 +34,9 @@ module.exports = new (Class({ //jshint ignore:line
       });
   },
   getList:function (query) {
-    var today = new Date();
-    return subscription.getSubscription(query,today)
+    return subscription.getSubscription(query)
     .then(function(data) {
-      if (data.subscription === 'Failed') {
-        return [{
-          subscription: 'Failed'
-        }];
-      }else {
+      if (data) {
         return db.getList(query, tableName, 'shop_id')
         .catch(function () {
           return {
@@ -49,6 +44,10 @@ module.exports = new (Class({ //jshint ignore:line
             error: 'Data reading failed'
           };
         });
+      }else {
+        return [{
+          subscription: 'Failed'
+        }];
       }
     });
   },
