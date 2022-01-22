@@ -6,6 +6,7 @@ var game = require('../models/game'),
     customId = require('custom-id'),
     config = require('../resources/config'),
     campaignDb = require('../models/campaign'),
+    subscriptionDb = require('../models/subscription'),
     sys_config = require('../resources/sys_config');
 
 module.exports = {
@@ -17,68 +18,81 @@ module.exports = {
 
     if (req.validate(null, null, rules)) {
       campaignDb.getRecord({id:req.query.campaign_id})
-        .then( function (response) {
-            if (!response.coupen) {
-              game.getPrice({campaign_id:req.query.campaign_id, status:config.price_status.active})
-                .then(function (price) {
-                  resp.render(process.cwd() +
-                  sys_config.game_data.get(response.game_id).url,
-                    {
-                      price: price.name,
-                      price_id: price.id,
-                      ticket_id: ticketId,
-                      coupon: config.coupen_status.no,
-                      price_expiry: price.expiry,
-                      isplayed: false,
-                      campaign_id: req.query.campaign_id,
-                      url: sys_config.server.url,
-                      play_validity_days: sys_config.game_data
-                                          .get(response.game_id)
-                                          .play_validity_in_days
-                    });
-                });
-            }else {
-              userPrice.getList({ticket_id: req.query.ticket_id})
-                .then(function (userprice) {
-                  if (userprice.length > 0){
-                    var user = userprice[0];
-                    if (user.played) {
-                      resp.render(process.cwd() +
-                      sys_config.game_data.get(response.game_id).url,
-                        {
-                          price: user.prizeName,
-                          price_id: user.prizeId,
-                          ticket_id: req.query.ticket_id,
-                          coupon: config.coupen_status.yes,
-                          price_expiry: user.prizeExpiry,
-                          isplayed: true,
-                          campaign_id: req.query.campaign_id,
-                          url: sys_config.server.url
-                        });
+        .then(function (response) {
+          subscriptionDb.isSubscribed({shop_id:response.shop_id})
+          .then(function(subscription) {
+            if (subscription) {
+              if (!response.coupen) {
+                game.getPrice
+                ({
+                  campaign_id:req.query.campaign_id,
+                  status:config.price_status.active
+                })
+                  .then(function (price) {
+                    resp.render(process.cwd() +
+                    sys_config.game_data.get(response.game_id).url,
+                      {
+                        price: price.name,
+                        price_id: price.id,
+                        ticket_id: ticketId,
+                        coupon: config.coupen_status.no,
+                        price_expiry: price.expiry,
+                        isplayed: false,
+                        campaign_id: req.query.campaign_id,
+                        url: sys_config.server.url,
+                        play_validity_days: sys_config.game_data
+                                            .get(response.game_id)
+                                            .play_validity_in_days
+                      });
+                  });
+              }else {
+                userPrice.getList({ticket_id: req.query.ticket_id})
+                  .then(function (userprice) {
+                    if (userprice.length > 0) {
+                      var user = userprice[0];
+                      if (user.played) {
+                        resp.render(process.cwd() +
+                        sys_config.game_data.get(response.game_id).url,
+                          {
+                            price: user.prizeName,
+                            price_id: user.prizeId,
+                            ticket_id: req.query.ticket_id,
+                            coupon: config.coupen_status.yes,
+                            price_expiry: user.prizeExpiry,
+                            isplayed: true,
+                            campaign_id: req.query.campaign_id,
+                            url: sys_config.server.url
+                          });
+                      }else {
+                        game.getPrice
+                        ({campaign_id:req.query.campaign_id,
+                          status:config.price_status.active})
+                          .then(function (price) {
+                            resp.render(process.cwd() +
+                            sys_config.game_data.get(response.game_id).url,
+                              {
+                                price: price.name,
+                                price_id: price.id,
+                                ticket_id: req.query.ticket_id,
+                                coupon: config.coupen_status.yes,
+                                price_expiry: price.expiry,
+                                isplayed: false,
+                                campaign_id: req.query.campaign_id,
+                                url: sys_config.server.url
+                              });
+                          });
+                      }
                     }else {
-                      game.getPrice({campaign_id:req.query.campaign_id, status:config.price_status.active})
-                        .then(function (price) {
-                          resp.render(process.cwd() +
-                          sys_config.game_data.get(response.game_id).url,
-                            {
-                              price: price.name,
-                              price_id: price.id,
-                              ticket_id: req.query.ticket_id,
-                              coupon: config.coupen_status.yes,
-                              price_expiry: price.expiry,
-                              isplayed: false,
-                              campaign_id: req.query.campaign_id,
-                              url: sys_config.server.url
-                            });
-                        });
+                      resp.sendStatus(404);
                     }
-                  }else {
-                    resp.sendStatus(404);
-                  }
-                });
+                  });
+              }
+            } else {
+              resp.sendStatus(404);
             }
+          });
         })
-        .catch(function(){
+        .catch(function() {
           resp.sendStatus(404);
         });
     }

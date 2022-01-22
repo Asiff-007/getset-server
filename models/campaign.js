@@ -2,6 +2,7 @@
 
 var Class = require('js-class'),
     db = require('../dao/db'),
+    subscription = require('./subscription'),
     config = require('../resources/config'),
     //util = require('../modules/util'),
     _ = require('lodash'),
@@ -33,16 +34,25 @@ module.exports = new (Class({ //jshint ignore:line
       });
   },
   getList:function (query) {
-    return db.getList(query, tableName, 'shop_id')
-    .catch(function () {
-      return {
-        status: 'Failed',
-        error: 'Data reading failed'
-      };
+    return subscription.getSubscription(query)
+    .then(function(data) {
+      if (data) {
+        return db.getList(query, tableName, 'shop_id')
+        .catch(function () {
+          return {
+            status: 'Failed',
+            error: 'Data reading failed'
+          };
+        });
+      }else {
+        return [{
+          subscription: 'Failed'
+        }];
+      }
     });
   },
   getRecord:function (query) {
-    return db.getRecord(query, tableName, 'id')
+    return db.getRecord(query, tableName, 'id');
   },
   update:function (id,update) {
     return db.update(id,update,tableName)
