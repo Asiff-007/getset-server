@@ -34,7 +34,7 @@ module.exports = new (Class({ //jshint ignore:line
       });
   },
   getList:function (query) {
-    return subscription.getSubscription(query)
+    return subscription.isSubscribed(query)
     .then(function(data) {
       if (data) {
         return db.getList(query, tableName, 'shop_id')
